@@ -1,2 +1,2 @@
-# FYS3110CompPhy
-Projects for the course FYS3110 at UiO
+# FYS3150CompPhy
+Projects for the course FYS3150 at UiO
