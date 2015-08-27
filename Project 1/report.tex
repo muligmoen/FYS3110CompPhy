@@ -1,0 +1,58 @@
+\documentclass[11pt,a4paper,english]{article}
+\usepackage[english]{babel} % Using babel for norwegian hyphenation
+\usepackage{lmodern} % Changing the font
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
+
+\usepackage[parfill]{parskip} % Removes indents
+\usepackage{amsmath} % Environment, symbols etc...
+\usepackage{amssymb}
+%\usepackage{wasysym} % Astrological symbols
+\usepackage{graphicx} % For pictures etc...
+\usepackage{enumitem} % Points/lists
+\usepackage{physics} % Typesetting of mathematical physics examples: \bra{}, \ket{}, expval{}
+
+% To include code(-snippets) with æøå
+%\usepackage{listings}
+%\lstset{
+%language=python,
+%showspaces=false,
+%showstringspaces=false,
+%frame=l,
+%literate=%
+%{æ}{{\ae}}1
+%{ø}{{\o}}1
+%{å}{{\aa}}1
+%{Æ}{{\AE}}1
+%{Ø}{{\O}}1
+%{Å}{{\AA}}1
+%}
+
+\tolerance = 5000 % Bedre tekst
+\hbadness = \tolerance
+\pretolerance = 2000
+
+\newcommand{\conj}[1]{#1^*}
+\newcommand{\ve}[1]{\mathbf{#1}} % Vektorer i bold
+\let\oldhat\hat
+\renewcommand{\hat}[1]{\mathbf{\oldhat{#1}}}
+\newcommand{\trans}[1]{#1^\top}
+\newcommand{\herm}[1]{#1^\dagger}
+%\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Gir fotnote-symboler
+\newcommand{\Real}{\mathbb{R}}
+
+\title{FYS3150/FYS4150 \\Project 1}
+\author{Magnus Ulimoen\\Krister Stræte Karlsen}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section{Motivation}
+
+Solutions of the Poissons equation are a vital component to many aspects physics.
+
+
+\end{document}

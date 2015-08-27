@@ -1,2 +1,8 @@
+#C++ files
 *.o
 .depend
+
+#LaTeX files
+*.log
+*.gz
+*.aux
