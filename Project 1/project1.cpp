@@ -19,24 +19,30 @@ void u_theory(arma::Col<double> &k, const int N);
 
 int main( int argc, char *argv[] )
 {
-  if (argc < 2 || std::atoi(argv[1]) < 2)
+  if (argc < 2 || atoi(argv[1]) < 2)
   {
     std::cout << "Usage: " << argv[0] << " N" << std::endl;
+    std::cout << "With N > 1" << std::endl;
     exit(0);
   }
   
-  const int matrix_size = std::atoi(argv[1]);
- 
-  //Change this to arma::SpMat when implementing sparse systems
+  const int matrix_size = atoi(argv[1]);
+  
+  /* Use this code if armadillo version < 5
   arma::Mat<double> A(matrix_size, matrix_size); 
+  fill_matrix(A, matrix_size);
+  */
+  
+  arma::SpMat<double> A(matrix_size, matrix_size);
   fill_matrix(A, matrix_size);
   
   arma::Col<double> b(matrix_size);
   fill_column(b, matrix_size);
   
-  // Sparse system -> spsolve
-  auto v = solve(A, b);
-  
+  arma::Col<double> v = spsolve(A, b);
+  /* armadillo V < 5
+   arma::Col<double> v = solve(A, b);
+  */
   
   arma::Col<double> u(matrix_size);
   
@@ -89,5 +95,19 @@ void fill_matrix(arma::SpMat<double> &A, const int sizeA)
   for (int diag=0; diag<sizeA; diag++)
   {
     A(diag, diag) = 2;
+  }
+  for (int diag=0; diag < sizeA; diag++)
+  {
+    if (diag < sizeA - 1)
+    {
+      A(diag, diag+1) = -1;
+    }
+  }
+  for (int diag=0; diag < sizeA; diag++)
+  {
+    if (diag > 0)
+    {
+      A(diag, diag-1) = -1;
+    }
   }
 }
