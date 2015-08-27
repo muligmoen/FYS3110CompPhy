@@ -3,17 +3,18 @@
 #include <cmath>
 #include <cstdlib>
 
+
 double f(double x);
 
 double u_theory(double x);
 
-void fill_matrix(arma::Mat<double> &A, const int sizeA);
+void fill_matrix(arma::Mat<double> &A);
 
-void fill_matrix(arma::SpMat<double> &A, const int sizeA);
+void fill_matrix(arma::SpMat<double> &A);
 
-void fill_column(auto &b, const int N);
+void fill_column(arma::Col<double> &b);
 
-void u_theory(arma::Col<double> &k, const int N);
+void u_theory(arma::Col<double> &u);
 
 
 
@@ -28,27 +29,28 @@ int main( int argc, char *argv[] )
   
   const int matrix_size = atoi(argv[1]);
   
-  /* Use this code if armadillo version < 5
-  arma::Mat<double> A(matrix_size, matrix_size); 
-  fill_matrix(A, matrix_size);
-  */
-  
+  //Use the top constructor if armadillo version < 5
+  //arma::Mat<double> A(matrix_size, matrix_size); 
   arma::SpMat<double> A(matrix_size, matrix_size);
-  fill_matrix(A, matrix_size);
+  
+  
+  fill_matrix(A);
   
   arma::Col<double> b(matrix_size);
-  fill_column(b, matrix_size);
+  fill_column(b);
   
+  
+  //Top for armadillo < 5
+  //arma::Col<double> v = solve(A, b);
   arma::Col<double> v = spsolve(A, b);
-  /* armadillo V < 5
-   arma::Col<double> v = solve(A, b);
-  */
+   
+  
   
   arma::Col<double> u(matrix_size);
   
-  u_theory(u, matrix_size);
+  u_theory(u);
   
-  std::cout << stddev(u-v) << std::endl;
+  std::cout << "Standard deviation of (u_{theory}-u_{computed}) = " << stddev(u-v) << std::endl;
   
   return 0;
 }
@@ -64,8 +66,9 @@ double u_theory(double x)
   return 1.0 - (1.0 - std::exp(-10.0))*x - std::exp(-10.0*x);
 }
 
-void u_theory(arma::Col<double> &u, const int N)
+void u_theory(arma::Col<double> &u)
 {
+  const int N = u.n_elem;
   double h = 1.0/N;
   for (int iii=0; iii<N; iii++)
   {
@@ -73,8 +76,9 @@ void u_theory(arma::Col<double> &u, const int N)
   }
 }
 
-void fill_column(auto &b, const int N)
+void fill_column(arma::Col<double> &b)
 {
+  const int N = b.n_elem;
   double h = 1.0/N;
   for (int iii=0; iii<N; iii++)
   {
@@ -82,16 +86,17 @@ void fill_column(auto &b, const int N)
   }
 }
 
-void fill_matrix(arma::Mat<double> &A, const int sizeA)
-// sparse matrix not support diag, find different algorithm
+void fill_matrix(arma::Mat<double> &A)
 {
   A.diag(0) += 2.0;
   A.diag(-1) += -1;
   A.diag(1) += -1;
 }
 
-void fill_matrix(arma::SpMat<double> &A, const int sizeA)
+
+void fill_matrix(arma::SpMat<double> &A)
 {
+  const int sizeA = A.n_rows;
   for (int diag=0; diag<sizeA; diag++)
   {
     A(diag, diag) = 2;
