@@ -5,20 +5,19 @@
 #include <cmath>
 #include <cstdlib>
 
-
+const bool SPARSE = true; //set to false if your arma library < ver. 5
 
 double f(double x);
 
 double u_theory(double x);
 
-void fill_matrix(arma::Mat<double> &A);
-
-void fill_matrix(arma::SpMat<double> &A);
-
-void f_column(arma::Col<double> &b);
-
 void u_theory(arma::Col<double> &u);
 
+arma::SpMat<double> second_deriv_matr(const int &N);
+
+arma::Mat<double> second_deriv_matr(const int&N, bool sparse);
+
+arma::Col<double> f_column(const double x0, const double x1, const int N);
 
 class Writer
 {
@@ -26,9 +25,9 @@ private:
   std::ofstream outf;
 public:
   Writer(const char* name, const int matrix_size);
-  ~Writer();
   void print(arma::Col<double> &vec);
 };
+
 
 int main( int argc, char *argv[] )
 {
@@ -36,27 +35,22 @@ int main( int argc, char *argv[] )
   {
     std::cout << "Usage: " << argv[0] << " N filename" << std::endl;
     std::cout << "With N > 1" << std::endl;
-    exit(0);
+    exit(1);
   }
   
   const int matrix_size = atoi(argv[1]);
   
-  //Use the top constructor if armadillo version < 5
-  //arma::Mat<double> A(matrix_size, matrix_size); 
-  arma::SpMat<double> A(matrix_size, matrix_size);
   
+  arma::Col<double> f = f_column(0, 1, matrix_size);
   
-  fill_matrix(A);
-  
-  arma::Col<double> b(matrix_size);
-  f_column(b);
-  
-  
-  //Top for armadillo < 5
-  //arma::Col<double> v = solve(A, b);
-  arma::Col<double> v = spsolve(A, b);
-   
-  
+  if (!SPARSE)
+  {
+    arma::Mat<double> A = second_deriv_matr(matrix_size, false); 
+    arma::Col<double> v = solve(A, f);
+  } else {
+    arma::SpMat<double> A = second_deriv_matr(matrix_size);
+    arma::Col<double> v = spsolve(A, f);
+  }
   
   arma::Col<double> u(matrix_size);
   
@@ -66,7 +60,7 @@ int main( int argc, char *argv[] )
   
 
   Writer fileprinter(argv[2], matrix_size);
-  fileprinter.print(b);
+  fileprinter.print(f);
   
   fileprinter.print(u);
   
@@ -94,53 +88,57 @@ void u_theory(arma::Col<double> &u)
   }
 }
 
-void f_column(arma::Col<double> &b)
+arma::Col<double> f_column(const double x0, const double x1, const int N)
 {
-  const int N = b.n_elem;
-  double h = 1.0/(double)N;
+  arma::Col<double> b(N);
+  
+  double h = (x1-x0)/(double)N;
+  
   for (int iii=0; iii<N; iii++)
   {
-    b[iii] = f(iii*h)*h*h;
+    double x = x0 + h*iii;
+    b[iii] = f(x)*h*h;
   }
+  return b;
 }
 
-void fill_matrix(arma::Mat<double> &A)
+arma::Mat<double> second_deriv_matr(const int&N, bool sparse)
 {
+  if (sparse)
+  {
+    std::cout << "Please use second_deriv_matr(N) instead" << std::endl;
+  }
+  arma::Mat<double> A(N, N);
   A.diag(0) += 2.0;
-  A.diag(-1) += -1.0;
-  A.diag(1) += -1.0;
+  A.diag(1) += -1;
+  A.diag(-1) += -1;
+  return A;
 }
 
-
-void fill_matrix(arma::SpMat<double> &A)
+arma::SpMat<double> second_deriv_matr(const int& N)
 {
-  const int sizeA = A.n_rows;
-  for (int diag=0; diag<sizeA; diag++)
+  arma::SpMat<double> A(N, N);
+  for (int diag=0; diag < N; diag++)
   {
-    A(diag, diag) = 2;
-  }
-  for (int diag=0; diag < sizeA; diag++)
-  {
-    if (diag < sizeA - 1)
+    A(diag, diag) = 2; //diagonal
+    if (diag < N - 1) //upper band
     {
       A(diag, diag+1) = -1;
     }
-  }
-  for (int diag=0; diag < sizeA; diag++)
-  {
-    if (diag > 0)
+    if (diag > 0) //lower band
     {
       A(diag, diag-1) = -1;
     }
   }
+  return A;
 }
 
-Writer::Writer(const char *name, const int array_length) : outf(name)
+
+Writer::Writer(const char* name, const int matrix_size) : outf(name)
 {
-  outf << array_length << "\n\n";
+  outf << matrix_size << "\n\n";
 };
 
-Writer::~Writer() { };
 
 void Writer::print(arma::Col<double> &vec)
 {
