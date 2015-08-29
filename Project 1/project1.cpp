@@ -5,7 +5,6 @@
 #include <cmath>
 #include <cstdlib>
 
-const bool SPARSE = true; //set to false if your arma library < ver. 5
 
 double f(double x);
 
@@ -43,14 +42,14 @@ int main( int argc, char *argv[] )
   
   arma::Col<double> f = f_column(0, 1, matrix_size);
   
-  if (!SPARSE)
-  {
-    arma::Mat<double> A = second_deriv_matr(matrix_size, false); 
-    arma::Col<double> v = solve(A, f);
-  } else {
-    arma::SpMat<double> A = second_deriv_matr(matrix_size);
-    arma::Col<double> v = spsolve(A, f);
-  }
+  
+  // non-sparse methods (arma version < 5)
+  //arma::Mat<double> A = second_deriv_matr(matrix_size, false); 
+  //arma::Col<double> v = solve(A, f);
+  
+  arma::SpMat<double> A = second_deriv_matr(matrix_size);
+  arma::Col<double> v = spsolve(A, f);
+  
   
   arma::Col<double> u(matrix_size);
   
@@ -60,7 +59,7 @@ int main( int argc, char *argv[] )
   
 
   Writer fileprinter(argv[2], matrix_size);
-  fileprinter.print(f);
+  fileprinter.print(v);
   
   fileprinter.print(u);
   
