@@ -1,7 +1,10 @@
 #include <iostream>
+#include <iomanip>
+#include <fstream>
 #include <armadillo>
 #include <cmath>
 #include <cstdlib>
+
 
 
 double f(double x);
@@ -12,17 +15,26 @@ void fill_matrix(arma::Mat<double> &A);
 
 void fill_matrix(arma::SpMat<double> &A);
 
-void fill_column(arma::Col<double> &b);
+void f_column(arma::Col<double> &b);
 
 void u_theory(arma::Col<double> &u);
 
 
+class Writer
+{
+private:
+  std::ofstream outf;
+public:
+  Writer(const char* name, const int matrix_size);
+  ~Writer();
+  void print(arma::Col<double> &vec);
+};
 
 int main( int argc, char *argv[] )
 {
-  if (argc < 2 || atoi(argv[1]) < 2)
+  if (argc < 3 || atoi(argv[1]) < 2)
   {
-    std::cout << "Usage: " << argv[0] << " N" << std::endl;
+    std::cout << "Usage: " << argv[0] << " N filename" << std::endl;
     std::cout << "With N > 1" << std::endl;
     exit(0);
   }
@@ -37,7 +49,7 @@ int main( int argc, char *argv[] )
   fill_matrix(A);
   
   arma::Col<double> b(matrix_size);
-  fill_column(b);
+  f_column(b);
   
   
   //Top for armadillo < 5
@@ -50,7 +62,13 @@ int main( int argc, char *argv[] )
   
   u_theory(u);
   
-  std::cout << "Standard deviation of (u_{theory}-u_{computed}) = " << stddev(u-v) << std::endl;
+  //std::cout << "Standard deviation of (u_{theory}-u_{computed}) = " << stddev(u-v) << std::endl;
+  
+
+  Writer fileprinter(argv[2], matrix_size);
+  fileprinter.print(b);
+  
+  fileprinter.print(u);
   
   return 0;
 }
@@ -69,28 +87,28 @@ double u_theory(double x)
 void u_theory(arma::Col<double> &u)
 {
   const int N = u.n_elem;
-  double h = 1.0/N;
+  double h = 1.0/(double)N;
   for (int iii=0; iii<N; iii++)
   {
     u[iii] = u_theory(iii*h);
   }
 }
 
-void fill_column(arma::Col<double> &b)
+void f_column(arma::Col<double> &b)
 {
   const int N = b.n_elem;
-  double h = 1.0/N;
+  double h = 1.0/(double)N;
   for (int iii=0; iii<N; iii++)
   {
-    b[iii] = f(iii*h)*(h*h);
+    b[iii] = f(iii*h)*h*h;
   }
 }
 
 void fill_matrix(arma::Mat<double> &A)
 {
   A.diag(0) += 2.0;
-  A.diag(-1) += -1;
-  A.diag(1) += -1;
+  A.diag(-1) += -1.0;
+  A.diag(1) += -1.0;
 }
 
 
@@ -116,3 +134,18 @@ void fill_matrix(arma::SpMat<double> &A)
     }
   }
 }
+
+Writer::Writer(const char *name, const int array_length) : outf(name)
+{
+  outf << array_length << "\n\n";
+};
+
+Writer::~Writer() { };
+
+void Writer::print(arma::Col<double> &vec)
+{
+  outf.precision(10);
+  vec.raw_print(outf);
+  outf << "\n";
+}
+
