@@ -43,6 +43,9 @@
 %\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Gir fotnote-symboler
 \newcommand{\Real}{\mathbb{R}}
 
+
+\newcommand{\spac}{\hspace{5mm}}
+
 \title{FYS3150/FYS4150 \\Project 1}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
 \date{\today}
@@ -57,12 +60,81 @@ Solutions of the Poissons equation are a vital component to many aspects physics
 
 \section{a)}
 
-Moving $h^2$ over and setting
+%Moving $h^2$ over and setting
+%\begin{gather*}
+%A = \begin{pmatrix} 2 & -1 & \ldots & \ldots & 0\\
+%		    -1 & 2 & 0 & \ldots & \ldots \\
+%		    \end{pmatrix}
+%\end{gather*}
+\subsection*{Formulation}
+
+Given the following ODE with boundary conditions, 
+
+\begin{equation}
+-u''(x) = f(x), \spac x \in (0,1), \spac u(0) = u(1) = 0.
+\end{equation}
+
+and the dicretized form following a symmetric Taylor expansion
+
+\begin{equation}
+-\frac{v_{i+1}+v_{i-1}-2v_i}{h^2} = f_i  \spac \mathrm{for} \spac i=1,\dots, n, \spac v_0 = v_{n} = 0
+\label{eq:discretized}
+\end{equation}
+
+we are going to show it can be written as system of linear equations of the form: 
+
+\begin{equation}
+   \ve{A}\ve{v} = \tilde{\ve{b}},
+   \label{eq:Avb}
+\end{equation}
+
+
+\subsection*{Solution}
+Multipling the discretized equation \eqref{eq:discretized} by $h^2$ we get:
+
 \begin{gather*}
-A = \begin{pmatrix} 2 & -1 & \ldots & \ldots & 0\\
-		    -1 & 2 & 0 & \ldots & \ldots \\
-		    \end{pmatrix}
+   -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \hspace{0.5cm} \mathrm{for} \hspace{0.5cm} i=1,\dots, n 
 \end{gather*}
+
+Filling in for $i$ and choosing $\tilde{b_i} = h^2 f_i$ we obtain the following set of equations: 
+\begin{align*}
+	2v_{1}-v_{2}=\tilde{b_1} \\
+	-v_{1}+2v_{2}-v_{3}=\tilde{b_2} \\
+	\vdots \hspace{0.5cm} \\
+	-v_{i-1}+2v_{i}-v_{i+1}=\tilde{b_i} \\
+	\vdots \hspace{0.5cm}  \\ 
+	-v_{n-1}+2v_{n}=\tilde{b_n} \\
+\end{align*}
+Now one can easily see that this system of linear equations can written on the form of \eqref{eq:Avb},
+where 
+\begin{gather*}
+    \ve{A} = \begin{pmatrix}%{cccccc}
+                           2& -1& 0 &\dots   & \dots &0 \\
+                           -1 & 2 & -1 &0 &\dots &\dots \\
+                           0&-1 &2 & -1 & 0 & \dots \\
+                           & \dots   & \dots &\dots   &\dots & \dots \\
+                           0&\dots   &  &-1 &2& -1 \\
+                           0&\dots    &  & 0  &-1 & 2 \\
+                      \end{pmatrix},\spac \ve{v} = \begin{pmatrix}
+                           v_1\\
+                           v_2\\
+                           \dots \\
+                          \dots  \\
+                          \dots \\
+                           v_n\\
+                      \end{pmatrix},
+  \spac \tilde{\ve{b}} = \begin{pmatrix}
+                           \tilde{b}_1\\
+                           \tilde{b}_2\\
+                           \dots \\
+                           \dots \\
+                          \dots \\
+                           \tilde{b}_n\\
+                      \end{pmatrix}.
+\end{gather*}
+
+
+
 
 
 \end{document}
