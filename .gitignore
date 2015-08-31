@@ -1,2 +1,13 @@
+#test-files
+test.txt
+
+#C++ files
 *.o
 .depend
+
+#LaTeX files
+*.log
+*.gz
+*.aux
+*.backup
+
