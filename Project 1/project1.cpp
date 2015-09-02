@@ -44,12 +44,13 @@ int main( int argc, char *argv[] )
   
   
   // non-sparse methods (arma version < 5)
-  //arma::Mat<double> A = second_deriv_matr(matrix_size, false); 
-  //arma::Col<double> v = solve(A, f);
+  arma::Mat<double> A = second_deriv_matr(matrix_size, false); 
+  arma::Col<double> v = solve(A, f);
   
+  /*
   arma::SpMat<double> A = second_deriv_matr(matrix_size);
   arma::Col<double> v = spsolve(A, f);
-  
+  */
   
   arma::Col<double> u(matrix_size);
   
