@@ -19,8 +19,7 @@ int main( int argc, char *argv[] )
   
   const int N = atoi(argv[1]);
   
-  arma::Col<double> u(N);
-  u_theory(u);
+
   
 
   std::clock_t t0, t1;
@@ -32,9 +31,9 @@ int main( int argc, char *argv[] )
   const char alg_type = argv[3][0];
   if (alg_type == 'M')
   {
-    v = matrix_alg(0, 1, N, false);
-  } else if (alg_type == 'S') {
     v = matrix_alg(0, 1, N);
+  } else if (alg_type == 'S') {
+    v = matrix_alg(0, 1, N, true);
   } else if (alg_type == 'T') {
     v = thomas_alg(0, 1, N);
   } else {
@@ -48,6 +47,9 @@ int main( int argc, char *argv[] )
   //std::cout << "Number of clock cycles used: " << time_ticks << std::endl;
   double time_used = time_ticks/(double)CLOCKS_PER_SEC;
   std::cout << "Time used: " << time_used << " seconds." << std::endl;
+  
+  
+  arma::Col<double> u = u_theory(N, 0, 1);
   
   double err = std::log10(max_relative_error(v, u));
   std::cout << "Log10 of relative error:" << err << std::endl;

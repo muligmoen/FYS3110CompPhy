@@ -7,25 +7,25 @@
 #include "tridiag_solver.h"
 
 
-
-double f(double x)
-{
-  return 100.0*std::exp(-10.0*x);
-}
-
 double u_theory(double x)
 {
   return 1.0 - (1.0 - std::exp(-10.0))*x - std::exp(-10.0*x);
 }
 
-void u_theory(arma::Col<double> &u)
+arma::Col<double> u_theory(const int N, double x0, double x1)
 {
-  const int N = u.n_elem;
+  arma::Col<double> u(N);
   double h = 1.0/(double)N;
   for (int iii=0; iii<N; iii++)
   {
     u[iii] = u_theory(iii*h);
   }
+  return u;
+}
+
+double f(double x)
+{
+  return 100.0*std::exp(-10.0*x);
 }
 
 arma::Col<double> f_column(const double x0, const double x1, const int N)

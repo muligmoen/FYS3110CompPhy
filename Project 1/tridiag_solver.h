@@ -8,7 +8,7 @@ double f(double x);
 
 double u_theory(double x);
 
-void u_theory(arma::Col<double> &u);
+arma::Col<double> u_theory(const int N, const double x0, const double x1);
 
 arma::SpMat<double> spsecond_deriv_matr(const int &N);
 
@@ -18,7 +18,7 @@ arma::Col<double> f_column(const double x0, const double x1, const int N);
 
 arma::Col<double> thomas_alg(const double x0, const double x1, const int N);
 
-arma::Col<double> matrix_alg(const double x0, const double x1, const int N, const bool SPARSE=true);
+arma::Col<double> matrix_alg(const double x0, const double x1, const int N, const bool SPARSE=false);
 
 double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u);
 
