@@ -12,11 +12,17 @@ double u_theory(double x);
 
 void u_theory(arma::Col<double> &u);
 
-arma::SpMat<double> second_deriv_matr(const int &N);
+arma::SpMat<double> spsecond_deriv_matr(const int &N);
 
-arma::Mat<double> second_deriv_matr(const int&N, bool sparse);
+arma::Mat<double> second_deriv_matr(const int&N);
 
 arma::Col<double> f_column(const double x0, const double x1, const int N);
+
+arma::Col<double> thomas_alg(const double x0, const double x1, const int N);
+
+arma::Col<double> matrix_alg(const double x0, const double x1, const int N, const bool SPARSE=true);
+
+double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u);
 
 class Writer
 {
@@ -37,28 +43,18 @@ int main( int argc, char *argv[] )
     exit(1);
   }
   
-  const int matrix_size = atoi(argv[1]);
+  const int N = atoi(argv[1]);
   
-  
-  arma::Col<double> f = f_column(0, 1, matrix_size);
-  
-  
-  // non-sparse methods (arma version < 5)
-  //arma::Mat<double> A = second_deriv_matr(matrix_size, false); 
-  //arma::Col<double> v = solve(A, f);
-  
-  arma::SpMat<double> A = second_deriv_matr(matrix_size);
-  arma::Col<double> v = spsolve(A, f);
-  
-  
-  arma::Col<double> u(matrix_size);
-  
+  arma::Col<double> u(N);
   u_theory(u);
   
-  //std::cout << "Standard deviation of (u_{theory}-u_{computed}) = " << stddev(u-v) << std::endl;
-  
 
-  Writer fileprinter(argv[2], matrix_size);
+  
+  arma::Col<double> v = matrix_alg(0, 1, N);
+  
+  std::cout << std::log10(max_relative_error(v, u)) << std::endl;
+  
+  Writer fileprinter(argv[2], N);
   fileprinter.print(v);
   
   fileprinter.print(u);
@@ -101,12 +97,8 @@ arma::Col<double> f_column(const double x0, const double x1, const int N)
   return b;
 }
 
-arma::Mat<double> second_deriv_matr(const int&N, bool sparse)
+arma::Mat<double> second_deriv_matr(const int&N)
 {
-  if (sparse)
-  {
-    std::cout << "Please use second_deriv_matr(N) instead" << std::endl;
-  }
   arma::Mat<double> A(N, N);
   A.diag(0) += 2.0;
   A.diag(1) += -1;
@@ -114,7 +106,7 @@ arma::Mat<double> second_deriv_matr(const int&N, bool sparse)
   return A;
 }
 
-arma::SpMat<double> second_deriv_matr(const int& N)
+arma::SpMat<double> spsecond_deriv_matr(const int& N)
 {
   arma::SpMat<double> A(N, N);
   for (int diag=0; diag < N; diag++)
@@ -130,6 +122,77 @@ arma::SpMat<double> second_deriv_matr(const int& N)
     }
   }
   return A;
+}
+
+
+arma::Col<double> thomas_alg(const double x0, const double x1, const int N)
+{
+  
+  double *cprime = new double[N];
+  double *dprime = new double[N];
+  
+  arma::Col<double> v(N);
+  
+  const arma::Col<double> b_tilde = f_column(x0, x1, N);
+  
+  
+  const double a = -1;
+  const double b = 2;
+  const double c = -1;
+  
+  
+  cprime[0] = c/b;
+  dprime[0] = b_tilde[0]/b;
+  
+  for (int iii=1; iii<N; iii++)
+  {
+    cprime[iii] = c/(b-a*cprime[iii-1]);
+    dprime[iii] = (b_tilde[iii] - a*dprime[iii-1])/(b-a*cprime[iii-1]);
+  }
+  
+  v[N] = dprime[N];
+  for (int iii=N-1; iii>0; iii--)
+  {
+    v[iii] = dprime[iii] - cprime[iii]*v[iii+1];
+  }
+  v[0] = 0;
+  
+  delete[] cprime;
+  delete[] dprime;
+  return v;
+}
+
+
+arma::Col<double> matrix_alg(const double x0, const double x1, const int N, const bool SPARSE)
+{
+  arma::Col<double> f = f_column(0, 1, N);
+  
+  if (SPARSE)
+  {
+    arma::SpMat<double> A = spsecond_deriv_matr(N);
+    arma::Col<double> v = spsolve(A, f);
+    return v;
+  } else {
+    arma::Mat<double> A = second_deriv_matr(N); 
+    arma::Col<double> v = solve(A, f);
+    return v;
+  }
+}
+
+
+double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u)
+{
+  const int N = v.n_elem;
+  double max_error = 0;
+  for (int iii=0; iii<N; iii++)
+  {
+    double err = std::abs((v[iii] - u[iii])/u[iii]);
+    if (err > max_error && u[iii]) // Checking not null element
+    {
+      max_error = err;
+    }
+  }
+  return max_error;
 }
 
 

@@ -93,16 +93,16 @@ we are going to show it can be written as system of linear equations of the form
 Multipling the discretized equation \eqref{eq:discretized} by $h^2$ we get:
 
 \begin{gather*}
-   -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \hspace{0.5cm} \mathrm{for} \hspace{0.5cm} i=1,\dots, n 
+   -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \spac \mathrm{for} \spac i=1,\dots, n 
 \end{gather*}
 
 Filling in for $i$ and choosing $\tilde{b_i} = h^2 f_i$ we obtain the following set of equations: 
 \begin{align*}
 	2v_{1}-v_{2}=\tilde{b_1} \\
 	-v_{1}+2v_{2}-v_{3}=\tilde{b_2} \\
-	\vdots \hspace{0.5cm} \\
+	\vdots \spac \\
 	-v_{i-1}+2v_{i}-v_{i+1}=\tilde{b_i} \\
-	\vdots \hspace{0.5cm}  \\ 
+	\vdots \spac  \\ 
 	-v_{n-1}+2v_{n}=\tilde{b_n} \\
 \end{align*}
 Now one can easily see that this system of linear equations can written on the form of \eqref{eq:Avb},
@@ -140,11 +140,11 @@ where
 
 We start by looking at the system of equations:
 \begin{align*}
-	 b_1 v_1 + c_1 v_{2} = \tilde{b_1} \hspace{0.5cm} (1*)\\
-	 a_2 v_1 + b_2 v_2 + c_3 v_3 = \tilde{b_2} \hspace{0.5cm} (2*) \\
-	 a_3 v_2 + b_3 v_3 + c_3 v_4 = \tilde{b_3} \hspace{0.5cm} (3*) \\
-	 \vdots \hspace{0.5cm}  \\ 
-	 a_n v_{n-1} + b_n v_n = \tilde{b_n} \hspace{0.5cm} (n*)\\
+	 b_1 v_1 + c_1 v_{2} = \tilde{b_1} \spac (1*)\\
+	 a_2 v_1 + b_2 v_2 + c_3 v_3 = \tilde{b_2} \spac (2*) \\
+	 a_3 v_2 + b_3 v_3 + c_3 v_4 = \tilde{b_3} \spac (3*) \\
+	 \vdots \spac  \\ 
+	 a_n v_{n-1} + b_n v_n = \tilde{b_n} \spac (n*)\\
 \end{align*}
 If we solve (1*) for $v_1$ and insert it into (2*) we obtain the following "modified second equation":
 \begin{align*}
@@ -167,7 +167,7 @@ v_3 =& \frac{(b_1 b_2 - a_2 c_1) \tilde{b_3} - a_3 (b_1 \tilde{b_2} - a_2 \tilde
 
 This prossess can be repeated up untill the last equation. This is the forward substitution step. From the last equation we compute $v_n$ and get all we need to compute $v_{n-1}$, then $v_{n-2}$, and so on. This is the backward substitution part of the algorithm. A shrewd reader might see that the coefficiants, $\beta$ and $\gamma$, take a recursive form
 \begin{align*}
-\beta_{i+1} = \frac{\tilde{b_i}-a_i \beta_i}{a_i \gamma_i + b_i} , \hspace{0.5cm} \gamma_{i+1}=\frac{-c_i}{a_i \gamma_i + b_i},
+\beta_{i+1} = \frac{\tilde{b_i}-a_i \beta_i}{a_i \gamma_i + b_i} , \spac \gamma_{i+1}=\frac{-c_i}{a_i \gamma_i + b_i},
 \end{align*}
 and the equation for $v_{i-1}$ reads: 
 \begin{equation}
@@ -177,7 +177,7 @@ v_{i-1} = \beta_i + \gamma_i v_i
 It follows from (1*) that $\beta_1 = \gamma_1 = 0$.
 From combining (n*) and (4) we get 
 \begin{align*}
-v_n = \frac{\tilde{b_n}-a_n \beta_n}{a_n \gamma_n + b_n} = \beta_{n+1} + \gamma_{n+1} v_{n+1}, \hspace{0.5cm} v_{n+1} = 0.
+v_n = \frac{\tilde{b_n}-a_n \beta_n}{a_n \gamma_n + b_n} = \beta_{n+1} + \gamma_{n+1} v_{n+1}, \spac v_{n+1} = 0.
 \end{align*}
 
 The goal of the IMIDLERTID stupid formulation above is to underline the importance of setting $v_{n+1}=0$ in order to obtain the right formula for $v_n$.
@@ -186,14 +186,14 @@ Having all the nessecary ingredients the algorithm reads as follows.
 \vspace{0.5cm}\\
 \centerline{Algorithm I}
 \begin{tcolorbox}
-$a_i = c_i = -1, \hspace{0.5cm}  i=1,2,3,..,n$ \\
-$b_i = 2, \hspace{0.5cm}  i=1,2,3,..,n $\\
+$a_i = c_i = -1, \spac  i=1,2,3,..,n$ \\
+$b_i = 2, \spac  i=1,2,3,..,n $\\
 $\beta_1 = \gamma_1 = 0$ \\
 for $i=1,2,..,n-1$ \\ \vspace{0.5cm} 
- \hspace{0.5cm} $ \beta_{i+1} = \frac{\tilde{b_i}-a_i \beta_i}{a_i \gamma_i + b_i} , \hspace{0.5cm} \gamma_{i+1}=\frac{-c_i}{a_i \gamma_i + b_i} $ \vspace{0.2cm}  \\
+ \spac $ \beta_{i+1} = \frac{\tilde{b_i}-a_i \beta_i}{a_i \gamma_i + b_i} , \spac \gamma_{i+1}=\frac{-c_i}{a_i \gamma_i + b_i} $ \vspace{0.2cm}  \\
  $v_{n+1} = 0$ \\
 for $j=n+1, n,..,1$ \\ \vspace{0.5cm} 
- \hspace{0.5cm} $v_{i-1} = \beta_i + \gamma_i v_i$
+ \spac $v_{i-1} = \beta_i + \gamma_i v_i$
 
 \end{tcolorbox} 
 
