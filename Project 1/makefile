@@ -18,7 +18,7 @@ LDLIBS = -larmadillo -lsuperlu -llapack -lopenblas
 
 # build executable
 TARGET = project1
-SRCS = $(TARGET).cpp
+SRCS = $(TARGET).cpp tridiag_solver.cpp
 OBJS = $(subst .cpp,.o,$(SRCS))
 
 
