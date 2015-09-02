@@ -8,7 +8,7 @@ RM = rm -f
 # compiler flags:
 # -g debugging information to executable
 # -Wall most compiler warnings enabled
-CPPFLAGS = -g -std=c++14 -Wall
+CPPFLAGS = -g -std=c++11 -Wall
 # linker flags
 LDFLAGS = -g
 

@@ -30,5 +30,9 @@ f.close()
 
 plt.plot(x, b, label='numerical')
 plt.plot(x, u, label='exact')
+plt.xlabel('x')
+plt.ylabel('u / v')
+plt.title('Comparing numerical and exact solution for n=%.0f' % N)
 plt.legend()
 plt.show()
+
