@@ -27,8 +27,10 @@ class Writer
 private:
   std::ofstream outf;
 public:
-  Writer(const char* name, const int matrix_size);
-  void print(arma::Col<double> &vec);
+  Writer(const char* name);
+  void print(const arma::Col<double> &vec);
+  void print(const char *text, const double value);
+  void print(const char *text, const int value);
 };
 
 #endif

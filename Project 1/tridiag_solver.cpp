@@ -141,15 +141,24 @@ double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u
 }
 
 
-Writer::Writer(const char* name, const int matrix_size) : outf(name)
+Writer::Writer(const char* name) : outf(name) 
 {
-  outf << matrix_size << "\n\n";
+  outf.precision(15);
 };
 
-
-void Writer::print(arma::Col<double> &vec)
+void Writer::print(const arma::Col<double> &vec)
 {
-  outf.precision(10);
-  vec.raw_print(outf);
   outf << "\n";
+  vec.raw_print(outf);
 }
+
+void Writer::print(const char *text, const double value)
+{
+  outf << value << "\t" << text << std::endl;
+}
+
+void Writer::print(const char *text, const int value)
+{
+  outf << value << "\t" << text << std::endl;
+}
+
