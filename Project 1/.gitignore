@@ -1,3 +1,7 @@
 test.txt
 project1
+
+# Kdevelop project files
+.kdev4/
+*.kdev4
  

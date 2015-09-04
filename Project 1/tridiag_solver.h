@@ -4,23 +4,20 @@
 #include <armadillo>
 #include <fstream>
 
-double f(double x);
 
-double u_theory(double x);
+arma::SpMat<double> spsecond_deriv_matr(int N);
 
-arma::Col<double> u_theory(const int N, const double x0, const double x1);
+arma::Mat<double> second_deriv_matr(int N);
 
-arma::SpMat<double> spsecond_deriv_matr(const int &N);
+arma::Col<double> f_column(double x0, double x1, int N, double (*f)(double), bool squared_h=false);
 
-arma::Mat<double> second_deriv_matr(const int&N);
+void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double));
 
-arma::Col<double> f_column(const double x0, const double x1, const int N);
-
-arma::Col<double> thomas_alg(const double x0, const double x1, const int N);
-
-arma::Col<double> matrix_alg(const double x0, const double x1, const int N, const bool SPARSE=false);
+arma::Col<double> matrix_alg(double x0, double x1, int N, double (*f)(double), bool SPARSE=false);
 
 double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u);
+
+double max_relative_error(const double* u, const arma::Col<double> &v);
 
 class Writer
 {
@@ -28,9 +25,11 @@ private:
   std::ofstream outf;
 public:
   Writer(const char* name);
-  void print(const arma::Col<double> &vec);
   void print(const char *text, const double value);
-  void print(const char *text, const int value);
+  void print(const char* text, int value);
+  void print(const arma::Col<double> &vec);
+  void print(int N, const double *vec);
+  void newline();
 };
 
 #endif

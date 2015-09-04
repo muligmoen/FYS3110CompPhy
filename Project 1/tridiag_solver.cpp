@@ -1,4 +1,3 @@
-//#include <iostream>
 #include <armadillo>
 #include <fstream>
 #include <iomanip>
@@ -7,80 +6,85 @@
 #include "tridiag_solver.h"
 
 
-double u_theory(double x)
-{
-  return 1.0 - (1.0 - std::exp(-10.0))*x - std::exp(-10.0*x);
-}
 
-arma::Col<double> u_theory(const int N, double x0, double x1)
-{
-  arma::Col<double> u(N);
-  double h = 1.0/(double)N;
-  for (int iii=0; iii<N; iii++)
-  {
-    u[iii] = u_theory(iii*h);
-  }
-  return u;
-}
 
-double f(double x)
-{
-  return 100.0*std::exp(-10.0*x);
-}
-
-arma::Col<double> f_column(const double x0, const double x1, const int N)
+arma::Col<double> f_column(double x0, double x1, int N, double (*f)(double), bool squared_h)
 {
   arma::Col<double> b(N);
   
   double h = (x1-x0)/(double)N;
   
-  for (int iii=0; iii<N; iii++)
+  if (squared_h)
   {
-    double x = x0 + h*iii;
-    b[iii] = f(x)*h*h;
+    for (int iii=0; iii<N; iii++)
+    {
+      double x = x0 + h*iii;
+      b[iii] = f(x)*h*h;
+    }
+    return b;
+  } else {
+    for (int iii=0; iii<N; iii++)
+    {
+      double x = x0 + h*iii;
+      b[iii] = f(x);
+    }
+    return b;
   }
-  return b;
 }
 
-arma::Mat<double> second_deriv_matr(const int&N)
+arma::Mat<double> second_deriv_matr(int N)
 {
   arma::Mat<double> A(N, N);
-  A.diag(0) += 2.0;
-  A.diag(1) += -1;
-  A.diag(-1) += -1;
+  A.diag(0) += -2.0;
+  A.diag(1) += 1;
+  A.diag(-1) += 1;
   return A;
 }
 
-arma::SpMat<double> spsecond_deriv_matr(const int& N)
+arma::SpMat<double> spsecond_deriv_matr(int N)
 {
   arma::SpMat<double> A(N, N);
   for (int diag=0; diag < N; diag++)
   {
-    A(diag, diag) = 2; //diagonal
+    A(diag, diag) = -2; //diagonal
     if (diag < N - 1) //upper band
     {
-      A(diag, diag+1) = -1;
+      A(diag, diag+1) = 1;
     }
     if (diag > 0) //lower band
     {
-      A(diag, diag-1) = -1;
+      A(diag, diag-1) = 1;
     }
   }
   return A;
 }
 
 
-arma::Col<double> thomas_alg(const double x0, const double x1, const int N)
+arma::Col<double> matrix_alg(double x0, double x1, int N, double (*f)(double), bool SPARSE)
+{
+  arma::Col<double> f_col = -f_column(0, 1, N, f, true);
+  
+  if (SPARSE)
+  {
+    arma::SpMat<double> A = spsecond_deriv_matr(N);
+    arma::Col<double> v = spsolve(A, f_col);
+    return v;
+  } else {
+    arma::Mat<double> A = second_deriv_matr(N); 
+    arma::Col<double> v = solve(A, f_col);
+    return v;
+  }
+}
+
+void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
 {
   
-  double *cprime = new double[N];
-  double *dprime = new double[N];
+  double cprime[N];
+  double dprime[N];
   
-  arma::Col<double> v(N);
+  arma::Col<double> b_tilde = f_column(x0, x1, N, f, true);
   
-  const arma::Col<double> b_tilde = f_column(x0, x1, N);
-  
-  
+  // the diagonal band does not change
   const double a = -1;
   const double b = 2;
   const double c = -1;
@@ -102,30 +106,24 @@ arma::Col<double> thomas_alg(const double x0, const double x1, const int N)
   }
   v[0] = 0;
   
-  delete[] cprime;
-  delete[] dprime;
-  return v;
 }
-
-
-arma::Col<double> matrix_alg(const double x0, const double x1, const int N, const bool SPARSE)
-{
-  arma::Col<double> f = f_column(0, 1, N);
-  
-  if (SPARSE)
-  {
-    arma::SpMat<double> A = spsecond_deriv_matr(N);
-    arma::Col<double> v = spsolve(A, f);
-    return v;
-  } else {
-    arma::Mat<double> A = second_deriv_matr(N); 
-    arma::Col<double> v = solve(A, f);
-    return v;
-  }
-}
-
 
 double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u)
+{
+  const int N = v.n_elem;
+  double max_error = 0;
+  for (int iii=0; iii<N; iii++)
+  {
+    double err = std::abs((v[iii] - u[iii])/u[iii]);
+    if (err > max_error && u[iii]) // Checking not null element
+    {
+      max_error = err;
+    }
+  }
+  return max_error;
+}
+
+double max_relative_error(const double* u, const arma::Col<double>& v)
 {
   const int N = v.n_elem;
   double max_error = 0;
@@ -146,19 +144,32 @@ Writer::Writer(const char* name) : outf(name)
   outf.precision(15);
 };
 
+void Writer::print(const char *text, double value)
+{
+  outf << value << "\t" << text << std::endl;
+}
+
+void Writer::print(const char *text, int value)
+{
+  outf << value << "\t" << text << std::endl;
+}
+
 void Writer::print(const arma::Col<double> &vec)
 {
   outf << "\n";
   vec.raw_print(outf);
 }
 
-void Writer::print(const char *text, const double value)
+void Writer::print(int N, const double *vec)
 {
-  outf << value << "\t" << text << std::endl;
+  outf << "\n";
+  for (int iii=0; iii<N; iii++)
+  {
+    outf << vec[iii] << "\n";
+  }
 }
 
-void Writer::print(const char *text, const int value)
+void Writer::newline()
 {
-  outf << value << "\t" << text << std::endl;
+  outf << "\n";
 }
-

@@ -6,10 +6,16 @@
 
 #include "tridiag_solver.h"
 
+double f(double x);
+
+double u_theory(double x);
+
+bool valid_args(int argc, char *argv[]);
+
 
 int main( int argc, char *argv[] )
 {
-  if (argc < 4 || atoi(argv[1]) < 2)
+  if (!valid_args(argc, argv))
   {
     std::cout << "Usage: " << argv[0] << " N filename <type>" << std::endl;
     std::cout << "With N > 1, and <type> as M for matrix, S for sparse matrix\n" <<
@@ -18,53 +24,81 @@ int main( int argc, char *argv[] )
   }
   
   const int N = atoi(argv[1]);
-  
-
-  
-
-  std::clock_t t0, t1;
-  
-  
-  arma::Col<double> v;
-  
-  t0 = std::clock();
-  const char alg_type = argv[3][0];
-  if (alg_type == 'M')
-  {
-    v = matrix_alg(0, 1, N);
-  } else if (alg_type == 'S') {
-    v = matrix_alg(0, 1, N, true);
-  } else if (alg_type == 'T') {
-    v = thomas_alg(0, 1, N);
-  } else {
-    std::cout << "Please use one of the supported algorithms" << std::endl;
-    exit(1);
-  }
-  t1 = std::clock();
-  
-  
-  auto time_ticks = t1-t0;
-  //std::cout << "Number of clock cycles used: " << time_ticks << std::endl;
-  double time_used = time_ticks/(double)CLOCKS_PER_SEC;
-  std::cout << "Time used: " << time_used << " seconds." << std::endl;
-  
-  
-  arma::Col<double> u = u_theory(N, 0, 1);
-  
-  double err = std::log10(max_relative_error(v, u));
-  std::cout << "Log10 of relative error:" << err << std::endl;
+  char alg_type = argv[3][0];
   
   Writer fileprinter(argv[2]);
   
   fileprinter.print("N", N);
+  
+  // Analytical solution
+  arma::Col<double> u = f_column(0, 1, N, u_theory);
+  // Prints the analytical to the file
+  fileprinter.print(u);
+  
+  
+  
+  std::clock_t t0, t1;
+  double err;
+  
+  if (alg_type=='M')
+  {
+    t0 = std::clock();
+    arma::Col<double> v = matrix_alg(0, 1, N, f);
+    t1 = std::clock();
+    err = std::log10(max_relative_error(v, u));
+    fileprinter.print(v);
+  }
+  
+  if (alg_type == 'S')
+  {
+    t0 = std::clock();
+    arma::Col<double> v = matrix_alg(0, 1, N, f, true);
+    t1 = std::clock();
+    err = std::log10(max_relative_error(v, u));
+    fileprinter.print(v);
+  }
+  
+  if (alg_type == 'T')
+  {
+    t0 = std::clock();
+    double *v = new double[N];
+    thomas_alg(v, 0, 1, N, f);
+    t1 = std::clock();
+    
+    fileprinter.print(N, v);
+    err = std::log10(max_relative_error(v, u));
+    delete[] v;
+  }
+  
+
+  double time_used = (t1-t0)/(double)CLOCKS_PER_SEC;
+
+  fileprinter.newline();
   fileprinter.print("Time used", time_used);
   fileprinter.print("max(log10(rel_error))", err);
-
-  fileprinter.print(v);
   
-  fileprinter.print(u);
   
   return 0;
 }
 
+double f(double x)
+{
+  return 100.0*std::exp(-10.0*x);
+}
 
+double u_theory(double x)
+{
+  return 1.0 - (1.0 - std::exp(-10.0))*x - std::exp(-10.0*x);
+}
+
+bool valid_args(int argc, char *argv[])
+{
+  if (argc < 4) {
+    return false;
+  }
+  if (atoi(argv[1]) < 2) {
+    return false;
+  } 
+  char alg_type = argv[3][0];
+  return (alg_type == 'M' || alg_type == 'S' || alg_type == 'T');
+}
