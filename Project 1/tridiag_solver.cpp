@@ -99,8 +99,8 @@ void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
     dprime[iii] = (b_tilde[iii] - a*dprime[iii-1])/(b-a*cprime[iii-1]);
   }
   
-  v[N] = dprime[N];
-  for (int iii=N-1; iii>0; iii--)
+  v[N-1] = dprime[N-1];
+  for (int iii=N-2; iii>0; iii--)
   {
     v[iii] = dprime[iii] - cprime[iii]*v[iii+1];
   }
