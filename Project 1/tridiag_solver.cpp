@@ -8,28 +8,31 @@
 
 
 
-arma::Col<double> f_column(double x0, double x1, int N, double (*f)(double), bool squared_h)
+arma::Col<double> f_column(double x0, double x1, int N, double (*f)(double))
 {
   arma::Col<double> b(N);
-  
   double h = (x1-x0)/(double)N;
   
-  if (squared_h)
+  for (int iii=0; iii<N; iii++)
   {
-    for (int iii=0; iii<N; iii++)
-    {
-      double x = x0 + h*iii;
-      b[iii] = f(x)*h*h;
-    }
-    return b;
-  } else {
-    for (int iii=0; iii<N; iii++)
-    {
-      double x = x0 + h*iii;
-      b[iii] = f(x);
-    }
-    return b;
+    double x = x0 + h*iii;
+    b[iii] = f(x);
   }
+  return b;
+}
+
+arma::Col<double> f_column_(double x0, double x1, int N, double (*f)(double))
+{
+  arma::Col<double> b(N);
+  double h = (x1-x0)/(double)N;
+  double neg_h_square = -h*h;
+  
+  for (int iii=0; iii<N; iii++)
+  {
+    double x = x0 + h*iii;
+    b[iii] = f(x)*neg_h_square;
+  }
+  return b;
 }
 
 arma::Mat<double> second_deriv_matr(int N)
@@ -62,7 +65,7 @@ arma::SpMat<double> spsecond_deriv_matr(int N)
 
 arma::Col<double> matrix_alg(double x0, double x1, int N, double (*f)(double), bool SPARSE)
 {
-  arma::Col<double> f_col = -f_column(x0, x1, N, f, true);
+  arma::Col<double> f_col = f_column_(x0, x1, N, f);
   
   if (SPARSE)
   {
@@ -79,10 +82,19 @@ arma::Col<double> matrix_alg(double x0, double x1, int N, double (*f)(double), b
 void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
 {
   
-  double cprime[N];
-  double dprime[N];
+  double *cprime = new double[N];
+  double *dprime = new double[N];
   
-  arma::Col<double> b_tilde = f_column(x0, x1, N, f, true);
+  double *b_tilde = new double[N];
+  
+  double h = (x1-x0)/(double)N;
+  double h_square = h*h;
+  
+  for (int iii = 0; iii<N; iii++)
+  {
+    double x = x0 + h*iii;
+    b_tilde[iii] = f(x)*h_square;
+  }
   
   // the diagonal band does not change
   const double a = -1;
@@ -98,6 +110,7 @@ void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
     cprime[iii] = c/(b-a*cprime[iii-1]);
     dprime[iii] = (b_tilde[iii] - a*dprime[iii-1])/(b-a*cprime[iii-1]);
   }
+  delete[] b_tilde;
   
   v[N-1] = dprime[N-1];
   for (int iii=N-2; iii>0; iii--)
@@ -105,7 +118,8 @@ void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
     v[iii] = dprime[iii] - cprime[iii]*v[iii+1];
   }
   v[0] = 0;
-  
+  delete[] cprime;
+  delete[] dprime;
 }
 
 double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u)
@@ -142,7 +156,7 @@ double max_relative_error(const double* u, const arma::Col<double>& v)
 Writer::Writer(const char* name) : outf(name) 
 {
   outf.precision(15);
-};
+}
 
 void Writer::print(const char *text, double value)
 {

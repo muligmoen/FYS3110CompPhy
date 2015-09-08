@@ -9,7 +9,9 @@ arma::SpMat<double> spsecond_deriv_matr(int N);
 
 arma::Mat<double> second_deriv_matr(int N);
 
-arma::Col<double> f_column(double x0, double x1, int N, double (*f)(double), bool squared_h=false);
+arma::Col<double> f_column(double x0, double x1, int N, double (*f)(double));
+
+arma::Col<double> f_column_(double x0, double x1, int N, double (*f)(double));
 
 void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double));
 
