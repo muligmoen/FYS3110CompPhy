@@ -46,7 +46,7 @@
 
 \newcommand{\spac}{\hspace{5mm}}
 
-\title{FYS3150/FYS4150 \\Project 1}
+\title{FYS3150/FYS4150\\Computational Physics\\Project 1}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
 \date{\today}
 
@@ -57,16 +57,52 @@
 
 Solutions of the Poissons equation are a vital component to many aspects physics.
 
+\subsection{Electromagnetism}
 
-\section{a)}
+The electrostatic potential $\Phi$ is generated from a charge distribution $\rho$.
+This gives
+\begin{equation}
+\nabla^2\Phi = -4\pi \rho(\ve{r})
+\end{equation}
 
-%Moving $h^2$ over and setting
-%\begin{gather*}
-%A = \begin{pmatrix} 2 & -1 & \ldots & \ldots & 0\\
-%		    -1 & 2 & 0 & \ldots & \ldots \\
-%		    \end{pmatrix}
-%\end{gather*}
-\subsection*{Formulation}
+Letting $\rho$ be spherically symmetric this leads to a symmetric $\Phi$.
+This gives with a substitution $\Phi(r) = \phi(r)/r$
+\begin{equation}
+\frac{d^2\phi}{dr^2} = -4\pi r\rho(r)
+\end{equation}
+Which is solved in this project.
+
+\section{Discretization}
+
+Solving the equation
+\begin{equation}
+\frac{d^2v}{dr^2} = f(r)
+\end{equation}
+
+Letting r be discretized into N pieces,
+\begin{gather}
+r_0, r_1, \dots, r_i, \dots, r_{N-1}
+\end{gather}
+And using the three-point formula for the second derivative of f,
+\begin{equation}
+\frac{d^2v}{dx^2} \simeq \frac{v_{i-1} + v_{i+1} - 2v_i}{h^2}
+\end{equation}
+
+This gives the discretized formula
+\begin{gather}
+\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = f(x_i)\\
+v_{i-1} + v_{i+1} - 2v_i = \tilde{f}_i
+\end{gather}
+With boundary conditions (dropping of an element)
+\begin{gather}
+v_1 - 2v_0 = f_0\\
+v_{N-2} - 2v_{N-1} = f_{N-1}
+\end{gather}
+
+
+\section{Thomas-algorithm}
+
+\subsection{Formulation}
 
 Given the following ODE with boundary conditions, 
 
@@ -89,7 +125,7 @@ we are going to show it can be written as system of linear equations of the form
 \end{equation}
 
 
-\subsection*{Solution}
+\subsection{Solution}
 Multipling the discretized equation \eqref{eq:discretized} by $h^2$ we get:
 
 \begin{gather*}
@@ -134,9 +170,8 @@ where
 \end{gather*}
 
 
-\newpage
 
-\subsection*{Algorithm for a tridiagonal system of linear equations}
+\subsection{Algorithm for a tridiagonal system of linear equations}
 
 We start by looking at the system of equations:
 \begin{align*}
@@ -200,7 +235,36 @@ for $i=n, n-1,..,2$ \\ \vspace{0.5cm}
 
 This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tridiagonal systems of linear equations.
 
+\subsection{FLOPS}
+
+\section{Matrix solutions}
+
+Can solve the equation \eqref{eq:Avb} directly by matrix solvers.
+
+\subsection{FLOPS}
+How many flops? Memory constraints, sparse matrices
 
 
+\section{Implementation}
 
-\end{document}\grid
+\subsection{Thomas algorithm}
+
+
+\subsection{Matrix}
+
+Using the armadillo library for the solution...
+
+\subsection{Sparse matrix}
+
+The matrix solution above is very ineffective in both FLOPS and memory usage.
+This is improved by using sparse matrices, which saves the position and the value,
+and assumes everything else is zero, which saves a lot of space in the 
+memory for our purpose ($(N-3)^2$ space saved).
+
+\section{Efficiency}
+
+Comparing the different algorithms for different h and against each other
+
+Compare relative error. What is rel-error compared to FLOPS?
+
+\end{document}
