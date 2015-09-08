@@ -62,7 +62,7 @@ arma::SpMat<double> spsecond_deriv_matr(int N)
 
 arma::Col<double> matrix_alg(double x0, double x1, int N, double (*f)(double), bool SPARSE)
 {
-  arma::Col<double> f_col = -f_column(0, 1, N, f, true);
+  arma::Col<double> f_col = -f_column(x0, x1, N, f, true);
   
   if (SPARSE)
   {
