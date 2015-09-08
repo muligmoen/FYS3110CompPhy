@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english]{article}
+\documentclass[11pt,a4paper,english,draft]{article}
 \usepackage[english]{babel} % Using babel for norwegian hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -34,6 +34,8 @@
 \hbadness = \tolerance
 \pretolerance = 2000
 
+\numberwithin{equation}{section}
+
 \newcommand{\conj}[1]{#1^*}
 \newcommand{\ve}[1]{\mathbf{#1}} % Vektorer i bold
 \let\oldhat\hat
@@ -42,7 +44,7 @@
 \newcommand{\herm}[1]{#1^\dagger}
 %\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Gir fotnote-symboler
 \newcommand{\Real}{\mathbb{R}}
-
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
 
 \newcommand{\spac}{\hspace{5mm}}
 
@@ -55,9 +57,27 @@
 
 \section{Motivation}
 
-Solutions of the Poissons equation are a vital component to many aspects physics.
+A great deal of differential equations in the natural sciences can be written 
+as a linear second-order differential equation on the form
+\begin{equation}
+\frac{d^y}{dx^2} + k^2(x)y = f(x)
+\label{eq:2orderDIFF}
+\end{equation}
 
-\subsection{Electromagnetism}
+
+Some examples include
+\begin{enumerate}[label=\bfseries \Roman*]
+\item Schrödinger's equation
+\item Airy function
+\item Economics?
+\item Poisson's equation
+\item Laplace's equation (Poisson's with f=0)
+\end{enumerate}
+
+So an accurate method of finding the solution to these problems should be found.
+
+
+\subsection{Example: Electromagnetism}
 
 The electrostatic potential $\Phi$ is generated from a charge distribution $\rho$.
 This gives
@@ -70,7 +90,7 @@ This gives with a substitution $\Phi(r) = \phi(r)/r$
 \begin{equation}
 \frac{d^2\phi}{dr^2} = -4\pi r\rho(r)
 \end{equation}
-Which is solved in this project.
+Which is on the form of \eqref{eq:2orderDIFF}.
 
 \section{Discretization}
 
@@ -83,16 +103,25 @@ Letting r be discretized into N pieces,
 \begin{gather}
 r_0, r_1, \dots, r_i, \dots, r_{N-1}
 \end{gather}
-And using the three-point formula for the second derivative of f,
+where 
+\begin{gather}
+h = \frac{r_{N-1} - r_0}{N}\\
+r_i = r_0 + i*h
+\end{gather}
+
+And using the three-point formula from the symmetric 
+Taylor-expansion for the second derivative of f,
 \begin{equation}
 \frac{d^2v}{dx^2} \simeq \frac{v_{i-1} + v_{i+1} - 2v_i}{h^2}
 \end{equation}
 
 This gives the discretized formula
 \begin{gather}
-\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = f(x_i)\\
+\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = f(r_i)\\
 v_{i-1} + v_{i+1} - 2v_i = \tilde{f}_i
 \end{gather}
+with $\tilde{f}_i = f(r_i) h^2$.
+
 With boundary conditions (dropping of an element)
 \begin{gather}
 v_1 - 2v_0 = f_0\\
@@ -144,7 +173,7 @@ Filling in for $i$ and choosing $\tilde{b_i} = h^2 f_i$ we obtain the following 
 Now one can easily see that this system of linear equations can written on the form of \eqref{eq:Avb},
 where 
 \begin{gather*}
-    \ve{A} = \begin{pmatrix}%{cccccc}
+    \ve{A} = \begin{pmatrix}
                            2& -1& 0 &\dots   & \dots &0 \\
                            -1 & 2 & -1 &0 &\dots &\dots \\
                            0&-1 &2 & -1 & 0 & \dots \\
@@ -174,20 +203,21 @@ where
 \subsection{Algorithm for a tridiagonal system of linear equations}
 
 We start by looking at the system of equations:
-\begin{align*}
-	 b_1 v_1 + c_1 v_{2} = \tilde{b_1} \hspace{0.5cm} (1*)\\
-	 a_2 v_1 + b_2 v_2 + c_3 v_3 = \tilde{b_2} \hspace{0.5cm} (2*) \\
-	 a_3 v_2 + b_3 v_3 + c_3 v_4 = \tilde{b_3} \hspace{0.5cm} (3*) \\
-	 \vdots \hspace{0.5cm}  \\ 
-	 a_n v_{n-1} + b_n v_n = \tilde{b_n} \hspace{0.5cm} (n*)\\
-\end{align*}
-If we solve (1*) for $v_1$ and insert it into (2*) we obtain the following "modified second equation":
+\begin{align}
+	 b_1 v_1 + c_1 v_{2} = \tilde{b_1} \label{eq:1star}\\
+	 a_2 v_1 + b_2 v_2 + c_3 v_3 = \tilde{b_2} \label{eq:2star}\\
+	 a_3 v_2 + b_3 v_3 + c_3 v_4 = \tilde{b_3} \label{eq:3star}\\
+\nonumber\vdots \hspace{0.5cm}  \\ 
+	 a_n v_{n-1} + b_n v_n = \tilde{b_n} \label{eq:Nstar}
+\end{align}
+If we solve \eqref{eq:1star} for $v_1$ and insert it into \eqref{eq:2star} we obtain the following "modified second equation":
 \begin{align*}
 	(b_1 b_2 - a_2 c_1)v_2 + b_1 c_2 v_3 = b_1 \tilde{b_2} - a_2  \tilde{b_1}  
 \end{align*}
 Now having successfully removed $v_1$ from the second equation we can go on and solve it for $v_2$ and insert it into the third equation obtaining:
 \begin{align*}
-(b_3 (b_1 b_2 - a_2 c_1)- a_3 b_1 c_2)v_3 + c_3(b_1 b_2 -a_2 c_1)v_4 = (b_1 b_2 - a_2 c_1 ) \tilde{b_3} - a_3 b_1 \tilde{b_2} + a_2 a_3 \tilde{b_1} 
+(b_3 (b_1 b_2 - a_2 c_1)- a_3 b_1 c_2)v_3 + c_3(b_1 b_2 -a_2 c_1)v_4 = \\
+(b_1 b_2 - a_2 c_1 ) \tilde{b_3} - a_3 b_1 \tilde{b_2} + a_2 a_3 \tilde{b_1} 
 \end{align*}
 
 The two modified equations may be written as 
@@ -200,17 +230,21 @@ v_3 =& \frac{(b_1 b_2 - a_2 c_1) \tilde{b_3} - a_3 (b_1 \tilde{b_2} - a_2 \tilde
 =&  \frac{\tilde{b_3}-a_3 \beta_2}{a_3 \gamma_2 + b_3} + \frac{-c_3}{a_3 \gamma_2 + b_3}v_4 = \beta_3 + \gamma_3 v_4
 \end{align*}
 
-This prossess can be repeated up untill the last equation. This is the forward substitution step. From the last equation we compute $v_n$ and get all we need to compute $v_{n-1}$, then $v_{n-2}$, and so on. This is the backward substitution part of the algorithm. A shrewd reader might see that the coefficiants, $\beta$ and $\gamma$, take a recursive form
+This prossess can be repeated up untill the last equation. 
+This is the forward substitution step. 
+From the last equation we compute $v_n$ and get all we need to compute $v_{n-1}$,
+then $v_{n-2}$, and so on. This is the backward substitution part of the algorithm. A shrewd reader might see that the coefficiants, $\beta$ and $\gamma$, take a recursive form
 \begin{align*}
 \beta_{i} = \frac{\tilde{b_i}-a_i \beta_{i-1}}{a_i \gamma_{i-1} + b_i} , \hspace{0.5cm} \gamma_{i}=\frac{-c_i}{a_i \gamma_{i-1} + b_i},
 \end{align*}
 and the equation for $v_{i-1}$ reads: 
 \begin{equation}
 v_{i-1} = \beta_{i-1} + \gamma_{i-1} v_i
+\label{eq:viminus1}
 \end{equation}
 
-It follows from (1*) that $\beta_1 = \frac{\tilde{b_1}}{b_1}$ and $\gamma_1 = \frac{-c_1}{b_1}$.
-From combining (n*) and (4) we get 
+It follows from \eqref{eq:1star} that $\beta_1 = \frac{\tilde{b_1}}{b_1}$ and $\gamma_1 = \frac{-c_1}{b_1}$.
+From combining \eqref{eq:Nstar} and \eqref{eq:viminus1} we get 
 \begin{align*}
 v_n = \frac{\tilde{b_n}-a_n \beta_{n-1}}{a_n \gamma_{n-1} + b_n} = \beta_{n}.
 \end{align*}
@@ -237,18 +271,29 @@ This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tr
 
 \subsection{FLOPS}
 
+The forward substitution requires one pass forwards, and one pass backwards,
+and have a complexity of $\bigO{N}$
+
 \section{Matrix solutions}
 
-Can solve the equation \eqref{eq:Avb} directly by matrix solvers.
+Can solve the equation \eqref{eq:Avb} directly by LU-decomposition.
+The matrix A is then transformed into one upper triagonal matrix and
+one lower diagonal matrix. By doing this on a matrix this results in an
+easier way to solve several $Ax = y$ for different y.
+
+Direct solver by arma::solve(A, y) is used to compare with the LU-method.
+This is ordinary quicker, since armadillo is a high-level wrapper around
+lapack etc.
 
 \subsection{FLOPS}
-How many flops? Memory constraints, sparse matrices
+The standard is $\bigO{N^3}$ complexity
 
 
 \section{Implementation}
 
 \subsection{Thomas algorithm}
 
+Allocation of temporary arrays to hold bprime and dprime...
 
 \subsection{Matrix}
 
@@ -259,7 +304,7 @@ Using the armadillo library for the solution...
 The matrix solution above is very ineffective in both FLOPS and memory usage.
 This is improved by using sparse matrices, which saves the position and the value,
 and assumes everything else is zero, which saves a lot of space in the 
-memory for our purpose ($(N-3)^2$ space saved).
+memory for our purpose ($(N-3)^2$ memory space saved).
 
 \section{Efficiency}
 

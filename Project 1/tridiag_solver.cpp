@@ -79,6 +79,22 @@ arma::Col<double> matrix_alg(double x0, double x1, int N, double (*f)(double), b
   }
 }
 
+arma::Col<double> LU_alg(double x0, double x1, int N, double (*f)(double))
+{
+  arma::Col<double> v;
+  arma::Mat<double> X = second_deriv_matr(N);
+  arma::Mat<double> L, U, P;
+  arma::Col<double> f_col = f_column_(x0, x1, N, f);
+  
+  lu( L, U, P, X );
+  
+  arma::Col<double> y = inv(P.t()*L)*f_col;
+  v = solve(U, y);
+  
+  return v;  
+}
+
+
 void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
 {
   

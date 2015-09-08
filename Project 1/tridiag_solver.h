@@ -17,6 +17,8 @@ void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double));
 
 arma::Col<double> matrix_alg(double x0, double x1, int N, double (*f)(double), bool SPARSE=false);
 
+arma::Col<double> LU_alg(double x0, double x1, int N, double (*f)(double));
+
 double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u);
 
 double max_relative_error(const double* u, const arma::Col<double> &v);

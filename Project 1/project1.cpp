@@ -19,7 +19,7 @@ int main( int argc, char *argv[] )
   {
     std::cout << "Usage: " << argv[0] << " N filename <type>" << std::endl;
     std::cout << "With N > 1, and <type> as M for matrix, S for sparse matrix\n" <<
-     "and T for Thomas algorithm" << std::endl;
+     "and T for Thomas algorithm, L for LU-algorithm" << std::endl;
     exit(1);
   }
   
@@ -54,7 +54,7 @@ int main( int argc, char *argv[] )
     t1 = std::clock();
     err = std::log10(max_relative_error(v, u));
     fileprinter.print(v);
-  } else // if alg_type == 'M'
+  } else if (alg_type == 'M')  
   {
     t0 = std::clock();
     double *v = new double[N];
@@ -64,6 +64,13 @@ int main( int argc, char *argv[] )
     fileprinter.print(N, v);
     err = std::log10(max_relative_error(v, u));
     delete[] v;
+  } else //if (alg_type == L)
+  {
+    t0 = std::clock();
+    arma::Col<double> v = LU_alg(0, 1, N, f);
+    t1 = std::clock();
+    err = std::log10(max_relative_error(v, u));
+    fileprinter.print(v);
   }
   
 
@@ -96,5 +103,6 @@ bool valid_args(int argc, char *argv[])
     return false;
   } 
   char alg_type = argv[3][0];
-  return (alg_type == 'M' || alg_type == 'S' || alg_type == 'T');
+  return (alg_type == 'M' || alg_type == 'S' || alg_type == 'T'
+            || alg_type == 'L');
 }
