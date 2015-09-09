@@ -12,7 +12,8 @@
 %\usepackage{wasysym} % Astrological symbols
 \usepackage{graphicx} % For pictures etc...
 \usepackage{enumitem} % Points/lists
-\usepackage{physics} % Typesetting of mathematical physics examples: \bra{}, \ket{}, expval{}
+%\usepackage{physics} % Typesetting of mathematical physics examples: \bra{}, \ket{}, expval{}
+\usepackage{url}
 
 \definecolor{red}{RGB}{255,10,10}
 
@@ -187,7 +188,7 @@ Now one can easily see that this system of linear equations can written on the f
 Having a complete set of linear equations we move on to how to solve them.
 
 \subsection{A tridiagonal matrix algorithm}
-
+\label{subsec:Thomas}
 
 We start by looking at the system of equations:
 \begin{align}
@@ -349,12 +350,18 @@ The standard is $\bigO{N^3}$ complexity
 
 \subsection{Thomas algorithm}
 
-The 
+The algorithm in section \ref{subsec:Thomas} is implemented in C++.
+This requires three arrays to be created, which holds $\beta_i$, $\gamma_i$
+and $\tilde{f}_i$. These arrays are zero-indexed, and the implementation
+follows this.
 
 
 \subsection{Matrix}
 
-Using the armadillo library for the solution...
+The matrix solvers are used from the Armadillo 
+library\footnote{\url{http://arma.sourceforge.net/}}. 
+The solvers for 
+
 
 \subsection{Sparse matrix}
 

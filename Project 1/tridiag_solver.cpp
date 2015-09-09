@@ -94,51 +94,6 @@ arma::Col<double> LU_alg(double x0, double x1, int N, double (*f)(double))
   return v;  
 }
 
-/*
-void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
-{
-  
-  double *cprime = new double[N];
-  double *dprime = new double[N];
-  
-  double *b_tilde = new double[N];
-  
-  double h = (x1-x0)/(double)N;
-  double h_square = h*h;
-  
-  for (int iii = 0; iii<N; iii++)
-  {
-    double x = x0 + h*iii;
-    b_tilde[iii] = f(x)*h_square;
-  }
-  
-  // the diagonal band does not change
-  const double a = -1;
-  const double b = 2;
-  const double c = -1;
-  
-  
-  cprime[0] = c/b;
-  dprime[0] = b_tilde[0]/b;
-  
-  for (int iii=1; iii<N; iii++)
-  {
-    cprime[iii] = c/(b-a*cprime[iii-1]);
-    dprime[iii] = (b_tilde[iii] - a*dprime[iii-1])/(b-a*cprime[iii-1]);
-  }
-  delete[] b_tilde;
-  
-  v[N-1] = dprime[N-1];
-  for (int iii=N-2; iii>0; iii--)
-  {
-    v[iii] = dprime[iii] - cprime[iii]*v[iii+1];
-  }
-  v[0] = 0;
-  delete[] cprime;
-  delete[] dprime;
-}*/
-
-
 void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
 {
   
@@ -149,6 +104,7 @@ void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
   
   double h = (x1-x0)/(double)N;
   double h_square = h*h;
+  
   
   for (int iii = 0; iii<N; iii++)
   {

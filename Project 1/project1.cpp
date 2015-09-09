@@ -45,6 +45,7 @@ int main( int argc, char *argv[] )
     t0 = std::clock();
     arma::Col<double> v = matrix_alg(0, 1, N, f);
     t1 = std::clock();
+    
     err = std::log10(max_relative_error(v, u));
     fileprinter.print(v);
   } else if (alg_type == 'S')
@@ -52,9 +53,10 @@ int main( int argc, char *argv[] )
     t0 = std::clock();
     arma::Col<double> v = matrix_alg(0, 1, N, f, true);
     t1 = std::clock();
+    
     err = std::log10(max_relative_error(v, u));
     fileprinter.print(v);
-  } else if (alg_type == 'M')  
+  } else if (alg_type == 'T')
   {
     t0 = std::clock();
     double *v = new double[N];
