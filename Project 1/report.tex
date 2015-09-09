@@ -14,6 +14,8 @@
 \usepackage{enumitem} % Points/lists
 \usepackage{physics} % Typesetting of mathematical physics examples: \bra{}, \ket{}, expval{}
 
+\definecolor{red}{RGB}{255,10,10}
+
 % To include code(-snippets) with æøå
 %\usepackage{listings}
 %\lstset{
@@ -48,14 +50,14 @@
 
 \newcommand{\spac}{\hspace{5mm}}
 
-\title{FYS3150/FYS4150\\Computational Physics\\Project 1}
+\title{FYS3150/4150\\Computational Physics\\Project 1}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
 \date{\today}
 
 \begin{document}
 \maketitle
 
-\section{Motivation}
+\section{Introduction}
 
 A great deal of differential equations in the natural sciences can be written 
 as a linear second-order differential equation on the form
@@ -74,10 +76,12 @@ Some examples include
 \item Laplace's equation (Poisson's with f=0)
 \end{enumerate}
 
-So an accurate method of finding the solution to these problems should be found.
+So being able to solve such equations optimally with respect to accuracy and efficiency is undoubtedly important. This report will compare different algorithms for solving them.
+
+\textcolor{red}{KSK: More specific info on which algorithms to be investigated. }  	
 
 
-\subsection{Example: Electromagnetism}
+\subsection{A closer look at an example from Electromagnetism}
 
 The electrostatic potential $\Phi$ is generated from a charge distribution $\rho$.
 This gives
@@ -85,77 +89,60 @@ This gives
 \nabla^2\Phi = -4\pi \rho(\ve{r})
 \end{equation}
 
-Letting $\rho$ be spherically symmetric this leads to a symmetric $\Phi$.
+Letting $\rho$ be spherically symmetric leads to a symmetric $\Phi$.
 This gives with a substitution $\Phi(r) = \phi(r)/r$
 \begin{equation}
 \frac{d^2\phi}{dr^2} = -4\pi r\rho(r)
 \end{equation}
 Which is on the form of \eqref{eq:2orderDIFF}.
 
-\section{Discretization}
+\section{Method}
 
-Solving the equation
-\begin{equation}
-\frac{d^2v}{dr^2} = f(r)
-\end{equation}
-
-Letting r be discretized into N pieces,
-\begin{gather}
-r_0, r_1, \dots, r_i, \dots, r_{N-1}
-\end{gather}
-where 
-\begin{gather}
-h = \frac{r_{N-1} - r_0}{N}\\
-r_i = r_0 + i*h
-\end{gather}
-
-And using the three-point formula from the symmetric 
-Taylor-expansion for the second derivative of f,
-\begin{equation}
-\frac{d^2v}{dx^2} \simeq \frac{v_{i-1} + v_{i+1} - 2v_i}{h^2}
-\end{equation}
-
-This gives the discretized formula
-\begin{gather}
-\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = f(r_i)\\
-v_{i-1} + v_{i+1} - 2v_i = \tilde{f}_i
-\end{gather}
-with $\tilde{f}_i = f(r_i) h^2$.
-
-With boundary conditions (dropping of an element)
-\begin{gather}
-v_1 - 2v_0 = f_0\\
-v_{N-2} - 2v_{N-1} = f_{N-1}
-\end{gather}
-
-
-\section{Thomas-algorithm}
-
-\subsection{Formulation}
-
-Given the following ODE with boundary conditions, 
+The specific differential equation, with boundery values, being discussed in this report is: 
 
 \begin{equation}
 -u''(x) = f(x), \spac x \in (0,1), \spac u(0) = u(1) = 0.
 \end{equation}
 
-and the dicretized form following a symmetric Taylor expansion
+This boundery value problem can be discretized and written as a system of linear equations.
 
+Letting the domain $x \in [0,1]$ be discretized into $n+1$ pieces,
+\begin{gather}
+x_0, x_1, \dots, x_i, \dots, x_{n+1}
+\end{gather}
+where 
+\begin{gather}
+h = \frac{x_{n+1} - x_0}{n+1} = \frac{x_{n+1}}{n+1}\\
+x_i = x_0 + ih = ih
+\end{gather}
+
+an then sampling the solution at the mesh points so that $u(x_i) \simeq v_i$.
+
+And using the three-point formula from the symmetric 
+Taylor-expansion for the second derivative of v,
 \begin{equation}
--\frac{v_{i+1}+v_{i-1}-2v_i}{h^2} = f_i  \spac \mathrm{for} \spac i=1,\dots, n, \spac v_0 = v_{n} = 0
-\label{eq:discretized}
+\frac{d^2v}{dx^2} \simeq \frac{v_{i-1} + v_{i+1} - 2v_i}{h^2}
 \end{equation}
 
-we are going to show it can be written as system of linear equations of the form: 
+The discretized form of equation (2.1) can then be written as
+\begin{gather}
+\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = \tilde{f}_i , \quad i=1,2, \dots, n 
+\end{gather}
+with $\tilde{f}_i = f(r_i) h^2$.
+
+With boundary conditions 
+\begin{gather}
+v_0 = v_{N-1} = 0
+\end{gather}
+
+This can now be written as a system of linear equations on the form 
 
 \begin{equation}
    \ve{A}\ve{v} = \tilde{\ve{b}},
    \label{eq:Avb}
 \end{equation}
 
-
-\subsection{Solution}
-Multipling the discretized equation \eqref{eq:discretized} by $h^2$ we get:
+Multipling the discretized equation (2.6) by $h^2$ we get:
 
 \begin{gather*}
    -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \hspace{0.5cm} \mathrm{for} \hspace{0.5cm} i=1,\dots, n 
@@ -170,8 +157,7 @@ Filling in for $i$ and choosing $\tilde{b_i} = h^2 f_i$ we obtain the following 
 	\vdots \hspace{0.5cm}  \\ 
 	-v_{n-1}+2v_{n}=\tilde{b_n} \\
 \end{align*}
-Now one can easily see that this system of linear equations can written on the form of \eqref{eq:Avb},
-where 
+Now one can easily see that this system of linear equations can written on the form of \eqref{eq:Avb}
 \begin{gather*}
     \ve{A} = \begin{pmatrix}
                            2& -1& 0 &\dots   & \dots &0 \\
@@ -198,9 +184,10 @@ where
                       \end{pmatrix}.
 \end{gather*}
 
+Having a complete set of linear equations we move on to how to solve them.
 
+\subsection{A tridiagonal matrix algorithm}
 
-\subsection{Algorithm for a tridiagonal system of linear equations}
 
 We start by looking at the system of equations:
 \begin{align}
@@ -251,30 +238,51 @@ v_n = \frac{\tilde{b_n}-a_n \beta_{n-1}}{a_n \gamma_{n-1} + b_n} = \beta_{n}.
 
 Having all the nessecary ingredients the algorithm reads as follows.
 \vspace{0.5cm}\\
+
 \centerline{Algorithm I}
 \begin{tcolorbox}
-$a_i = c_i = -1, \hspace{0.5cm}  i=1,2,3,..,n$ \\
+$a_i = c_i = -1, \hspace{0.5cm}  i=1,2,3,..,n$\\
 $b_i = 2, \hspace{0.5cm}  i=1,2,3,..,n $\\
-$\tilde{b_i} = h^2 f_i \hspace{0.5cm}  i=1,2,3,..,n $ \\
+$\tilde{b_i} = h^2 f_i \hspace{0.5cm}  i=1,2,3,..,n $\\
 $\beta_1 = \frac{\tilde{b_1}}{b_1}$ \\
 $\gamma_1 = \frac{-c_1}{b_1}$ \\
 for $i=2,3,..,n$ \\ \vspace{0.5cm} 
  \hspace{0.5cm} $ \beta_{i} = \frac{\tilde{b_{i-1}}-a_{i-1} \beta_{i-1}}{a_{i-1} \gamma_{i-1} + b_{i-1}} , \hspace{0.5cm} \gamma_{i}=\frac{-c_{i-1}}{a_{i-1} \gamma_{i-1} + b_{i-1}} $ \vspace{0.2cm}  \\
- $v_{n} = \beta_{n}$ \\
-for $i=n, n-1,..,2$ \\ \vspace{0.5cm} 
+ $v_{n} = \beta_{n}$\\
+for $i=n, n-1,..,2$\\ \vspace{0.5cm} 
  \hspace{0.5cm} $v_{i-1} = \beta_{i-1} + \gamma_{i-1} v_i$
 
 \end{tcolorbox} 
 
 
-This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tridiagonal systems of linear equations.
+This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tridiagonal systems of linear equations. 
+
+\textcolor{red}{KSK: More on implementation needed?}
+
+\subsection{Standard Gaussian Elimination}
+
+\textcolor{red}{KSK: A short description should be added here. }
+
+\subsection{LU decomposition}
+
+\textcolor{red}{KSK: A short description should be added here. }
+
+\subsection{Method using sparse(?)}
+
+\textcolor{red}{KSK: A short description should be added here. }
+
+\section{Results}
+
+\subsection{Speed/Efficiency}
+
+\subsection{Accuracy/Error}
 
 \subsection{FLOPS}
 
 The forward substitution requires one pass forwards, and one pass backwards,
 and have a complexity of $\bigO{N}$
 
-\section{Matrix solutions}
+\section{Discussion}
 
 Can solve the equation \eqref{eq:Avb} directly by LU-decomposition.
 The matrix A is then transformed into one upper triagonal matrix and
@@ -306,7 +314,7 @@ This is improved by using sparse matrices, which saves the position and the valu
 and assumes everything else is zero, which saves a lot of space in the 
 memory for our purpose ($(N-3)^2$ memory space saved).
 
-\section{Efficiency}
+\section{Concluding remarks}
 
 Comparing the different algorithms for different h and against each other
 
