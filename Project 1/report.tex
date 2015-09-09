@@ -261,15 +261,48 @@ This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tr
 
 \subsection{Standard Gaussian Elimination}
 
+
 \textcolor{red}{KSK: A short description should be added here. }
 
 \subsection{LU decomposition}
 
-\textcolor{red}{KSK: A short description should be added here. }
+When the matrix equation \eqref{eq:Avb} is solved, this is modified into
+an upper triangular and lower triangular matrix. The lower matrix (L) 
+diagonal has elements with the value 1, and is invertible if A is 
+non-singular.
 
-\subsection{Method using sparse(?)}
+The LU decomposition allows one to find the sets of linear equations,
+\begin{gather}
+Ax = LUx = w
+\end{gather}
+Is then solved for x by using a the inverse of L (which exist due to its 
+construction), 
+\begin{gather}
+Ux = L^{-1}w = y
+\end{gather}
+Since U is an upper triangular matrix the solution is found from back-substitution
+of the elements,
+\begin{gather}
+\begin{pmatrix} u_{11} & u_{12} & \dots\\
+                0 & u_{22} & u_{23} & \dots\\
+                &\dots & \dots\\
+                \dots & 0 & a_{(n-1)(n-1)} & a_{(n-1)n} \\
+                & \dots & 0 & a_{nn}
+\end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ \dots \\ x_{n-1}\\ x_n \end{pmatrix}
+ = \begin{pmatrix} y_1 \\ y_2 \\ \dots\\ y_{n-1} \\ y_n \end{pmatrix}\\
+ x_n = \frac{y_n}{a_{nn}}\\
+ x_{n-1} = \frac{y_{n-1} - a_{(n-1)n}x_n}{a_{(n-1)(n-1)}}
+\end{gather}
+And a recursive formula which takes $\bigO{N^2}$ calculations.
 
-\textcolor{red}{KSK: A short description should be added here. }
+
+
+\subsection{Method using sparse}
+
+To prevent saving a very sparse matrix in memory a sparse method can be employed.
+This saves the non-zero matrix elements and location instead of the 
+entire matrix. This saves memory and computational speed, as only these
+elements are manipulated.
 
 \section{Results}
 
@@ -279,8 +312,23 @@ This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tr
 
 \subsection{FLOPS}
 
-The forward substitution requires one pass forwards, and one pass backwards,
-and have a complexity of $\bigO{N}$
+The number of floating point operations (FLOPS) per algorithm gives a useful 
+metric of the scalability. The more FLOPS required the more time is
+required for larger systems.
+
+\subsubsection{Thomas algorithm}
+This algorithm requires nine operations for each row for the forward substitution,
+and two backwards. This requires 11 FLOPS for each row to solve the system, and
+the algorithm has a complexity of $\bigO{N}$.
+
+\subsubsection{Gaussian decomposition}
+The most general algorithm has a complexity of $\bigO{N^3}$.
+
+\subsubsection{LU decomposition}
+The decomposition into the LU-matrix requires $\bigO{N^3}$ FLOPS, but 
+has the advantage that backwards substitution just requires $\bigO{N^2}$
+FLOPS to compute. This decomposition is also highly reusable if \eqref{eq:Avb}
+is to be solved for more than one $\ve{x}$, or the determinant is to be found.
 
 \section{Discussion}
 
@@ -301,7 +349,8 @@ The standard is $\bigO{N^3}$ complexity
 
 \subsection{Thomas algorithm}
 
-Allocation of temporary arrays to hold bprime and dprime...
+The 
+
 
 \subsection{Matrix}
 
@@ -315,6 +364,7 @@ and assumes everything else is zero, which saves a lot of space in the
 memory for our purpose ($(N-3)^2$ memory space saved).
 
 \section{Concluding remarks}
+
 
 Comparing the different algorithms for different h and against each other
 

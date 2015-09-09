@@ -1,10 +1,10 @@
-#!/usr/bin/ev python3
+#!/usr/bin/env python3
 
 import subprocess
 
 def get_state_size():
   N = 0
-  print('Please state the size of the system (>=2)')
+  print('Please state the size of the system (> 1)')
   while N<2:
     N = int(input('N = '))
   return str(N)
@@ -19,9 +19,9 @@ def get_filename():
 def get_algtype():
   print('Please choose the algorithm to use, M - matrix decomp,\n' +
       'S - sparse matrix decomp, T - Thomas algorithm,\n' +
-      'default=T')
+      'L - LU decomp', 'default=T')
   alg = input('<type> = ')
-  if alg not in ['S','M','T']:
+  if alg not in ['S','M','T', 'L']:
     alg = 'T'
   return alg
   

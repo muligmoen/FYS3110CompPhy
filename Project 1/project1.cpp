@@ -80,7 +80,6 @@ int main( int argc, char *argv[] )
   fileprinter.print("Time used", time_used);
   fileprinter.print("max(log10(rel_error))", err);
   
-  
   return 0;
 }
 

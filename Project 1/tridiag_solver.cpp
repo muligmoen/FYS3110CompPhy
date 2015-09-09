@@ -94,7 +94,7 @@ arma::Col<double> LU_alg(double x0, double x1, int N, double (*f)(double))
   return v;  
 }
 
-
+/*
 void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
 {
   
@@ -136,6 +136,50 @@ void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
   v[0] = 0;
   delete[] cprime;
   delete[] dprime;
+}*/
+
+
+void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
+{
+  
+  double *gamma = new double[N];
+  double *beta= new double[N];
+  
+  double *b_tilde = new double[N];
+  
+  double h = (x1-x0)/(double)N;
+  double h_square = h*h;
+  
+  for (int iii = 0; iii<N; iii++)
+  {
+    double x = x0 + h*iii;
+    b_tilde[iii] = f(x)*h_square;
+  }
+  
+  // the diagonal band does not change
+  const double a = -1;
+  const double b = 2;
+  const double c = -1;
+  
+  
+  beta[0] = b_tilde[0]/b;
+  gamma[0] = c/b;
+  
+  for (int iii=1; iii<N; iii++)
+  {
+    beta[iii] = (b_tilde[iii] - a*beta[iii-1])/(b+a*gamma[iii-1]);
+    gamma[iii] = -c/(b+a*gamma[iii-1]);
+  }
+  delete[] b_tilde;
+  
+  v[N-1] = beta[N-1];
+  for (int iii=N-2; iii>0; iii--)
+  {
+    v[iii] = beta[iii] + gamma[iii]*v[iii+1];
+  }
+  v[0] = 0;
+  delete[] gamma;
+  delete[] beta;
 }
 
 double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u)
