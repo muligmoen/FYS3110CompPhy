@@ -21,7 +21,7 @@ arma::Col<double> LU_alg(double x0, double x1, int N, double (*f)(double));
 
 double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u);
 
-double max_relative_error(const double* u, const arma::Col<double> &v);
+double max_relative_error(const double* v, const arma::Col<double> &u);
 
 class Writer
 {

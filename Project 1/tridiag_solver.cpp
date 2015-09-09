@@ -153,9 +153,9 @@ double max_relative_error(const arma::Col<double> &v, const arma::Col<double> &u
   return max_error;
 }
 
-double max_relative_error(const double* u, const arma::Col<double>& v)
+double max_relative_error(const double* v, const arma::Col<double>& u)
 {
-  const int N = v.n_elem;
+  const int N = u.n_elem;
   double max_error = 0;
   for (int iii=0; iii<N; iii++)
   {

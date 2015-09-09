@@ -77,12 +77,20 @@ Some examples include
 \item Laplace's equation (Poisson's with f=0)
 \end{enumerate}
 
-So being able to solve such equations optimally with respect to accuracy and efficiency is undoubtedly important. This report will compare different algorithms for solving them.
+So being able to solve such equations optimally with respect to accuracy 
+and efficiency is undoubtedly important. This report will compare 
+different algorithms for solving them.
 
 \textcolor{red}{KSK: More specific info on which algorithms to be investigated. }  	
 
 
 \subsection{A closer look at an example from Electromagnetism}
+
+In electrostatics Maxwells equations reduces to
+\begin{gather}
+
+\end{gather}
+
 
 The electrostatic potential $\Phi$ is generated from a charge distribution $\rho$.
 This gives
@@ -360,7 +368,12 @@ follows this.
 
 The matrix solvers are used from the Armadillo 
 library\footnote{\url{http://arma.sourceforge.net/}}. 
-The solvers for 
+The solvers implementation is unknown for us, and we will assume
+it follows $\bigO{N^3}$. Calling of this function is
+\begin{gather}
+x = solve(A, \tilde{f})
+\end{gather}
+
 
 
 \subsection{Sparse matrix}
@@ -373,8 +386,8 @@ memory for our purpose ($(N-3)^2$ memory space saved).
 \section{Concluding remarks}
 
 
-Comparing the different algorithms for different h and against each other
+We see that the algorithm developed in section \ref{subsec:Thomas} is 
+well suited for this problem.
 
-Compare relative error. What is rel-error compared to FLOPS?
 
 \end{document}
