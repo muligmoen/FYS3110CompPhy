@@ -119,7 +119,7 @@ void thomas_alg(double *v, double x0, double x1, int N, double (*f)(double))
   
   
   beta[0] = b_tilde[0]/b;
-  gamma[0] = c/b;
+  gamma[0] = -c/b;
   
   for (int iii=1; iii<N; iii++)
   {
