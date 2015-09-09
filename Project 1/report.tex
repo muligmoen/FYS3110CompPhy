@@ -9,6 +9,7 @@
 \usepackage[parfill]{parskip} % Removes indents
 \usepackage{amsmath} % Environment, symbols etc...
 \usepackage{amssymb}
+\usepackage{multirow} % For nice tables
 %\usepackage{wasysym} % Astrological symbols
 \usepackage{graphicx} % For pictures etc...
 \usepackage{enumitem} % Points/lists
@@ -330,7 +331,34 @@ elements are manipulated.
 
 \subsection{Speed/Efficiency}
 
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{2}{|c|}{Thomas alg.} & \multicolumn{2}{|c|}{Gaussian el.} & \multicolumn{2}{|c|}{Sparse} & \multicolumn{2}{|c|}{LU decomp.} \\
+\hline
+N & Time & N & Time & N & Time & N & Time  \\
+\hline
+10 & Insert & 10 & Insert & 10 & Insert &  10 & Insert \\
+100 & Insert & 100 & Insert & 100 & Insert & 100 & Insert \\
+1000 & Insert & 1000 & Insert & 1000 & Insert & 1000 & Insert \\
+10000 & Insert & 10000 & Insert & 10000 & Insert & 10000 & Insert \\
+\hline
+\end{tabular}
+
 \subsection{Accuracy/Error}
+
+\begin{tabular}{|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{2}{|c|}{Thomas alg.} & \multicolumn{2}{|c|}{Gaussian el.} & \multicolumn{2}{|c|}{Sparse} & \multicolumn{2}{|c|}{LU decomp.} \\
+\hline
+N & LMRE. & N & LMRE. & N & LMRE. & N & LMRE.  \\
+\hline
+10 & Insert & 10 & Insert & 10 & Insert &  10 & Insert \\
+100 & Insert & 100 & Insert & 100 & Insert & 100 & Insert \\
+1000 & Insert & 1000 & Insert & 1000 & Insert & 1000 & Insert \\
+10000 & Insert & 10000 & Insert & 10000 & Insert & 10000 & Insert \\
+\hline
+\end{tabular}
+
 
 \subsection{FLOPS}
 
