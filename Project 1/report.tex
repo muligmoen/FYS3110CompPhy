@@ -88,20 +88,25 @@ different algorithms for solving them.
 
 In electrostatics Maxwells equations reduces to
 \begin{gather}
-
+\nabla \cdot \ve{E} = \frac{\rho}{\epsilon_0}\\
+\nabla \cdot \ve{B} = 0\\
+\nabla \times \ve{E} = 0\\
+\nabla \times \ve{B} = 0
 \end{gather}
-
-
-The electrostatic potential $\Phi$ is generated from a charge distribution $\rho$.
-This gives
+As the curl of the electric field is zero, the field is conservative
+and can be written on the form
 \begin{equation}
-\nabla^2\Phi = -4\pi \rho(\ve{r})
+\nabla \Phi = -\ve{E}
+\end{equation}
+This gives Poisson's equation
+\begin{equation}
+\nabla^2\Phi = -\frac{\rho(\ve{r})}{\epsilon_0}
 \end{equation}
 
 Letting $\rho$ be spherically symmetric leads to a symmetric $\Phi$.
 This gives with a substitution $\Phi(r) = \phi(r)/r$
 \begin{equation}
-\frac{d^2\phi}{dr^2} = -4\pi r\rho(r)
+\frac{d^2\phi}{dr^2} = -\frac{r\rho(r)}{\epsilon_0}
 \end{equation}
 Which is on the form of \eqref{eq:2orderDIFF}.
 
@@ -270,8 +275,29 @@ This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tr
 
 \subsection{Standard Gaussian Elimination}
 
+The Gaussian elimination is solving the system \eqref{eq:Avb} by using 
+row operations and getting a row echelon form and then backsubstituting.
 
-\textcolor{red}{KSK: A short description should be added here. }
+
+
+\textcolor{red}{MU: Reducing matrix}
+
+The backsubstitution is simple when a row reduced matrix is achieved.
+
+Let us look at the matrix equation $Ux = y$
+\begin{gather}
+\begin{pmatrix} u_{11} & u_{12} & \dots\\
+                0 & u_{22} & u_{23} & \dots\\
+                &\dots & \dots\\
+                \dots & 0 & a_{(n-1)(n-1)} & a_{(n-1)n} \\
+                & \dots & 0 & a_{nn}
+\end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ \dots \\ x_{n-1}\\ x_n \end{pmatrix}
+ = \begin{pmatrix} y_1 \\ y_2 \\ \dots\\ y_{n-1} \\ y_n \end{pmatrix}\\
+ x_n = \frac{y_n}{a_{nn}}\\
+ x_{n-1} = \frac{y_{n-1} - a_{(n-1)n}x_n}{a_{(n-1)(n-1)}}
+\end{gather}
+Where $x_{i}$ is found from a recursive method.
+
 
 \subsection{LU decomposition}
 
@@ -290,20 +316,7 @@ construction),
 Ux = L^{-1}w = y
 \end{gather}
 Since U is an upper triangular matrix the solution is found from back-substitution
-of the elements,
-\begin{gather}
-\begin{pmatrix} u_{11} & u_{12} & \dots\\
-                0 & u_{22} & u_{23} & \dots\\
-                &\dots & \dots\\
-                \dots & 0 & a_{(n-1)(n-1)} & a_{(n-1)n} \\
-                & \dots & 0 & a_{nn}
-\end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ \dots \\ x_{n-1}\\ x_n \end{pmatrix}
- = \begin{pmatrix} y_1 \\ y_2 \\ \dots\\ y_{n-1} \\ y_n \end{pmatrix}\\
- x_n = \frac{y_n}{a_{nn}}\\
- x_{n-1} = \frac{y_{n-1} - a_{(n-1)n}x_n}{a_{(n-1)(n-1)}}
-\end{gather}
-And a recursive formula which takes $\bigO{N^2}$ calculations.
-
+of the elements as described in the Gaussian Elimination.
 
 
 \subsection{Method using sparse}
