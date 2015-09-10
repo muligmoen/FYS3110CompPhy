@@ -252,7 +252,7 @@ v_n = \frac{\tilde{b_n}-a_n \beta_{n-1}}{a_n \gamma_{n-1} + b_n} = \beta_{n}.
 \end{align*}
 
 Having all the nessecary ingredients the algorithm reads as follows.
-\vspace{0.5cm}\\
+\vspace{0.5cm}
 
 \centerline{Algorithm I}
 \begin{tcolorbox}
@@ -264,9 +264,8 @@ $\gamma_1 = \frac{-c_1}{b_1}$ \\
 for $i=2,3,..,n$ \\ \vspace{0.5cm} 
  \hspace{0.5cm} $ \beta_{i} = \frac{\tilde{b_{i-1}}-a_{i-1} \beta_{i-1}}{a_{i-1} \gamma_{i-1} + b_{i-1}} , \hspace{0.5cm} \gamma_{i}=\frac{-c_{i-1}}{a_{i-1} \gamma_{i-1} + b_{i-1}} $ \vspace{0.2cm}  \\
  $v_{n} = \beta_{n}$\\
-for $i=n, n-1,..,2$\\ \vspace{0.5cm} 
+for $i=n, n-1, \cdots ,2$\\ \vspace{0.5cm} 
  \hspace{0.5cm} $v_{i-1} = \beta_{i-1} + \gamma_{i-1} v_i$
-
 \end{tcolorbox} 
 
 
@@ -279,18 +278,45 @@ This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tr
 The Gaussian elimination is solving the system \eqref{eq:Avb} by using 
 row operations and getting a row echelon form and then backsubstituting.
 
+A matrix
+\begin{gather}
+A = \begin{pmatrix}
+    a_{11} & a_{12} & a_{13} & \cdots\\
+    a_{21} & a_{22} & a_{23} & \cdots\\
+    a_{31} & a_{32} & a_{33} & \cdots\\
+    \cdots \\
+    a_{n1} & a_{n2} & \cdots
+    \end{pmatrix}
+\end{gather}
 
+To get the matrix into the row echelon the first row needs to have a non-zero
+value as its first element. Then a constant $c_i = a_{i1}/a_{11}$ is 
+calculated, and a subtraction of the first row,
+\begin{gather}
+a_{ij} = a_{ij} - c_i a_{ij}
+\end{gather}
+is done. For the elements $a_{i1}$, this gives zero, and the matrix is
+row reduced to
+\begin{gather}
+A \sim
+\begin{pmatrix}
+    a_{11} & a_{12} & a_{13} & \cdots\\
+    0 & a_{22} - c_2 a_{22} & a_{23} - c_2 a_{23} & \cdots\\
+    0 & a_{32} - c_3 a_{32} & a_{33} - c_3 a_{33} & \cdots\\
+    0 & \cdots \\
+    0 & a_{n2} - c_2 a_{n2} & \cdots
+\end{pmatrix}
+\end{gather}
+The operation can be repeated on the submatrix $A_{(2-N)(2-N)}$
+until the decired triangular matrix is achieved.
 
-\textcolor{red}{MU: Reducing matrix}
-
-The backsubstitution is simple when a row reduced matrix is achieved.
-
-Let us look at the matrix equation $Ux = y$
+The backsubstitution is simple when a row reduced matrix is achieved,
+by looking at the matrix equation $Ux = y$
 \begin{gather}
 \begin{pmatrix} u_{11} & u_{12} & \dots\\
                 0 & u_{22} & u_{23} & \dots\\
                 &\dots & \dots\\
-                \dots & 0 & a_{(n-1)(n-1)} & a_{(n-1)n} \\
+                0 & \dots & a_{(n-1)(n-1)} & a_{(n-1)n} \\
                 & \dots & 0 & a_{nn}
 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ \dots \\ x_{n-1}\\ x_n \end{pmatrix}
  = \begin{pmatrix} y_1 \\ y_2 \\ \dots\\ y_{n-1} \\ y_n \end{pmatrix}\\
@@ -364,15 +390,19 @@ N & LMRE. & N & LMRE. & N & LMRE. & N & LMRE.  \\
 
 The number of floating point operations (FLOPS) per algorithm gives a useful 
 metric of the scalability. The more FLOPS required the more time is
-required for larger systems.
+required for larger systems. This is usually given in $\bigO{n}$ notation.
 
 \subsubsection{Thomas algorithm}
 This algorithm requires nine operations for each row for the forward substitution,
 and two backwards. This requires 11 FLOPS for each row to solve the system, and
-the algorithm has a complexity of $\bigO{N}$.
+the algorithm has a complexity of $\bigO{n}$.
 
 \subsubsection{Gaussian decomposition}
-The most general algorithm has a complexity of $\bigO{N^3}$.
+For a general matrix with size ($N\times N$),
+the first operation is subtraction the first row times a constant from
+all the remaining rows. This is $\bigO{n^2}$ operations. This is done for all 
+N columns, which gives a complexity of $\bigO{n^3}$. The backwards 
+substitution is only $\bigO{n^2}$ and is not counted.
 
 \subsubsection{LU decomposition}
 The decomposition into the LU-matrix requires $\bigO{N^3}$ FLOPS, but 
@@ -404,25 +434,29 @@ This requires three arrays to be created, which holds $\beta_i$, $\gamma_i$
 and $\tilde{f}_i$. These arrays are zero-indexed, and the implementation
 follows this.
 
+Our implementation assumes constant a, b, c, and the elements $a_i$
+used in the algorithm is not implemented in the code. This is 
+easily changed for more general purposes.
 
 \subsection{Matrix}
 
 The matrix solvers are used from the Armadillo 
 library\footnote{\url{http://arma.sourceforge.net/}}. 
-The solvers implementation is unknown for us, and we will assume
-it follows $\bigO{N^3}$. Calling of this function is
-\begin{gather}
-x = solve(A, \tilde{f})
-\end{gather}
 
+This method uses the Gaussian decomposition and should be solving
+the equations in $\bigO{n^3}$.
 
 
 \subsection{Sparse matrix}
 
-The matrix solution above is very ineffective in both FLOPS and memory usage.
-This is improved by using sparse matrices, which saves the position and the value,
-and assumes everything else is zero, which saves a lot of space in the 
-memory for our purpose ($(N-3)^2$ memory space saved).
+The matrix solution above is very ineffective in both the amount
+of computations and memory usage. This is improved by using sparse 
+matrices, which saves the non-zero elements by position and value.
+
+For our very sparse matrix which has $N-3$ unused elements per row, the
+memory-space saved is $(N-3)^2$. This helps keep the matrix in the 
+CPU-cache and speeds it up for larger matrices.
+
 
 \section{Concluding remarks}
 
