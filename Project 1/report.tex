@@ -61,7 +61,6 @@ as a linear second-order differential equation on the form
 \label{eq:2orderDIFF}
 \end{equation}
 
-
 Some examples include, Schrödinger's equation, the Airy function,
 Poisson's equation and a special case, Laplace's equation.
 
@@ -69,7 +68,7 @@ Being able to solve such equations optimally with respect to accuracy
 and efficiency is undoubtedly important. This report will compare 
 different algorithms for solving them.
 
-The algorithms to be investegated in this report is standard Gaussian 
+The algorithms to be investegated in this report are	 standard Gaussian 
 Elimination, LU decomposition, sparse matrix decomposition and an 
 algorithm specifically tailored for a tridiagonal system of 
 linear equations. 
@@ -112,13 +111,13 @@ The specific differential equation, with boundery values, being discussed in thi
 
 This boundery value problem can be discretized and written as a system of linear equations.
 
-Letting the domain $x \in [0,1]$ be discretized into $n$ pieces,
+Letting the domain $x \in [0,1]$ be discretized into $n+2$ pieces,
 \begin{gather}
-x_0, x_1, \dots, x_{n}, \dots, x_{n-1}
+x_0, x_1, \dots, x_{n}, \dots, x_{n+1}
 \end{gather}
 where 
 \begin{gather}
-h = \frac{x_{n-1} - x_0}{n} = \frac{x_{n-1}}{n}\\
+h = \frac{x_{n+1} - x_0}{n+1} = \frac{x_{n+1}}{n+1}\\
 x_i = x_0 + ih = ih
 \end{gather}
 
@@ -132,13 +131,13 @@ Taylor-expansion for the second derivative of v,
 
 The discretized form of equation (2.1) can then be written as
 \begin{gather}
-\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = \tilde{f}_i , \quad i=0,1,2, \dots, n-1 
+\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = \tilde{f}_i , \quad i=1,2, \dots, n 
 \end{gather}
 with $\tilde{f}_i = f(r_i) h^2$.
 
 With boundary conditions 
 \begin{gather}
-v_0 = v_{N-1} = 0
+v_0 = v_{n+1} = 0
 \end{gather}
 
 This can now be written as a system of linear equations on the form 
@@ -151,7 +150,7 @@ This can now be written as a system of linear equations on the form
 Multipling the discretized equation (2.6) by $h^2$ we get:
 
 \begin{gather*}
-   -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \hspace{0.5cm} \mathrm{for} \hspace{0.5cm} i=1,\dots, n-1 
+   -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \hspace{0.5cm} \mathrm{for} \hspace{0.5cm} i=1,\dots, n 
 \end{gather*}
 
 Filling in for $i$ and choosing $\tilde{b_i} = h^2 f_i$ we obtain the following set of equations: 
@@ -260,7 +259,7 @@ for $i=n, n-1, \cdots ,2$\\ \vspace{0.5cm}
 \end{tcolorbox} 
 
 
-This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tridiagonal systems of linear equations. 
+This is often refered to as \emph{Thomas Algorithm}, or \emph{TDMA}, an algorithm for solving tridiagonal systems of linear equations. 
 
 \subsubsection{FLOPS}
 This algorithm requires nine operations for each row for the forward substitution,
@@ -349,17 +348,17 @@ Which returns the resulting vector.
 
 \subsection{LU decomposition}
 
-The matrix A can be decomposited into an upper triangular matrix U and 
-a lower triangular matrix L. The elements on the diagonal of L are 1,
+The matrix $\ve{A}$ can be decomposited into an upper triangular matrix $\ve{U}$ and 
+a lower triangular matrix $\ve{L}$. The elements on the diagonal of $\ve{L}$ are 1,
 and it is invertible.
 
 By decomposition the result is
 \begin{gather}
-Ax = LUx = w
+\ve{Ax} = \ve{LUx} = \ve{w}
 \end{gather}
 Which is then solved for x by using a the inverse of L
 \begin{gather}
-Ux = L^{-1}w = y
+\ve{Ux} = \ve{L^{-1}w} = \ve{y}
 \end{gather}
 Since U is an upper triangular matrix the solution is found from back-substitution
 of the elements as described in the Gaussian Elimination.
@@ -373,16 +372,16 @@ is to be solved for more than one $\ve{x}$, or the determinant is to be found.
 \subsubsection{Implementation}
 
 The LU decomposition is achieved with the Armadillo library, by calling
-the lu()-method. This produces three matrices, L, U and a transformation
-matrix P, such that
+the lu()-method. This produces three matrices, $\ve{L}$, $\ve{U}$ and a transformation
+matrix $\ve{P}$, such that
 \begin{gather}
-A = \trans{P}LU
+\ve{A} = \ve{ \trans{P}LU }
 \end{gather}
 The vector y is then created by
 \begin{gather}
-y = inv\left(\trans{P}L  \right)
+\ve{y} = \left( \ve{ \trans{P}L }  \right)^{-1}
 \end{gather}
-And the solver function in the Armadillo library is used.
+Then the solver function in the Armadillo library is used.
 
 \subsection{Method using sparse}
 
