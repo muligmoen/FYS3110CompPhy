@@ -62,20 +62,17 @@ as a linear second-order differential equation on the form
 \end{equation}
 
 
-Some examples include
-\begin{enumerate}[label=\bfseries \Roman*]
-\item Schrödinger's equation
-\item Airy function
-\item Economics?
-\item Poisson's equation
-\item Laplace's equation (Poisson's with f=0)
-\end{enumerate}
+Some examples include, Schrödinger's equation, the Airy function,
+Poisson's equation and a special case, Laplace's equation.
 
-So being able to solve such equations optimally with respect to accuracy 
+Being able to solve such equations optimally with respect to accuracy 
 and efficiency is undoubtedly important. This report will compare 
 different algorithms for solving them.
 
-The algorithms to be investegated in this report is standard Gaussian Elemination, LU decomposition, sparse matrix decomposition and an algorithem specifically tailored for this problem. A tridiagonal system of linear equations. 
+The algorithms to be investegated in this report is standard Gaussian 
+Elimination, LU decomposition, sparse matrix decomposition and an 
+algorithem specifically tailored for a tridiagonal system of 
+linear equations. 
 
 
 \subsection{A closer look at an example from Electromagnetism}
@@ -102,25 +99,26 @@ This gives with a substitution $\Phi(r) = \phi(r)/r$
 \begin{equation}
 \frac{d^2\phi}{dr^2} = -\frac{r\rho(r)}{\epsilon_0}
 \end{equation}
-Which is on the form of \eqref{eq:2orderDIFF}.
+Which is on the form of \eqref{eq:2orderDIFF} with $k(x)=0$, which is also the differential
+equation which is solved in this paper.
 
 \section{Method}
 
 The specific differential equation, with boundery values, being discussed in this report is: 
 
 \begin{equation}
--u''(x) = f(x), \spac x \in (0,1), \spac u(0) = u(1) = 0.
+-u''(x) = f(x), \spac x \in [0,1], \spac u(0) = u(1) = 0.
 \end{equation}
 
 This boundery value problem can be discretized and written as a system of linear equations.
 
-Letting the domain $x \in [0,1]$ be discretized into $n+1$ pieces,
+Letting the domain $x \in [0,1]$ be discretized into $n$ pieces,
 \begin{gather}
-x_0, x_1, \dots, x_i, \dots, x_{n+1}
+x_0, x_1, \dots, x_{n}, \dots, x_{n-1}
 \end{gather}
 where 
 \begin{gather}
-h = \frac{x_{n+1} - x_0}{n+1} = \frac{x_{n+1}}{n+1}\\
+h = \frac{x_{n-1} - x_0}{n} = \frac{x_{n-1}}{n}\\
 x_i = x_0 + ih = ih
 \end{gather}
 
@@ -134,7 +132,7 @@ Taylor-expansion for the second derivative of v,
 
 The discretized form of equation (2.1) can then be written as
 \begin{gather}
-\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = \tilde{f}_i , \quad i=1,2, \dots, n 
+\frac{v_{i-1} + v_{i+1} - 2v_i}{h^2} = \tilde{f}_i , \quad i=0,1,2, \dots, n-1 
 \end{gather}
 with $\tilde{f}_i = f(r_i) h^2$.
 
@@ -153,7 +151,7 @@ This can now be written as a system of linear equations on the form
 Multipling the discretized equation (2.6) by $h^2$ we get:
 
 \begin{gather*}
-   -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \hspace{0.5cm} \mathrm{for} \hspace{0.5cm} i=1,\dots, n 
+   -v_{i-1}+2v_{i}-v_{i+1}=h^2 f_i \hspace{0.5cm} \mathrm{for} \hspace{0.5cm} i=1,\dots, n-1 
 \end{gather*}
 
 Filling in for $i$ and choosing $\tilde{b_i} = h^2 f_i$ we obtain the following set of equations: 
@@ -175,20 +173,20 @@ Now one can easily see that this system of linear equations can written on the f
                            0&\dots   &  &-1 &2& -1 \\
                            0&\dots    &  & 0  &-1 & 2 \\
                       \end{pmatrix},\spac \ve{v} = \begin{pmatrix}
+                           v_0\\
                            v_1\\
-                           v_2\\
                            \dots \\
                           \dots  \\
                           \dots \\
-                           v_n\\
+                           v_{n-1}\\
                       \end{pmatrix},
   \spac \tilde{\ve{b}} = \begin{pmatrix}
+                           \tilde{b}_0\\
                            \tilde{b}_1\\
-                           \tilde{b}_2\\
                            \dots \\
                            \dots \\
                           \dots \\
-                           \tilde{b}_n\\
+                           \tilde{b}_{n-1}\\
                       \end{pmatrix}.
 \end{gather*}
 
@@ -267,13 +265,9 @@ This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tr
 \subsubsection{Implementation}
 
 The algorithm in section \ref{subsec:Thomas} is implemented in C++.
-This requires three arrays to be created, which holds $\beta_i$, $\gamma_i$
-and $\tilde{f}_i$. These arrays are zero-indexed, and the implementation
-follows this.
-
-Our implementation assumes constant a, b, c, and the elements $a_i$
-used in the algorithm is not implemented in the code. This is 
-easily changed for more general purposes.
+Since we do not have changing $a_i$ we have coded a[iii] as a constant.
+The zero-indexing in C++ is used, and the elements accessed in the code
+is different from the algorithm.
 
 \subsection{Standard Gaussian Elimination}
 
@@ -328,7 +322,7 @@ by looking at the matrix equation $Ux = y$
 Where $x_{i}$ is found from a recursive method.
 
 \subsubsection{Implementation}
-
+\label{subsubsec:impl_gauss}
 The matrix solvers are used from the Armadillo 
 library\footnote{\url{http://arma.sourceforge.net/}}. The matrix is
 created by indexing the non-zero elements and setting this equal to the 
@@ -349,8 +343,7 @@ The LU decomposition allows one to find the sets of linear equations,
 \begin{gather}
 Ax = LUx = w
 \end{gather}
-Is then solved for x by using a the inverse of L (which exist due to its 
-construction), 
+Is then solved for x by using a the inverse of L
 \begin{gather}
 Ux = L^{-1}w = y
 \end{gather}
@@ -359,7 +352,17 @@ of the elements as described in the Gaussian Elimination.
 
 \subsubsection{Implementation}
 
-\textcolor{red}{KSK: Implementation of LU to be added here.}
+The LU decomposition is achieved with the Armadillo library, by calling
+the lu()-method. This produces three matrices, L, U and a transformation
+matrix P, such that
+\begin{gather}
+A = \trans{P}LU
+\end{gather}
+The vector y is then created by
+\begin{gather}
+y = inv\left(\trans{P}L  \right)
+\end{gather}
+And the solver function from \ref{subsubsec:impl_gauss} is used.
 
 \subsection{Method using sparse}
 
@@ -459,7 +462,9 @@ This is ordinary quicker, since armadillo is a high-level wrapper around
 lapack etc.
 
 \subsection{FLOPS}
-The standard is $\bigO{N^3}$ complexity
+The number of calculations for the different algorithms are not equally
+scalable. The Thomas algorithm is far superior to the other methods
+with a complexity of $\bigO{n}$ compared to $\bigO{n^3}$.
 
 \section{Concluding remarks}
 
