@@ -2,10 +2,11 @@
 import numpy as np
 import subprocess
 import matplotlib.pylab as plt
+import os
 
 filename = 'test.txt'
 
-N = [10, 25, 50, 100, 250, 500, 1000, 2000, 3000]
+N = [10, 25, 50, 100, 250, 500, 1000, 2000, 3000, 4000, 5000, 6000]
 
 Alg = ['M','T','S','L']
 
@@ -29,6 +30,7 @@ for i, N_ in enumerate(N):
 
 log_n = np.log10(N)
 
+
 plt.plot(log_n, err[0,:], label="Gaussian elimination")
 plt.plot(log_n, err[1,:], label="Thomas algorithm")
 plt.plot(log_n, err[3,:], label="LU decomposition")
@@ -37,6 +39,7 @@ plt.xlabel('Log10 number of messh points')
 plt.ylabel('Log10 relative error')
 plt.title('Max relative error for different algorithms')
 plt.legend()
+plt.savefig(os.path.join('Results', 'n_err.png'), dpi=600, bbox_inches='tight')
 plt.show()
 
 log_time = np.log10(time)
@@ -45,9 +48,15 @@ plt.plot(log_n, log_time[0,:], label="Gaussian elimination")
 plt.plot(log_n, log_time[1,:], label="Thomas algorithm")
 plt.plot(log_n, log_time[3,:], label="LU decomposition")
 plt.plot(log_n, log_time[2,:], label="Sparse matrix decomposition")
-plt.xlabel('Log10 number of mesh points')
-plt.ylabel('Log10 Effective seconds [Clock cycles/MHz]')
+plt.xlabel('$\log_{10}$ number of mesh points')
+plt.ylabel('$\log_{10}$ Effective seconds [Clock cycles/MHz]')
 plt.title('Comparing time')
 plt.legend(loc='upper left')
+plt.savefig(os.path.join('Results', 'n_time.png'), dpi=600, bbox_inches='tight')
 plt.show()
+
+
+np.save(os.path.join('Results', 'time.npy'), time)
+
+np.save(os.path.join('Results', 'err.npy'), err)
 
