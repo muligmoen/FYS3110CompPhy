@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english,draft]{article}
+\documentclass[11pt,a4paper,english,final]{article}
 \usepackage[english]{babel} % Using babel for norwegian hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -19,20 +19,13 @@
 \definecolor{red}{RGB}{255,10,10}
 
 % To include code(-snippets) with æøå
-%\usepackage{listings}
-%\lstset{
-%language=python,
-%showspaces=false,
-%showstringspaces=false,
-%frame=l,
-%literate=%
-%{æ}{{\ae}}1
-%{ø}{{\o}}1
-%{å}{{\aa}}1
-%{Æ}{{\AE}}1
-%{Ø}{{\O}}1
-%{Å}{{\AA}}1
-%}
+\usepackage{listings}
+\lstset{
+language=c++,
+showspaces=false,
+showstringspaces=false,
+frame=l,
+}
 
 \tolerance = 5000 % Bedre tekst
 \hbadness = \tolerance
@@ -390,19 +383,26 @@ N & LMRE. & N & LMRE. & N & LMRE. & N & LMRE.  \\
 
 The number of floating point operations (FLOPS) per algorithm gives a useful 
 metric of the scalability. The more FLOPS required the more time is
-required for larger systems. This is usually given in $\bigO{n}$ notation.
+required for larger systems. This is usually given in $\bigO{x}$ notation,
+where x gives approximately the number of calculations.
 
 \subsubsection{Thomas algorithm}
 This algorithm requires nine operations for each row for the forward substitution,
-and two backwards. This requires 11 FLOPS for each row to solve the system, and
-the algorithm has a complexity of $\bigO{n}$.
+and two backwards. This requires 11 FLOPS for each row to solve the system.
+With n rows this algorithm requires 11N FLOPS.
+
+In big O notation the complexity of $\bigO{n}$.
 
 \subsubsection{Gaussian decomposition}
-For a general matrix with size ($N\times N$),
-the first operation is subtraction the first row times a constant from
-all the remaining rows. This is $\bigO{n^2}$ operations. This is done for all 
-N columns, which gives a complexity of $\bigO{n^3}$. The backwards 
-substitution is only $\bigO{n^2}$ and is not counted.
+For a general matrix with size ($N\times N$), the algorithm requires
+$N^2$ operations per row reduction. This is repeated for all N rows,
+and the complexity is $\bigO{n^3}$ for the reduction. The backwards 
+substitution has $\bigO{n^2}$ and is not of significance.
+
+For a sparse matrix (with suitable algorithms) this could be less, 
+as some of the row operations are
+skipped. This leads to a lower amount of FLOPS needed for a sparse
+matrix.
 
 \subsubsection{LU decomposition}
 The decomposition into the LU-matrix requires $\bigO{N^3}$ FLOPS, but 
@@ -441,10 +441,13 @@ easily changed for more general purposes.
 \subsection{Matrix}
 
 The matrix solvers are used from the Armadillo 
-library\footnote{\url{http://arma.sourceforge.net/}}. 
+library\footnote{\url{http://arma.sourceforge.net/}}. The matrix is
+created by indexing the non-zero elements and setting this equal to the 
+tridiagonal elements. The calculation is done by a call to 
+\begin{lstlisting}
+arma::Col<double> x = solve(A, b);
+\end{lstlisting}
 
-This method uses the Gaussian decomposition and should be solving
-the equations in $\bigO{n^3}$.
 
 
 \subsection{Sparse matrix}
@@ -456,6 +459,12 @@ matrices, which saves the non-zero elements by position and value.
 For our very sparse matrix which has $N-3$ unused elements per row, the
 memory-space saved is $(N-3)^2$. This helps keep the matrix in the 
 CPU-cache and speeds it up for larger matrices.
+
+The calculation is done by a call to
+\begin{lstlisting}
+arma::Col<double> x = spsolve(spA, b);
+\end{lstlisting}
+
 
 
 \section{Concluding remarks}
