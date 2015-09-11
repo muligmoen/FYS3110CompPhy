@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english,final]{article}
+\documentclass[11pt,a4paper,english,draft]{article}
 \usepackage[english]{babel} % Using babel for norwegian hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -71,7 +71,7 @@ different algorithms for solving them.
 
 The algorithms to be investegated in this report is standard Gaussian 
 Elimination, LU decomposition, sparse matrix decomposition and an 
-algorithem specifically tailored for a tridiagonal system of 
+algorithm specifically tailored for a tridiagonal system of 
 linear equations. 
 
 
@@ -262,10 +262,17 @@ for $i=n, n-1, \cdots ,2$\\ \vspace{0.5cm}
 
 This is often refered to as \emph{Thomas Algorithm}, an algorithm for solving tridiagonal systems of linear equations. 
 
+\subsubsection{FLOPS}
+This algorithm requires nine operations for each row for the forward substitution,
+and two backwards. This requires 11 FLOPS for each row to solve the system.
+With n rows this algorithm requires 11N FLOPS.
+
+In big O notation the complexity of $\bigO{n}$.
+
 \subsubsection{Implementation}
 
 The algorithm in section \ref{subsec:Thomas} is implemented in C++.
-Since we do not have changing $a_i$ we have coded a[iii] as a constant.
+Since we do not have changing $a_i$ we have coded $a_i = a$.
 The zero-indexing in C++ is used, and the elements accessed in the code
 is different from the algorithm.
 
@@ -274,14 +281,14 @@ is different from the algorithm.
 The Gaussian elimination is solving the system \eqref{eq:Avb} by using 
 row operations and getting a row echelon form and then backsubstituting.
 
-A matrix
+This operation in principle is here shown for matrix A.
 \begin{gather}
 A = \begin{pmatrix}
-    a_{11} & a_{12} & a_{13} & \cdots\\
-    a_{21} & a_{22} & a_{23} & \cdots\\
-    a_{31} & a_{32} & a_{33} & \cdots\\
+    a_{11} & a_{12} & a_{13} & \cdots & y_1\\
+    a_{21} & a_{22} & a_{23} & \cdots& y_2\\
+    a_{31} & a_{32} & a_{33} & \cdots & y_3\\
     \cdots \\
-    a_{n1} & a_{n2} & \cdots
+    a_{n1} & a_{n2} & \cdots & & y_n
     \end{pmatrix}
 \end{gather}
 
@@ -297,7 +304,7 @@ row reduced to
 A \sim
 \begin{pmatrix}
     a_{11} & a_{12} & a_{13} & \cdots\\
-    0 & a_{22} - c_2 a_{22} & a_{23} - c_2 a_{23} & \cdots\\
+    0 & a_{22} - c_2 a_{22} & a_{23} - c_2 {a}_{23} & \cdots\\
     0 & a_{32} - c_3 a_{32} & a_{33} - c_3 a_{33} & \cdots\\
     0 & \cdots \\
     0 & a_{n2} - c_2 a_{n2} & \cdots
@@ -307,7 +314,7 @@ The operation can be repeated on the submatrix $A_{(2-N)(2-N)}$
 until the decired triangular matrix is achieved.
 
 The backsubstitution is simple when a row reduced matrix is achieved,
-by looking at the matrix equation $Ux = y$
+by examining the matrix equation $\ve{U}\ve{x} = \ve{\tilde{y}}$
 \begin{gather}
 \begin{pmatrix} u_{11} & u_{12} & \dots\\
                 0 & u_{22} & u_{23} & \dots\\
@@ -315,11 +322,19 @@ by looking at the matrix equation $Ux = y$
                 0 & \dots & a_{(n-1)(n-1)} & a_{(n-1)n} \\
                 & \dots & 0 & a_{nn}
 \end{pmatrix} \begin{pmatrix} x_1 \\ x_2 \\ \dots \\ x_{n-1}\\ x_n \end{pmatrix}
- = \begin{pmatrix} y_1 \\ y_2 \\ \dots\\ y_{n-1} \\ y_n \end{pmatrix}\\
- x_n = \frac{y_n}{a_{nn}}\\
- x_{n-1} = \frac{y_{n-1} - a_{(n-1)n}x_n}{a_{(n-1)(n-1)}}
+ = \begin{pmatrix} \tilde{y}_1 \\ \tilde{y}_2 \\ \dots\\ \tilde{y}_{n-1} \\ \tilde{y}_n \end{pmatrix}\\
+ x_n = \frac{\tilde{y}_n}{a_{nn}}\\
+ x_{n-1} = \frac{\tilde{y}_{n-1} - a_{(n-1)n}x_n}{a_{(n-1)(n-1)}}
 \end{gather}
-Where $x_{i}$ is found from a recursive method.
+Where $x_{i}$ is found from a recursive method extended from this.
+
+\subsubsection{FLOPS}
+For a general matrix with size ($N\times N$), the algorithm requires
+$N^2$ operations per row reduction. This is repeated for all N rows,
+and the complexity is $\bigO{n^3}$ for the reduction. The backwards 
+substitution has $\bigO{n^2}$ and is not of significance.
+
+
 
 \subsubsection{Implementation}
 \label{subsubsec:impl_gauss}
@@ -330,25 +345,30 @@ tridiagonal elements. The calculation is done by a call to
 \begin{lstlisting}
 arma::Col<double> x = solve(A, b);
 \end{lstlisting}
-
+Which returns the resulting vector.
 
 \subsection{LU decomposition}
 
-When the matrix equation \eqref{eq:Avb} is solved, this is modified into
-an upper triangular and lower triangular matrix. The lower matrix (L) 
-diagonal has elements with the value 1, and is invertible if A is 
-non-singular.
+The matrix A can be decomposited into an upper triangular matrix U and 
+a lower triangular matrix L. The elements on the diagonal of L are 1,
+and it is invertible.
 
-The LU decomposition allows one to find the sets of linear equations,
+By decomposition the result is
 \begin{gather}
 Ax = LUx = w
 \end{gather}
-Is then solved for x by using a the inverse of L
+Which is then solved for x by using a the inverse of L
 \begin{gather}
 Ux = L^{-1}w = y
 \end{gather}
 Since U is an upper triangular matrix the solution is found from back-substitution
 of the elements as described in the Gaussian Elimination.
+
+\subsubsection{FLOPS}
+The decomposition into the LU-matrix requires $\bigO{N^3}$ FLOPS, but 
+has the advantage that backwards substitution just requires $\bigO{N^2}$
+FLOPS to compute. This decomposition is also highly reusable if \eqref{eq:Avb}
+is to be solved for more than one $\ve{x}$, or the determinant is to be found.
 
 \subsubsection{Implementation}
 
@@ -362,7 +382,7 @@ The vector y is then created by
 \begin{gather}
 y = inv\left(\trans{P}L  \right)
 \end{gather}
-And the solver function from \ref{subsubsec:impl_gauss} is used.
+And the solver function in the Armadillo library is used.
 
 \subsection{Method using sparse}
 
@@ -371,28 +391,64 @@ This saves the non-zero matrix elements and location instead of the
 entire matrix. This saves memory and computational speed, as only these
 elements are manipulated.
 
-\subsubsection{Implementation}
+\subsubsection{FLOPS}
 
-The matrix solution above is very ineffective in both the amount
-of computations and memory usage. This is improved by using sparse 
-matrices, which saves the non-zero elements by position and value.
+For a sparse matrix (with suitable algorithms) the number of operations are considerably
+less than for the Gaussian reduction when the matrices are sparse.
+The amount of computations is very dependent upon the nature of the matrix.
+
+\subsubsection{Implementation}
 
 For our very sparse matrix which has $N-3$ unused elements per row, the
 memory-space saved is $(N-3)^2$. This helps keep the matrix in the 
-CPU-cache and speeds it up for larger matrices.
+CPU-cache and speeds it up for larger matrices. The implementation follows
+from the non-sparse solver, but a sparse matrix has to be constructed and 
+a sparse matrix solver must be used.
 
 The calculation is done by a call to
 \begin{lstlisting}
 arma::Col<double> x = spsolve(spA, b);
 \end{lstlisting}
 
+
+
+
 \section{Results}
 
 \subsection{Speed/Efficiency}
 
-\begin{center}
-\textbf{Table 1}: Comparing the time, number of clock cycles per MHz for the different algorithms for different number of mesh points.  
+The speed is measured in the program by counting the number of clock
+cycles that is executed between the start of the algorithm and the 
+end of it. This is so divided by one million, to simulate a 
+''standard'' computer. This is not a perfect measure, as random usage
+of the computer can divert CPU-time to other processes while the time
+is being measured. 
 
+A computer being run with no other processes and sequentially running
+through the parameters has produced a table for the computational speed
+of the algorithms\footnote{For reproduction use the script 
+\url{compare_algs.py}}.
+
+The CPU-time and the number of mesh points are included
+in table \ref{tab:time}, and plotted in figure \ref{fig:time}. When
+the number of meshpoints gets bigger, certain properties of the algorithms
+can be seen. With $\log$ plots the first derivative gives the polynomial 
+complexity. This shows that TDMA follows roughly $\bigO{n}$,
+LU-decomp $\approx \bigO{n^3}$, Gaussian $\approx \bigO{n^3}$ and the 
+sparse $\approx \bigO{n^{(5/2)}}$. 
+
+It is worth noting that the 
+LU-decomp takes a considerable amount of time more than the Gaussian,
+as the solver for the Gaussian is more effective. The LU-decomp has
+the advantage that it can be used for more vectors easily.
+
+\begin{table}[ht!]
+\centering
+%\textbf{Table 1}: Comparing the time, number of clock cycles per MHz for the different algorithms for different number of mesh points.  
+\caption{Comparing the time, number of clock cycles per MHz for the
+different algorithms for different number of mesh points. TDMA: TriDiagonal
+Matrix algorithm}
+\vspace{3mm}
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
 \hline
 \multicolumn{1}{|c|}{ } & \multicolumn{1}{|c|}{Gauss Elimination} & \multicolumn{1}{|c|}{TDMA.} & \multicolumn{1}{|c|}{Sparse decompostion} & \multicolumn{1}{|c|}{LU decomposition}  \\
@@ -413,20 +469,42 @@ N & Time & Time & Time & Time  \\
 6000 & 3.20998800e+01 &   2.22900000e-03 &   5.35781000e-01 & 1.89079185e+02 \\
 \hline
 \end{tabular}
-\end{center}
+\label{tab:time}
+\end{table}
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
 \centering
-  \includegraphics[scale=0.5]{n_time.png}
-  \caption{Insert some meaningful caption here. }
+  \includegraphics[scale=0.5]{Results/n_time.png}
+  \caption{Time taken for the different algorithms plotted against 
+  the number of mesh points}
+  \label{fig:time}
 \end{figure}
 
 
 \subsection{Accuracy/Error}
 
-\begin{figure}
-\textbf{Table 2}: Comparing accuray of different algorithms for a different number of mesh points. The error here is defined as $log_{10}$ of the maximum relative error. 
+\begin{equation}
+err = \max \left(\log_{10} \left(\mathrm{max}\left[
+\frac{v_i - u_i}{u_i} \right]\right)\right)
+\label{eq:error}
+\end{equation}
 
+
+The error is computed using \eqref{eq:error}.
+
+A table and figure of the error is included in table \ref{tab:err} 
+and plotted in figur \ref{fig:err}. The error is very similar,
+and is simply overplotted. This is saying that the methods
+give the same results, and are using the same procedures.
+
+
+
+\begin{table}[ht!]
+\centering
+\caption{Comparing accuray of different algorithms for a different number
+of mesh points. The error here is defined as $log_{10}$ of the maximum 
+relative error. }
+\vspace{3mm}
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
 \hline
 \multicolumn{1}{|c|}{ } & \multicolumn{1}{|c|}{Gauss Elimination} & \multicolumn{1}{|c|}{TDMA.} & \multicolumn{1}{|c|}{Sparse decompostion} & \multicolumn{1}{|c|}{LU decomposition}  \\
@@ -447,61 +525,25 @@ N & Error & Error & Error & Error  \\
 6000 & 0.00065928 &  0.00065928 &  0.00065928 &  0.00065928\\
 \hline
 \end{tabular}
-\end{figure}
+\label{tab:err}
+\end{table}
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
 \centering
-  \includegraphics[scale=0.5]{n_err.png}
-  \caption{Insert some meaningful caption here. }
+  \includegraphics[scale=0.5]{Results/n_err.png}
+  \caption{Relative error for the different algorithms plotted 
+  againt the number of meshpoints }
+  \label{fig:err}
 \end{figure}
 
 
-\subsection{FLOPS}
 
-The number of floating point operations (FLOPS) per algorithm gives a useful 
-metric of the scalability. The more FLOPS required the more time is
-required for larger systems. This is usually given in $\bigO{x}$ notation,
-where x gives approximately the number of calculations.
 
-\subsubsection{Thomas algorithm}
-This algorithm requires nine operations for each row for the forward substitution,
-and two backwards. This requires 11 FLOPS for each row to solve the system.
-With n rows this algorithm requires 11N FLOPS.
-
-In big O notation the complexity of $\bigO{n}$.
-
-\subsubsection{Gaussian decomposition}
-For a general matrix with size ($N\times N$), the algorithm requires
-$N^2$ operations per row reduction. This is repeated for all N rows,
-and the complexity is $\bigO{n^3}$ for the reduction. The backwards 
-substitution has $\bigO{n^2}$ and is not of significance.
-
-For a sparse matrix (with suitable algorithms) this could be less, 
-as some of the row operations are
-skipped. This leads to a lower amount of FLOPS needed for a sparse
-matrix.
-
-\subsubsection{LU decomposition}
-The decomposition into the LU-matrix requires $\bigO{N^3}$ FLOPS, but 
-has the advantage that backwards substitution just requires $\bigO{N^2}$
-FLOPS to compute. This decomposition is also highly reusable if \eqref{eq:Avb}
-is to be solved for more than one $\ve{x}$, or the determinant is to be found.
 
 \section{Discussion}
 
-Can solve the equation \eqref{eq:Avb} directly by LU-decomposition.
-The matrix A is then transformed into one upper triagonal matrix and
-one lower diagonal matrix. By doing this on a matrix this results in an
-easier way to solve several $Ax = y$ for different y.
 
-Direct solver by arma::solve(A, y) is used to compare with the LU-method.
-This is ordinary quicker, since armadillo is a high-level wrapper around
-lapack etc.
 
-\subsection{FLOPS}
-The number of calculations for the different algorithms are not equally
-scalable. The Thomas algorithm is far superior to the other methods
-with a complexity of $\bigO{n}$ compared to $\bigO{n^3}$.
 
 \section{Concluding remarks}
 
