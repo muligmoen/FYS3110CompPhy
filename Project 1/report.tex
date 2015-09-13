@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english,draft]{article}
+\documentclass[11pt,a4paper,english]{article}
 \usepackage[english]{babel} % Using babel for norwegian hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -9,6 +9,7 @@
 \usepackage[parfill]{parskip} % Removes indents
 \usepackage{amsmath} % Environment, symbols etc...
 \usepackage{amssymb}
+\usepackage{float} % Fixing figure locations
 \usepackage{multirow} % For nice tables
 %\usepackage{wasysym} % Astrological symbols
 \usepackage{graphicx} % For pictures etc...
@@ -356,11 +357,11 @@ By decomposition the result is
 \begin{gather}
 \ve{Ax} = \ve{LUx} = \ve{w}
 \end{gather}
-Which is then solved for x by using a the inverse of L
+Which is then solved for $\ve{x}$ by using a the inverse of $\ve{L}$
 \begin{gather}
-\ve{Ux} = \ve{L^{-1}w} = \ve{y}
+\ve{Ux} = \ve{L^{-1}w} = \ve{y}.
 \end{gather}
-Since U is an upper triangular matrix the solution is found from back-substitution
+Since $\ve{U}$ is an upper triangular matrix the solution is found from back-substitution
 of the elements as described in the Gaussian Elimination.
 
 \subsubsection{FLOPS}
@@ -414,7 +415,7 @@ arma::Col<double> x = spsolve(spA, b);
 
 \section{Results}
 
-\subsection{Speed/Efficiency}
+\subsection{Efficiency}
 
 The speed is measured in the program by counting the number of clock
 cycles that is executed between the start of the algorithm and the 
@@ -436,17 +437,11 @@ complexity. This shows that TDMA follows roughly $\bigO{n}$,
 LU-decomp $\approx \bigO{n^3}$, Gaussian $\approx \bigO{n^3}$ and the 
 sparse $\approx \bigO{n^{(5/2)}}$. 
 
-It is worth noting that the 
-LU-decomp takes a considerable amount of time more than the Gaussian,
-as the solver for the Gaussian is more effective. The LU-decomp has
-the advantage that it can be used for more vectors easily.
-
-\begin{table}[ht!]
+\begin{table}[H]
 \centering
 %\textbf{Table 1}: Comparing the time, number of clock cycles per MHz for the different algorithms for different number of mesh points.  
 \caption{Comparing the time, number of clock cycles per MHz for the
-different algorithms for different number of mesh points. TDMA: TriDiagonal
-Matrix algorithm}
+different algorithms for different number of mesh points. }
 \vspace{3mm}
 \begin{tabular}{|l|l|l|l|l|l|l|l|}
 \hline
@@ -471,7 +466,14 @@ N & Time & Time & Time & Time  \\
 \label{tab:time}
 \end{table}
 
-\begin{figure}[ht!]
+It is worth noting that the 
+LU-decomp takes a considerable amount of time more than the Gaussian,
+as the solver for the Gaussian is more effective. The LU-decomp has
+the advantage that it can be used for more vectors easily. 
+The algorithm developed in section \ref{subsec:Thomas} is 
+the most effective.
+
+\begin{figure}[H]
 \centering
   \includegraphics[scale=0.5]{Results/n_time.png}
   \caption{Time taken for the different algorithms plotted against 
@@ -480,7 +482,18 @@ N & Time & Time & Time & Time  \\
 \end{figure}
 
 
-\subsection{Accuracy/Error}
+\subsection{Accuracy}
+
+A table and figure of the error is included in table \ref{tab:err} 
+and plotted in figur \ref{fig:err}. 
+
+\begin{figure}[H]
+\centering
+  \includegraphics[scale=0.45]{Results/n_err.png}
+  \caption{Relative error for the different algorithms plotted 
+  againt the number of meshpoints }
+  \label{fig:err}
+\end{figure}
 
 \begin{equation}
 err = \max \left(\log_{10} \left(\mathrm{max}\left[
@@ -491,14 +504,11 @@ err = \max \left(\log_{10} \left(\mathrm{max}\left[
 
 The error is computed using \eqref{eq:error}.
 
-A table and figure of the error is included in table \ref{tab:err} 
-and plotted in figur \ref{fig:err}. The error is very similar,
-and is simply overplotted. This is saying that the methods
-give the same results, and are using the same procedures.
 
+The error is very similar, and is simply overplotted. This is saying that the methods
+give the same results, and are using the same procedures. To obtain different(preferably better) convergence rates for the error, using a higher order approximation for the derivative is a way to go. That was not the goal for this project, but is worth mentioning. 
 
-
-\begin{table}[ht!]
+\begin{table}[H]
 \centering
 \caption{Comparing accuray of different algorithms for a different number
 of mesh points. The error here is defined as $log_{10}$ of the maximum 
@@ -527,28 +537,12 @@ N & Error & Error & Error & Error  \\
 \label{tab:err}
 \end{table}
 
-\begin{figure}[ht!]
-\centering
-  \includegraphics[scale=0.5]{Results/n_err.png}
-  \caption{Relative error for the different algorithms plotted 
-  againt the number of meshpoints }
-  \label{fig:err}
-\end{figure}
-
-
-
-
-
-\section{Discussion}
-
-
-
-
 \section{Concluding remarks}
 
+Libraries for computational algorithms can be a great asset for scientists. However, one must not blindly belive that it is always the best option. To take into consideration how the algorithems work, and whether or not they are well suited for your specific problem is very important. The numerical experiments done in the project is good proof of that. Preforming a full Gaussian Elimination on a tridiagonal matrix is overkill. Just like you would not try to take out the rat in your basement using a nuclear bomb. 
 
-We see that the algorithm developed in section \ref{subsec:Thomas} is 
-well suited for this problem.
+
+
 
 
 \end{document}
