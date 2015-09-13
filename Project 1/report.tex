@@ -276,6 +276,8 @@ Since we do not have changing $a_i$ we have coded $a_i = a$.
 The zero-indexing in C++ is used, and the elements accessed in the code
 is different from the algorithm.
 
+For more details about implementation the full program containing all algorithms is available at: \url{https://github.com/mulimoen/FYS3150CompPhy/tree/master/Project\%201}. 
+
 \subsection{Standard Gaussian Elimination}
 
 The Gaussian elimination is solving the system \eqref{eq:Avb} by using 
@@ -413,7 +415,7 @@ arma::Col<double> x = spsolve(spA, b);
 
 
 
-\section{Results}
+\section{Results and observations}
 
 \subsection{Efficiency}
 
@@ -475,7 +477,7 @@ the most effective.
 
 \begin{figure}[H]
 \centering
-  \includegraphics[scale=0.5]{Results/n_time.png}
+  \includegraphics[scale=0.45]{Results/n_time.png}
   \caption{Time taken for the different algorithms plotted against 
   the number of mesh points}
   \label{fig:time}
