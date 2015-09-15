@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english,draft]{article}
+\documentclass[11pt,a4paper,english]{article}
 \usepackage[english]{babel} % Using babel for norwegian hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -11,6 +11,7 @@
 \usepackage{amssymb}
 \usepackage{float} % Fixing figure locations
 \usepackage{multirow} % For nice tables
+%\usepackage{wasysym} % Astrological symbols
 \usepackage{graphicx} % For pictures etc...
 \usepackage{enumitem} % Points/lists
 %\usepackage{physics} % Typesetting of mathematical physics examples: \bra{}, \ket{}, expval{}
@@ -33,11 +34,13 @@ frame=l,
 
 \numberwithin{equation}{section}
 
+\newcommand{\conj}[1]{#1^*}
 \newcommand{\ve}[1]{\mathbf{#1}} % Vektorer i bold
 \let\oldhat\hat
 \renewcommand{\hat}[1]{\mathbf{\oldhat{#1}}}
 \newcommand{\trans}[1]{#1^\top}
 \newcommand{\herm}[1]{#1^\dagger}
+%\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Gir fotnote-symboler
 \newcommand{\Real}{\mathbb{R}}
 \newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
 
@@ -49,6 +52,43 @@ frame=l,
 
 \begin{document}
 \maketitle
+
+\section{Method}
+
+ 
+\subsection{Jacobi's eigenvalue algorithm}
+
+\textcolor{red}{KSK: These are straight up answers to a). A more complete subsection should be made.}
+
+Having defined the quantities $\tan\theta = t= s/c$, with $s=\sin\theta$ and $c=\cos\theta$ and
+\[\cot 2\theta=\tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}.
+\]
+
+We can then define the angle $\theta$ so that the non-diagonal matrix elements of the transformed matrix 
+$a_{kl}$ become non-zero and
+we obtain the quadratic equation (using $\cot 2\theta=1/2(\cot \theta-\tan\theta)$
+\[
+t^2+2\tau t-1= 0,
+\]
+resulting in 
+\[
+  t = -\tau \pm \sqrt{1+\tau^2},
+\]
+
+Here a clever choice of roots must be made. For for a well trained computational physisist this equation should be a red warning sign of loss of numerical precision. To avoid subtraction of to almost equal numbers the following chioice should be made:
+
+\begin{align*}
+t=  -\tau + \sqrt{1+\tau^2}, \quad   0  \geq \tau \\
+t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0
+\end{align*}
+
+This also makes sure $t$ is the smaller of the roots. From the equations above we obtain the folowing relation for $c$ and $t$
+\[
+   c = \frac{1}{\sqrt{1+t^2}}.
+\]
+Knowing that $t \in [0,1]$ we put restrictions such that $c \in [\frac{1}{\sqrt{2}}, 1]$ which focres $\theta$ to be in the interval $[- \frac{\pi}{4},\frac{\pi}{4}]$.  
+
+This has the following effect on the convergence.. 
 
 
 
