@@ -1,8 +1,14 @@
+#Hidden files and folders
+.*
+!.gitignore
+
 #test-files
 test.txt
 
 #C++ files
 *.o
+
+#makefile
 .depend
 
 #LaTeX files
@@ -11,3 +17,8 @@ test.txt
 *.aux
 *.backup
 
+# Kdevelop project files
+.kdev4/
+*.kdev4
+ 
+*.kate-swp

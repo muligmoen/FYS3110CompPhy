@@ -1,0 +1,56 @@
+\documentclass[11pt,a4paper,english,draft]{article}
+\usepackage[english]{babel} % Using babel for norwegian hyphenation
+\usepackage{lmodern} % Changing the font
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
+\usepackage{tcolorbox}
+\usepackage[parfill]{parskip} % Removes indents
+\usepackage{amsmath} % Environment, symbols etc...
+\usepackage{amssymb}
+\usepackage{float} % Fixing figure locations
+\usepackage{multirow} % For nice tables
+\usepackage{graphicx} % For pictures etc...
+\usepackage{enumitem} % Points/lists
+%\usepackage{physics} % Typesetting of mathematical physics examples: \bra{}, \ket{}, expval{}
+\usepackage{url}
+
+\definecolor{red}{RGB}{255,10,10}
+
+% To include code(-snippets) with æøå
+\usepackage{listings}
+\lstset{
+language=c++,
+showspaces=false,
+showstringspaces=false,
+frame=l,
+}
+
+\tolerance = 5000 % Bedre tekst
+\hbadness = \tolerance
+\pretolerance = 2000
+
+\numberwithin{equation}{section}
+
+\newcommand{\ve}[1]{\mathbf{#1}} % Vektorer i bold
+\let\oldhat\hat
+\renewcommand{\hat}[1]{\mathbf{\oldhat{#1}}}
+\newcommand{\trans}[1]{#1^\top}
+\newcommand{\herm}[1]{#1^\dagger}
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+
+\newcommand{\spac}{\hspace{5mm}}
+
+\title{FYS3150/4150\\Computational Physics\\Project 2}
+\author{Magnus Ulimoen\\Krister Stræte Karlsen}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+
+
+
+\end{document}
