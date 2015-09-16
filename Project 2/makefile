@@ -14,7 +14,7 @@ LDFLAGS = -g
 
 
 # libraries to link into executable
-LDLIBS = 
+LDLIBS = -larmadillo -llapack -lopenblas
 
 # build executable
 TARGET = project2
