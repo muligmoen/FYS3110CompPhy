@@ -95,7 +95,6 @@ void test_find_cos_sin()
   
   std::cout << x << " " << c << "\n"
      << y << " " << s << std::endl;
-  
 }
 
 void test_max_indexes()
@@ -109,4 +108,11 @@ void test_max_indexes()
   
   max_err_offdiag(A, k, l, err);
   assert(k==1 && l==2);
+}
+
+int main()
+{
+  test_find_cos_sin();
+  test_max_indexes();
+  test_rotate();
 }
