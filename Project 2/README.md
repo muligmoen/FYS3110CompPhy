@@ -9,13 +9,13 @@ which is solved as an eigenvalue-problem.
 ##Installation
 Open the terminal in this folder and type
 
-'''
+```
 make
-'''
+```
 
 ##Usage
 In the terminal type
 
-'''
+```
 ./project2
-'''
+```
