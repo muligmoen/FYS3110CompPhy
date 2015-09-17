@@ -5,6 +5,8 @@
 #include <armadillo>
 
 #include "Jacobi_rotation.h"
+#include "unittest++/UnitTest++.h"
+
 
 
 void find_cos_sin(double a_kk, double a_ll, double a_kl, double &c, double &s)
@@ -45,74 +47,11 @@ void max_err_offdiag(const arma::Mat<double> &A, int &k, int &l, double &err)
     {
       if ((jjj != iii) && (std::abs(A(iii,jjj)) > err))
       {
-	err = std::abs(A(iii,jjj));
-	k = iii;
-	l = jjj;
+        err = std::abs(A(iii,jjj));
+        k = iii;
+        l = jjj;
       }
     }
   }
 }
 
-void test_rotate()
-{
-  double off_number = 1/std::sqrt(2);
-  arma::Mat<double> A;
-  A << 1 << off_number << arma::endr
-    << off_number << 3;
-    
-  double tau = (3-1)/((int)2*off_number);
-  double t = -tau - std::sqrt(1+ tau*tau);
-  double c = 1/std::sqrt(1+t*t);
-  double s = t*c;
-  
-  
-  arma::Mat<double> S;
-  S << c << s << arma::endr
-    << -s << c;
-  
-  arma::Mat<double> B = S.t()*A*S;
-  rotate(A, c, s, 0, 1);
-  
-  std::cout << A-B << std::endl;
-}
-
-void test_find_cos_sin()
-{
-  double off_number = 1/std::sqrt(2);
-  /*
-   * A = [1        off_number]
-   *     [off_number        3]
-   */
-  
-  double tau = (3-1)/((int)2*off_number);
-  double t = -tau - std::sqrt(1+ tau*tau);
-  double c = 1/std::sqrt(1+t*t);
-  double s = t*c;
-
-  
-  double x,y;
-  find_cos_sin(1, 3, off_number, x, y);
-  
-  std::cout << x << " " << c << "\n"
-     << y << " " << s << std::endl;
-}
-
-void test_max_indexes()
-{
-  arma::Mat<double> A;
-  A << 1 << 0 << 6 << arma::endr
-    << 0 << 3 << 9;
-  int k = 0;
-  int l = 0;
-  double err = 0;
-  
-  max_err_offdiag(A, k, l, err);
-  assert(k==1 && l==2);
-}
-
-int main()
-{
-  test_find_cos_sin();
-  test_max_indexes();
-  test_rotate();
-}

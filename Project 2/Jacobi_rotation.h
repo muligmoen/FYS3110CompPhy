@@ -1,3 +1,6 @@
+#ifndef Jacobi_rotation_H
+#define Jacobi_rotation_H
+
 #include <armadillo>
 
 
@@ -7,3 +10,4 @@ void rotate(arma::Mat<double> &A, double c, double s, int k, int l);
 
 void max_err_offdiag(const arma::Mat<double> &A, int &k, int &l, double &err);
 
+#endif

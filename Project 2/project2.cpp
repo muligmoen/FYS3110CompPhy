@@ -3,10 +3,13 @@
 #include <armadillo>
 #include "Jacobi_rotation.h"
 
+#include "unittest++/UnitTest++.h"
+
+
 
 
 int main()
 {
-  std::cout << "Hello" << std::endl;
+  UnitTest::RunAllTests();
 }
 
