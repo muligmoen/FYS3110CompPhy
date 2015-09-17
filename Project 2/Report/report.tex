@@ -90,6 +90,28 @@ Knowing that $t \in [0,1]$ we put restrictions such that $c \in [\frac{1}{\sqrt{
 
 This has the following effect on the convergence.. 
 
+\subsubsection{Implementation}
+
+\centerline{Algorithm I}
+\begin{tcolorbox}
+Find the largest element, $a_{k,l}$, in $A$ \\
+Compute $\tau:$ \\
+$ \tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}$ \\
+Compute t according to:  \\
+$t=  -\tau + \sqrt{1+\tau^2}, \quad   0  \geq \tau \\
+t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0 $ \\
+Set \\
+$ c= \frac{1}{\sqrt{1+t^2}}, \quad s= ct$ \\
+Compute the new matrix elements: \\
+$ b_{kl} = a_{kl}, \quad k,l \neq i,j$ \\
+$ b_{ik} = b_{ki} = ca_{ik}-sa_{jk}, \quad k \neq i,j$ \\
+$ b_{jk} = b_{kj} = sa_{ik}+ca_{jk}, \quad k \neq i,j$ \\
+$ b_{ij} = b_{ji} = (c^2 - s^2)a_{ij} + cs(a_{ii}-a_{jj}) $ \\
+$ b_{ii} = c^2 a_{ii} - 2csa_{ij} + s^2 a_{jj} $ \\
+$ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $ \\
+
+\end{tcolorbox} 
+
 
 
 
