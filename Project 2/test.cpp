@@ -1,5 +1,6 @@
- 
+
 #include <armadillo>
+#include <cmath>
 
 #include "Jacobi_rotation.h"
 #include "unittest++/UnitTest++.h"
@@ -11,30 +12,47 @@ SUITE(Jacobi)
   double tolerance = 1e-10;
   TEST(Rotate)
   {
-    double off_number = 1/std::sqrt(2);
-    arma::Mat<double> A;
-    A << 1 << off_number << arma::endr
-      << off_number << 3;
-      
-    double tau = (3-1)/((int)2*off_number);
-    double t = -tau - std::sqrt(1+ tau*tau);
-    double c = 1/std::sqrt(1+t*t);
-    double s = t*c;
+    int N = 5;
+    
+    arma::arma_rng::set_seed_random();
+    arma::Mat<double> A(N, N, arma::fill::randu);
     
     
-    arma::Mat<double> S;
-    S << c << s << arma::endr
-      << -s << c;
+    for (int iii=0; iii<N; iii++) // Symmetric matrix
+    {
+      for (int jjj=0; jjj<N; jjj++)
+      {
+        if (jjj>iii)
+	{
+	  A(jjj, iii) = A(iii, jjj);
+	}
+      }
+    }
+    
+    double cos = 0.5;
+    double sin = std::sqrt(1-cos*cos);
+    int k = 2;
+    int l = 4;
+    
+    arma::Mat<double> S(N, N, arma::fill::eye);
+    S(k, k) = cos;
+    S(l, l) = cos;
+    
+    S(k, l) = sin;
+    S(l, k) = -sin;
     
     arma::Mat<double> B = S.t()*A*S;
-    rotate(A, c, s, 0, 1);
+    rotate(A, cos, sin, k, l);
     
     
-    for (int iii=0; iii<2; iii++)
+    for (int iii=0; iii<N; iii++)
     {
-      for (int jjj=0; jjj<2; jjj++)
+      for (int jjj=0; jjj<N; jjj++)
       {
-        CHECK_CLOSE(A(iii,jjj), B(iii,jjj), tolerance);
+	if ((iii != k) && (iii != l)) // ignore the hard-coded zero-values
+	{
+	  CHECK_CLOSE(A(iii,jjj), B(iii,jjj), tolerance);
+	}
       }
     }
   }

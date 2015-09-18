@@ -22,8 +22,8 @@ TEST(Potential)
 int main()
 {
   UnitTest::RunAllTests();
-  
-  const int N = 100;
+  /*
+  const int N = 5;
   
   double rho_0 = 0.01;
   double rho_inf = 10;
@@ -33,7 +33,7 @@ int main()
   
   auto eigs =  eig_sym(A);
   
-  int MAX_iter = 10000;
+  int MAX_iter = 10;
   for (int iii=0; iii<MAX_iter; iii++)
   {
     int k, l;
@@ -64,7 +64,7 @@ int main()
   for (int iii=0; iii<10; iii++)
   {
     std::cout << eigs(iii) << " " << eigs2(iii) << "\n";
-  }
+  }*/
 }
 
 
