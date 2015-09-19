@@ -7,7 +7,20 @@
 #include "Jacobi_rotation.h"
 #include "unittest++/UnitTest++.h"
 
-
+double sum_offdiag(const arma::mat &A) // Can be used for tolerance check
+{
+double sum = 0;
+  for (int ii=0; ii < A.n_cols; ii++)
+  {
+     for (int jj=0; jj < A.n_cols; jj++)
+        {
+          if(ii != jj){
+            sum = sum + std::abs(A(ii,jj));
+            }
+        }
+  }
+  return sum;
+}
 
 void find_cos_sin(double a_kk, double a_ll, double a_kl, double &c, double &s)
 {
