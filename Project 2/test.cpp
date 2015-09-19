@@ -91,4 +91,14 @@ SUITE(Jacobi)
     CHECK_CLOSE(x, c, tolerance);
     CHECK_CLOSE(y, s, tolerance);
   }
+  TEST(abs_sum_offdiag)
+  {
+    arma::Mat<double> A;
+    
+    A << 1 << 6 << -1 << arma::endr
+      << 4 << 999 << 9;
+    
+    CHECK_CLOSE( abs_sum_offdiag(A), 6+1+4+9, tolerance);
+    
+  }
 }

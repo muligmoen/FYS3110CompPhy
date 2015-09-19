@@ -1,23 +1,21 @@
-#include <iostream>
 #include <cmath>
-#include <cassert>
 
 #include <armadillo>
 
 #include "Jacobi_rotation.h"
 #include "unittest++/UnitTest++.h"
 
-double sum_offdiag(const arma::mat &A) // Can be used for tolerance check
+double abs_sum_offdiag(const arma::Mat<double> &A) // Can be used for tolerance check
 {
-double sum = 0;
-  for (int ii=0; ii < A.n_cols; ii++)
+  double sum = 0;
+  for (int iii=0; iii < (int)A.n_rows; iii++)
   {
-     for (int jj=0; jj < A.n_cols; jj++)
-        {
-          if(ii != jj){
-            sum = sum + std::abs(A(ii,jj));
-            }
-        }
+    for (int jjj=0; jjj < (int)A.n_cols; jjj++)
+     {
+       if(iii != jjj){
+         sum += std::abs(A(iii,jjj));
+       }
+     }
   }
   return sum;
 }
