@@ -1,31 +1,50 @@
 #include <iostream>
+#include <cstdlib>
 
 #include <armadillo>
 #include "Jacobi_rotation.h"
 
 #include "unittest++/UnitTest++.h"
 
-void do_nothing(...) { }
 
-double potential(double r);
+
+inline double potential(double rho);
 
 arma::Mat<double> get_matrix(int N, double rho_0, double rho_inf, double (*V)(double));
 
-TEST(Potential)
+/*TEST(Potential)
 {
   double tolerance = 1e-10;
   double k = 1.0;
   
-  CHECK_CLOSE(potential(5), k/(5.0*5.0), tolerance);
-}
+  CHECK_CLOSE(potential(5), k*5*5, tolerance);
+}*/
 
-int main()
+int main(int argc, char *argv[])
 {
   UnitTest::RunAllTests();
-  /*
-  const int N = 5;
   
-  double rho_0 = 0.01;
+  int N = -1;
+  int MAX_iter = -1;
+  
+  if (argc < 3)
+  {
+    std::cout << "Running standard settings" << std::endl;
+    N = 100;
+    MAX_iter = 10000;    
+  }
+  else 
+  {
+    N = std::atoi(argv[1]);
+    MAX_iter = std::atof(argv[2]);
+    if (N<1 || MAX_iter<1)
+    {
+      std::cerr << "Invalid arguments" << std::endl;
+      std::exit(1);
+    }
+  }
+
+  double rho_0 = 0.0;
   double rho_inf = 10;
   
   
@@ -33,7 +52,7 @@ int main()
   
   auto eigs =  eig_sym(A);
   
-  int MAX_iter = 10;
+ 
   for (int iii=0; iii<MAX_iter; iii++)
   {
     int k, l;
@@ -41,7 +60,7 @@ int main()
     max_err_offdiag(A, k, l, max_err);
     
     
-    if (max_err < 1e-5)
+    if (max_err < 1e-10)
     {
       break;
     }
@@ -64,14 +83,15 @@ int main()
   for (int iii=0; iii<10; iii++)
   {
     std::cout << eigs(iii) << " " << eigs2(iii) << "\n";
-  }*/
+  }
+  return 0;
 }
 
 
-double potential(double r)
+inline double potential(double rho)
 {
   double k = 1.0;
-  return k/(r*r);
+  return k*rho*rho;
 }
 
 arma::Mat<double> get_matrix(int N, double rho_0, double rho_inf, double (*V)(double))
