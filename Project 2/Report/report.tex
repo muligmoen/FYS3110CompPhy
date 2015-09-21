@@ -55,9 +55,81 @@ frame=l,
 
 \section{Introduction}
 
+In this projct the Schr\"odinger's equation for two electrons in a three-dimensional harmonic oscillator well will be solved numerically. Both computational and physical aspects of the problem will be discussed throughout the report. 
+
 
 \section{Method}
 
+\subsection{Mathematical formulation and scaling}
+
+We will assume spherical symmetry and that the electrons move in a three-dimensional harmonic
+oscillator potential and repel  each other via the static Colulomb interaction.  
+
+The radial part of the Schr\"odinger's equation for one electron then reads:
+\[
+  -\frac{\hbar^2}{2 m} \left ( \frac{1}{r^2} \frac{d}{dr} r^2
+  \frac{d}{dr} - \frac{l (l + 1)}{r^2} \right )R(r) 
+     + V(r) R(r) = E R(r).
+\]
+In our case $V(r)$ is the harmonic oscillator potential $(1/2)kr^2$ with
+$k=m\omega^2$ and $E$ is
+the energy of the harmonic oscillator in three dimensions.
+The oscillator frequency is $\omega$ and the energies are
+\[
+E_{nl}=  \hbar \omega \left(2n+l+\frac{3}{2}\right),
+\]
+with $n=0,1,2,\dots$ and $l=0,1,2,\dots$.
+ 
+Using spherical coordinates we have $r\in [0,\infty)$. The quantum number
+$l$ is the orbital momentum of the electron.
+Then we make the substitution $R(r) = (1/r) u(r)$ and obtain
+
+\[
+  -\frac{\hbar^2}{2 m} \frac{d^2}{dr^2} u(r) 
+       + \left ( V(r) + \frac{l (l + 1)}{r^2}\frac{\hbar^2}{2 m}
+                                    \right ) u(r)  = E u(r) .
+\]
+%
+The boundary conditions are $u(0)=0$ and $u(\infty)=0$.
+
+Introducing the dimensionless variable $\rho = (1/\alpha) r$
+where $\alpha$ is a constant with dimension length we get
+% 
+\[
+  -\frac{\hbar^2}{2 m \alpha^2} \frac{d^2}{d\rho^2} u(\rho) 
+       + \left ( V(\rho) + \frac{l (l + 1)}{\rho^2}
+         \frac{\hbar^2}{2 m\alpha^2} \right ) u(\rho)  = E u(\rho) .
+\]
+%
+In this project we will only study the situation $l=0$.
+Inserting $V(\rho) = (1/2) k \alpha^2\rho^2$ we end up with
+\[
+  -\frac{\hbar^2}{2 m \alpha^2} \frac{d^2}{d\rho^2} u(\rho) 
+       + \frac{k}{2} \alpha^2\rho^2u(\rho)  = E u(\rho) .
+\]
+Multiplying with $2m\alpha^2/\hbar^2$ on both sides to obtain
+\[
+  -\frac{d^2}{d\rho^2} u(\rho) 
+       + \frac{mk}{\hbar^2} \alpha^4\rho^2u(\rho)  = \frac{2m\alpha^2}{\hbar^2}E u(\rho) .
+\]
+The constant $\alpha$ can now be fixed such that
+\[
+\frac{mk}{\hbar^2} \alpha^4 = 1,
+\]
+or 
+\[
+\alpha = \left(\frac{\hbar^2}{mk}\right)^{1/4}.
+\]
+Defining 
+\[
+\lambda = \frac{2m\alpha^2}{\hbar^2}E,
+\]
+we can rewrite Schr\"odinger's equation as
+\[
+  -\frac{d^2}{d\rho^2} u(\rho) + \rho^2u(\rho)  = \lambda u(\rho) .
+\]
+
+This equation can now be discretized and solved as a linear system using Jacobi's algorithm for eigenvalues. 
  
 \subsection{Jacobi's eigenvalue algorithm}
 
@@ -85,7 +157,7 @@ t=  -\tau + \sqrt{1+\tau^2}, \quad   0  \geq \tau \\
 t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0
 \end{align*}
 
-This also makes sure $t$ is the smaller of the roots. From the equations above we obtain the folowing relation for $c$ and $t$
+This choice also makes sure $t$ is the smaller of the roots. From the equations above we obtain the folowing relation for $c$ and $t$
 \[
    c = \frac{1}{\sqrt{1+t^2}}.
 \]
