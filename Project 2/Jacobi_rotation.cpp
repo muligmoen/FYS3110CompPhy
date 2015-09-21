@@ -2,7 +2,7 @@
 
 #include <armadillo>
 
-#include "Jacobi_rotation.h"
+#include "Jacobi_rotation.hpp"
 #include "unittest++/UnitTest++.h"
 
 double abs_sum_offdiag(const arma::Mat<double> &A) // Can be used for tolerance check

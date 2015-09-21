@@ -2,7 +2,7 @@
 #include <armadillo>
 #include <cmath>
 
-#include "Jacobi_rotation.h"
+#include "Jacobi_rotation.hpp"
 #include "unittest++/UnitTest++.h"
 
 
