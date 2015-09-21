@@ -212,13 +212,17 @@ t=  -\tau + \sqrt{1+\tau^2}, \quad   0  \geq \tau \\
 t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0
 \end{align*}
 
-This choice also makes sure $t$ is the smaller of the roots. From the equations above we obtain the folowing relation for $c$ and $t$
+From the equations above we obtain the folowing relation for $c$ and $t$
 \[
    c = \frac{1}{\sqrt{1+t^2}}.
 \]
 Knowing that $t \in [0,1]$ we put restrictions such that $c \in [\frac{1}{\sqrt{2}}, 1]$ which focres $\theta$ to be in the interval $[- \frac{\pi}{4},\frac{\pi}{4}]$.  
 
-This has the following effect on the convergence.. 
+Chosing the smaller $t$ makes $c$ the larger and minimizes 
+\[
+||{\bf B}-{\bf A}||_F^2=4(1-c)\sum_{i=1,i\ne k,l}^n(a_{ik}^2+a_{il}^2) +\frac{2a_{kl}^2}{c^2}.
+\]
+
 
 \subsubsection{Implementation}
 
