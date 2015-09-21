@@ -1,23 +1,21 @@
-#include <iostream>
 #include <cmath>
-#include <cassert>
 
 #include <armadillo>
 
 #include "Jacobi_rotation.h"
 #include "unittest++/UnitTest++.h"
 
-double sum_offdiag(const arma::mat &A) // Can be used for tolerance check
+double abs_sum_offdiag(const arma::Mat<double> &A) // Can be used for tolerance check
 {
-double sum = 0;
-  for (int ii=0; ii < A.n_cols; ii++)
+  double sum = 0;
+  for (int iii=0; iii < (int)A.n_rows; iii++)
   {
-     for (int jj=0; jj < A.n_cols; jj++)
-        {
-          if(ii != jj){
-            sum = sum + std::abs(A(ii,jj));
-            }
-        }
+    for (int jjj=0; jjj < (int)A.n_cols; jjj++)
+     {
+       if(iii != jjj){
+         sum += std::abs(A(iii,jjj));
+       }
+     }
   }
   return sum;
 }
@@ -35,19 +33,21 @@ void rotate(arma::Mat<double> &A, double c, double s, int k, int l)
 {
   double a_kk = A(k, k);
   double a_ll = A(l, l);
-  double a_lk = A(l, k);
   double a_kl = A(k, l);
   
   for (int iii=0; iii<(int)A.n_rows; iii++)
   {
+    double a_ik = A(iii, k);
     A(iii, k) = A(iii, k)*c - A(iii, l)*s;
-    A(iii, l) = A(iii, l)*c + A(iii, l)*s;
+    A(k, iii) = A(iii, k);
+    A(iii, l) = A(iii, l)*c + a_ik*s;
+    A(l, iii) = A(iii, l);
   }
   
   A(k, k) = a_kk*c*c - 2*a_kl*c*s + a_ll*s*s;
-  A(l, l) = a_ll*c*c + 2*a_lk*c*s + a_kk*s*s;
-  A(k,l) = (a_kk-a_ll)*c*s + a_kl*(c*c-s*s); // DEBUG
-  A(l,k) = (a_kk-a_ll)*c*s + a_kl*(c*c-s*s); // DEBUG
+  A(l, l) = a_ll*c*c + 2*a_kl*c*s + a_kk*s*s;
+  A(k,l) = 0; // (a_kk-a_ll)*c*s + a_kl*(c*c-s*s); // DEBUG
+  A(l,k) = 0; // (a_kk-a_ll)*c*s + a_kl*(c*c-s*s); // DEBUG
 }
 
 void max_err_offdiag(const arma::Mat<double> &A, int &k, int &l, double &err)

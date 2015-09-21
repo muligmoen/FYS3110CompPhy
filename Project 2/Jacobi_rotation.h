@@ -10,4 +10,7 @@ void rotate(arma::Mat<double> &A, double c, double s, int k, int l);
 
 void max_err_offdiag(const arma::Mat<double> &A, int &k, int &l, double &err);
 
+double abs_sum_offdiag(const arma::Mat<double> &A);
+
+
 #endif
