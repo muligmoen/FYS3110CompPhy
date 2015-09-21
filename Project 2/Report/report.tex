@@ -1,5 +1,5 @@
-\documentclass[11pt,a4paper,english]{article}
-\usepackage[english]{babel} % Using babel for norwegian hyphenation
+\documentclass[11pt,a4paper,english,draft]{article}
+\usepackage[english]{babel} % Using babel for hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -14,7 +14,8 @@
 %\usepackage{wasysym} % Astrological symbols
 \usepackage{graphicx} % For pictures etc...
 \usepackage{enumitem} % Points/lists
-%\usepackage{physics} % Typesetting of mathematical physics examples: \bra{}, \ket{}, expval{}
+\usepackage{physics} % Typesetting of mathematical physics examples: 
+                     % \bra{}, \ket{}, expval{}
 \usepackage{url}
 
 \definecolor{red}{RGB}{255,10,10}
@@ -37,7 +38,7 @@ frame=l,
 \newcommand{\conj}[1]{#1^*}
 \newcommand{\ve}[1]{\mathbf{#1}} % Vektorer i bold
 \let\oldhat\hat
-\renewcommand{\hat}[1]{\mathbf{\oldhat{#1}}}
+\renewcommand{\hat}[1]{\oldhat{#1}}
 \newcommand{\trans}[1]{#1^\top}
 \newcommand{\herm}[1]{#1^\dagger}
 %\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Gir fotnote-symboler
@@ -55,81 +56,134 @@ frame=l,
 
 \section{Introduction}
 
-In this projct the Schr\"odinger's equation for two electrons in a three-dimensional harmonic oscillator well will be solved numerically. Both computational and physical aspects of the problem will be discussed throughout the report. 
+In this projct the Schrödinger's equation for two electrons in a
+three-dimensional harmonic oscillator well will be solved numerically. 
+Both computational and physical aspects of the problem will be discussed 
+throughout the report. 
 
 
 \section{Method}
 
-\subsection{Mathematical formulation and scaling}
+\subsection{Schrödinger's equation}
 
-We will assume spherical symmetry and that the electrons move in a three-dimensional harmonic
-oscillator potential and repel  each other via the static Colulomb interaction.  
 
-The radial part of the Schr\"odinger's equation for one electron then reads:
-\[
+\subsubsection{Time-independent Schrödinger's equation}
+From quantum mechanics we have Schrödinger's equation on the form
+\begin{equation}
+\hat{H} \ket{\Psi} = i\hbar \frac{\partial }{\partial t} \ket{\Psi}
+\label{eq:Schrödinger}
+\end{equation}
+If the Hamiltonian $\hat{H}$ is independent of time this is separable,
+and the left side of \eqref{eq:Schrödinger} is taken as E, and we get the
+time-independent Schrödinger equation;
+\begin{equation}
+ \hat{H}\ket{\Psi} = E\ket{\Psi}
+\end{equation}
+For a single electron the Hamiltonian has the form 
+\begin{equation}
+\hat{H} = \frac{\hat{p}^2}{2m} + V(\ve{r})
+\end{equation}
+Or if written in the function basis,
+\begin{equation}
+\hat{H} = -\frac{\hbar^2}{2m}\nabla^2 + V(\ve{r})
+\label{eq:Hamiltonian}
+\end{equation}
+
+
+
+\subsubsection{Spherical harmonics}
+Writing out \eqref{eq:Hamiltonian} in spherical coordinates we end up
+with the equation
+\begin{gather}
+\nonumber \hat{H} = \\
+-\frac{\hbar^2}{2m}\left(\frac{1}{r^2}\frac{\partial}{\partial r}
+\left( r^2\frac{\partial }{\partial r}\right)
++ \frac{1}{r^2}\left[ \frac{1}{\sin\theta}\frac{\partial}{\partial \theta}
+\left( \sin\theta \frac{\partial}{\partial \theta}\right)
++ \frac{1}{\sin^2\theta}\frac{\partial^2}{\partial \phi^2}
+\right]\right) + V(r,\theta,\phi)
+\end{gather}
+If $V$ is spherically symmetrical, the solution is separable into
+$\Psi = R(r)Y_l^m(\theta, \phi)$ where $Y_l^m$ is the associated Laguerre
+polynomials. The part in the square brackets is an eigenfunction of 
+$Y_l^m$, with eigenvalue $-l(l+1)$. 
+
+
+\subsubsection{Radial equation}
+
+The radial part of the Schrödinger's equation now reads:
+\begin{gather}
   -\frac{\hbar^2}{2 m} \left ( \frac{1}{r^2} \frac{d}{dr} r^2
   \frac{d}{dr} - \frac{l (l + 1)}{r^2} \right )R(r) 
-     + V(r) R(r) = E R(r).
-\]
-In our case $V(r)$ is the harmonic oscillator potential $(1/2)kr^2$ with
-$k=m\omega^2$ and $E$ is
-the energy of the harmonic oscillator in three dimensions.
-The oscillator frequency is $\omega$ and the energies are
-\[
-E_{nl}=  \hbar \omega \left(2n+l+\frac{3}{2}\right),
-\]
-with $n=0,1,2,\dots$ and $l=0,1,2,\dots$.
- 
-Using spherical coordinates we have $r\in [0,\infty)$. The quantum number
-$l$ is the orbital momentum of the electron.
-Then we make the substitution $R(r) = (1/r) u(r)$ and obtain
+     + V(r) R(r) = E R(r)
+\label{eq:radial}
+\end{gather}
+The $l$ quantum number tends to ''throw'' the radial part outwards,
+and works as a sentrifugal barrier.
 
-\[
+\subsubsection{Harmonic oscillator}
+In our case $V(r)$ is the harmonic oscillator potential 
+$V = \frac{1}{2}k r^2$ with
+$k=m\omega^2$. 
+
+We make the substitution $R(r) = (1/r) u(r)$ in the radial
+equation and obtain
+\begin{gather}
   -\frac{\hbar^2}{2 m} \frac{d^2}{dr^2} u(r) 
        + \left ( V(r) + \frac{l (l + 1)}{r^2}\frac{\hbar^2}{2 m}
                                     \right ) u(r)  = E u(r) .
-\]
-%
-The boundary conditions are $u(0)=0$ and $u(\infty)=0$.
+\end{gather}
+The boundary conditions are $u(0)=0$ and $u(\infty)=0$ to avoid
+an unnormalizable wavefunction.
 
 Introducing the dimensionless variable $\rho = (1/\alpha) r$
 where $\alpha$ is a constant with dimension length we get
-% 
-\[
+\begin{gather}
   -\frac{\hbar^2}{2 m \alpha^2} \frac{d^2}{d\rho^2} u(\rho) 
        + \left ( V(\rho) + \frac{l (l + 1)}{\rho^2}
          \frac{\hbar^2}{2 m\alpha^2} \right ) u(\rho)  = E u(\rho) .
-\]
-%
+\end{gather}
 In this project we will only study the situation $l=0$.
 Inserting $V(\rho) = (1/2) k \alpha^2\rho^2$ we end up with
-\[
+\begin{gather}
   -\frac{\hbar^2}{2 m \alpha^2} \frac{d^2}{d\rho^2} u(\rho) 
        + \frac{k}{2} \alpha^2\rho^2u(\rho)  = E u(\rho) .
-\]
+\end{gather}
 Multiplying with $2m\alpha^2/\hbar^2$ on both sides to obtain
-\[
+\begin{gather}
   -\frac{d^2}{d\rho^2} u(\rho) 
-       + \frac{mk}{\hbar^2} \alpha^4\rho^2u(\rho)  = \frac{2m\alpha^2}{\hbar^2}E u(\rho) .
-\]
+       + \frac{mk}{\hbar^2} \alpha^4\rho^2u(\rho) 
+       = \frac{2m\alpha^2}{\hbar^2}E u(\rho) .
+\end{gather}
 The constant $\alpha$ can now be fixed such that
-\[
+\begin{gather}
 \frac{mk}{\hbar^2} \alpha^4 = 1,
-\]
-or 
-\[
-\alpha = \left(\frac{\hbar^2}{mk}\right)^{1/4}.
-\]
+\end{gather}
+and the constant is now
+\begin{gather}
+\alpha = \left(\frac{\hbar^2}{mk}\right)^{1/4}
+\end{gather}
 Defining 
-\[
+\begin{gather}
 \lambda = \frac{2m\alpha^2}{\hbar^2}E,
-\]
-we can rewrite Schr\"odinger's equation as
+\end{gather}
+we can rewrite Schrödinger's equation as
 \begin{equation}
   -\frac{d^2}{d\rho^2} u(\rho) + \rho^2u(\rho)  = \lambda u(\rho) .
 \end{equation}
 
-This equation can now be discretized and solved as a linear system using Jacobi's algorithm for eigenvalues. 
+This equation can now be discretized and solved as a linear system 
+using for example Jacobi's algorithm for eigenvalues. 
+
+\subsubsection{Eigenvalues of the energy}
+The eigenvalues of \eqref{eq:radial} can be found analytically,
+and are the energies
+\begin{gather}
+E_{nl}=  \hbar \omega \left(2n+l+\frac{3}{2}\right),
+\end{gather}
+where $n$ and $l$ are quantum numbers, with $n = 0, 1, 2, \dots$ and
+$l = 0, 1, \dots, n-1$.
+ 
  
 \subsection{Discretization}
 
@@ -138,49 +192,52 @@ Using a standard center approximation for the second derivative:$u$
     u''=\frac{u(\rho+h) -2u(\rho) +u(\rho-h)}{h^2} +O(h^2),
     \label{eq:diffoperation}
 \end{equation} 
-where $h$ is our step.
+where $h$ is our steplength.
 
 For a finite value of $\rho_{\mathrm{max}}$, we can define 
-\[
+\begin{gather}
   h=\frac{\rho_{\mathrm{max}}-\rho_{\mathrm{min}} }{n_{\mathrm{step}}}.
-\]
+\end{gather}
 and 
-\[
-    \rho_i= \rho_{\mathrm{min}} + ih, \hspace{1cm} i=0,1,2,\dots , n_{\mathrm{step}}
-\]
-Then rewrite the Schr\"odinger equation for $\rho_i$ as
-\[
--\frac{u(\rho_i+h) -2u(\rho_i) +u(\rho_i-h)}{h^2}+\rho_i^2u(\rho_i)  = \lambda u(\rho_i)
-\]
+\begin{gather}
+    \rho_i= \rho_{\mathrm{min}} + ih, \hspace{1cm} i=0,1,2,\dots ,
+    n_{\mathrm{step}}
+\end{gather}
+Then rewrite the Schrödinger equation for $\rho_i$ as
+\begin{gather}
+-\frac{u(\rho_i+h) -2u(\rho_i) +u(\rho_i-h)}{h^2}+\rho_i^2u(\rho_i) 
+= \lambda u(\rho_i)
+\end{gather}
 where $V_i=\rho_i^2$ is the harmonic oscillator potential.
 
 Defning 
-\[
+\begin{gather}
    d_i=\frac{2}{h^2}+V_i, \hspace{0.5cm } e_i=-\frac{1}{h^2}.
-\]
-the Schr\"odinger equation takes the following form
-\[
+\end{gather}
+the Schrödinger equation takes the following form
+\begin{gather}
 d_iu_i+e_{i-1}u_{i-1}+e_{i+1}u_{i+1}  = \lambda u_i,
-\]
+\end{gather}
 where $u_i$ is unknown. We can write the 
 latter equation as a matrix eigenvalue problem 
 \begin{equation}
-    \left( \begin{array}{ccccccc} d_1 & e_1 & 0   & 0    & \dots  &0     & 0 \\
-                                e_1 & d_2 & e_2 & 0    & \dots  &0     &0 \\
-                                0   & e_2 & d_3 & e_3  &0       &\dots & 0\\
-                                \dots  & \dots & \dots & \dots  &\dots      &\dots & \dots\\
-                                0   & \dots & \dots & \dots  &\dots       &d_{n_{\mathrm{step}}-2} & e_{n_{\mathrm{step}}-1}\\
-                                0   & \dots & \dots & \dots  &\dots       &e_{n_{\mathrm{step}}-1} & d_{n_{\mathrm{step}}-1}
-
-             \end{array} \right)      \left( \begin{array}{c} u_{1} \\
-                                                              u_{2} \\
-                                                              \dots\\ \dots\\ \dots\\
-                                                              u_{n_{\mathrm{step}}-1}
-             \end{array} \right)=\lambda \left( \begin{array}{c} u_{1} \\
-                                                              u_{2} \\
-                                                              \dots\\ \dots\\ \dots\\
-                                                              u_{n_{\mathrm{step}}-1}
-             \end{array} \right) 
+\begin{pmatrix} d_1 & e_1 & 0   & 0    & \dots  &0     & 0 \\
+                e_1 & d_2 & e_2 & 0    & \dots  &0     &0 \\
+                0   & e_2 & d_3 & e_3  &0       &\dots & 0\\
+        \dots  & \dots & \dots & \ddots  &\ddots      &\dots & \dots\\
+ 0   & \dots & \dots & \dots  &\dots  &d_{n_{\mathrm{step}}-2} & e_{n_{\mathrm{step}}-1}\\
+ 0   & \dots & \dots & \dots  &\dots       &e_{n_{\mathrm{step}}-1} & d_{n_{\mathrm{step}}-1}
+             \end{pmatrix}
+\begin{pmatrix} u_{1} \\
+      u_{2} \\
+      \dots\\ \dots\\ \dots\\
+      u_{n_{\mathrm{step}}-1}
+\end{pmatrix} 
+= \lambda \begin{pmatrix} u_{1} \\
+                          u_{2} \\
+                          \dots\\ \dots\\ \dots\\
+                          u_{n_{\mathrm{step}}-1}
+             \end{pmatrix} 
       \label{eq:sematrix}
 \end{equation} 
 
@@ -191,19 +248,19 @@ We will now move on the see how we can solve this eivenvalue problem using Jacob
 \textcolor{red}{KSK: These are straight up answers to a). A more complete subsection should be made.}
 
 Having defined the quantities $\tan\theta = t= s/c$, with $s=\sin\theta$ and $c=\cos\theta$ and
-\[\cot 2\theta=\tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}.
-\]
+\begin{gather}\cot 2\theta=\tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}.
+\end{gather}
 
 We can then define the angle $\theta$ so that the non-diagonal matrix elements of the transformed matrix 
 $a_{kl}$ become non-zero and
 we obtain the quadratic equation (using $\cot 2\theta=1/2(\cot \theta-\tan\theta)$
-\[
+\begin{gather}
 t^2+2\tau t-1= 0,
-\]
+\end{gather}
 resulting in 
-\[
+\begin{gather}
   t = -\tau \pm \sqrt{1+\tau^2},
-\]
+\end{gather}
 
 Here a clever choice of roots must be made. For for a well trained computational physisist this equation should be a red warning sign of loss of numerical precision. To avoid subtraction of to almost equal numbers the following chioice should be made:
 
@@ -213,15 +270,15 @@ t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0
 \end{align*}
 
 From the equations above we obtain the folowing relation for $c$ and $t$
-\[
+\begin{gather}
    c = \frac{1}{\sqrt{1+t^2}}.
-\]
+\end{gather}
 Knowing that $t \in [0,1]$ we put restrictions such that $c \in [\frac{1}{\sqrt{2}}, 1]$ which focres $\theta$ to be in the interval $[- \frac{\pi}{4},\frac{\pi}{4}]$.  
 
 Chosing the smaller $t$ makes $c$ the larger and minimizes 
-\[
+\begin{gather}
 ||{\bf B}-{\bf A}||_F^2=4(1-c)\sum_{i=1,i\ne k,l}^n(a_{ik}^2+a_{il}^2) +\frac{2a_{kl}^2}{c^2}.
-\]
+\end{gather}
 
 
 \subsubsection{Implementation}
