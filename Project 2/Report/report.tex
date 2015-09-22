@@ -180,14 +180,14 @@ we can rewrite Schrödinger's equation as
 This equation can now be discretized and solved as a linear system 
 using for example Jacobi's algorithm for eigenvalues. 
 
-\subsubsection{Eigenvalues of the energy}
+\subsubsection{Eigenvalues of the Hamiltonian}
 The eigenvalues of \eqref{eq:radial} can be found analytically,
 and are the energies
 \begin{gather}
 E_{nl}=  \hbar \omega \left(2n+l+\frac{3}{2}\right),
 \end{gather}
 where $n$ and $l$ are quantum numbers, with $n = 0, 1, 2, \dots$ and
-$l = 0, 1, \dots, n-1$.
+$l = 0, 1, 2,  \dots $.
  
  
 \subsection{Discretization}
@@ -286,8 +286,11 @@ Chosing the smaller $t$ makes $c$ the larger and minimizes
 \end{gather}
 
 
+
+
 \subsubsection{Implementation}
 
+The Jacobi algorithm takes the form
 \centerline{Algorithm \algnum}
 \begin{tcolorbox}
 Find the largest element, $a_{k,l}$, in $A$ \\
@@ -307,7 +310,14 @@ $ b_{ii} = c^2 a_{ii} - 2csa_{ij} + s^2 a_{jj} $ \\
 $ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $ 
 \end{tcolorbox} 
 
-\subsubsection{Unit tests}
+
+\subsubsection{Fonseca thingy}
+
+Following the paper from C.M. da Fonseca
+
+
+
+%\subsubsection{Unit tests}
 
 
 \section{Results and reflection}
