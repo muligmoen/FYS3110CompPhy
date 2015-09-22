@@ -8,17 +8,8 @@
 
 
 
-inline double potential(double rho);
+arma::Mat<double> get_matrix(int N, double rho_0, double rho_inf);
 
-arma::Mat<double> get_matrix(int N, double rho_0, double rho_inf, double (*V)(double));
-
-/*TEST(Potential)
-{
-  double tolerance = 1e-10;
-  double k = 1.0;
-  
-  CHECK_CLOSE(potential(5), k*5*5, tolerance);
-}*/
 
 int main(int argc, char *argv[])
 {
@@ -29,9 +20,11 @@ int main(int argc, char *argv[])
   
   if (argc < 3)
   {
-    std::cout << "Running standard settings" << std::endl;
     N = 100;
-    MAX_iter = 10000;    
+    MAX_iter = 10000;
+    std::cout << "Running standard settings" << std::endl;
+    std::cout << "N = " << N << std::endl;
+    std::cout << "Max iterations = " << MAX_iter << std::endl;
   }
   else 
   {
@@ -39,7 +32,7 @@ int main(int argc, char *argv[])
     MAX_iter = std::atof(argv[2]);
     if (N<1 || MAX_iter<1)
     {
-      std::cerr << "Invalid arguments" << std::endl;
+      std::cerr << "Invalid arguments, exiting" << std::endl;
       std::exit(1);
     }
   }
@@ -48,10 +41,11 @@ int main(int argc, char *argv[])
   double rho_inf = 10;
   
   
-  arma::Mat<double> A = get_matrix(N, rho_0, rho_inf, potential);
+  arma::Mat<double> A = get_matrix(N, rho_0, rho_inf);
   
+
   auto eigs =  eig_sym(A);
-  
+
  
   for (int iii=0; iii<MAX_iter; iii++)
   {
@@ -78,9 +72,10 @@ int main(int argc, char *argv[])
   {
     eigs2(iii) = A(iii,iii);
   }
-  eigs2= sort(eigs2);
+  eigs2 = sort(eigs2);
   
-  for (int iii=0; iii<10; iii++)
+  
+  for (int iii=0; iii<std::min(10, N); iii++)
   {
     std::cout << eigs(iii) << " " << eigs2(iii) << "\n";
   }
@@ -88,25 +83,20 @@ int main(int argc, char *argv[])
 }
 
 
-inline double potential(double rho)
-{
-  double k = 1.0;
-  return k*rho*rho;
-}
 
-arma::Mat<double> get_matrix(int N, double rho_0, double rho_inf, double (*V)(double))
+arma::Mat<double> get_matrix(int N, double rho_0, double rho_inf)
 {
   arma::Mat<double> A(N, N, arma::fill::zeros);
   
   double h = (rho_inf-rho_0)/(double)N;
   double inv_h_square = 1/(h*h);
-  A.diag(1) += inv_h_square;
-  A.diag(-1) += inv_h_square;
+  A.diag(1) -= inv_h_square;
+  A.diag(-1) -= inv_h_square;
   
   for (int iii=0; iii<N; iii++)
   {
     double rho = rho_0 + iii*h;
-    A(iii,iii) = 2*inv_h_square + V(rho);
+    A(iii,iii) = 2*inv_h_square + rho*rho;
   }
   
   return A;

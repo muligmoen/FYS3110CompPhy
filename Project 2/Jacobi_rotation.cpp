@@ -23,7 +23,7 @@ double abs_sum_offdiag(const arma::Mat<double> &A) // Can be used for tolerance 
 void find_cos_sin(double a_kk, double a_ll, double a_kl, double &c, double &s)
 {
   double tau = (a_ll - a_kk)/(2*a_kl);
-  double t = tau > 0 ? -tau -std::sqrt(1+tau*tau) : tau -std::sqrt(1+tau*tau);
+  double t = tau <= 0 ? -tau + std::sqrt(1+tau*tau) : -tau -std::sqrt(1+tau*tau);
   
   c = 1/std::sqrt(1+t*t);
   s = t*c;  
