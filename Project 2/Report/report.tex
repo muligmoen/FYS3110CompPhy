@@ -6,6 +6,7 @@
 
 %\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
 \usepackage{tcolorbox}
+\tcbuselibrary{hooks}
 \usepackage[parfill]{parskip} % Removes indents
 \usepackage{amsmath} % Environment, symbols etc...
 \usepackage{amssymb}
@@ -47,11 +48,15 @@ frame=l,
 
 \newcommand{\spac}{\hspace{5mm}}
 
+\newcounter{algcounter}
+\newcommand{\algnum}{\stepcounter{algcounter}\Roman{algcounter}}
+
 \title{FYS3150/4150\\Computational Physics\\Project 2}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
 \date{\today}
 
 \begin{document}
+\tcbset{before app=\parfillskip0pt}
 \maketitle
 
 \section{Introduction}
@@ -283,7 +288,7 @@ Chosing the smaller $t$ makes $c$ the larger and minimizes
 
 \subsubsection{Implementation}
 
-\centerline{Algorithm I}
+\centerline{Algorithm \algnum}
 \begin{tcolorbox}
 Find the largest element, $a_{k,l}$, in $A$ \\
 Compute $\tau:$ \\
@@ -299,8 +304,7 @@ $ b_{ik} = b_{ki} = ca_{ik}-sa_{jk}, \quad k \neq i,j$ \\
 $ b_{jk} = b_{kj} = sa_{ik}+ca_{jk}, \quad k \neq i,j$ \\
 $ b_{ij} = b_{ji} = (c^2 - s^2)a_{ij} + cs(a_{ii}-a_{jj}) $ \\
 $ b_{ii} = c^2 a_{ii} - 2csa_{ij} + s^2 a_{jj} $ \\
-$ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $ \\
-
+$ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $ 
 \end{tcolorbox} 
 
 \subsubsection{Unit tests}
