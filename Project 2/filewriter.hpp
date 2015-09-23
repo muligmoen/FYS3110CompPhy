@@ -4,6 +4,12 @@
 #include <armadillo>
 #include <fstream>
 
+struct Energies
+{
+  double Energy[3];
+  int indexes[3];
+};
+
 
 class FileWriter
 {
@@ -13,6 +19,8 @@ public:
   FileWriter(const char* name);
   void print(int N, double rho_0, double rho_inf, 
 	     bool two_electrons=false, double omega_r=1.0);
+  void print(const Energies &E);
+  void print(const arma::Col <double> &Evec);
 };
 
 
