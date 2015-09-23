@@ -5,6 +5,40 @@
 #include "Jacobi_rotation.hpp"
 #include "unittest++/UnitTest++.h"
 
+void three_min_diag(const arma::mat &A)
+{
+    arma::rowvec MIN(3,arma::fill:zeros);
+    arma::rowvec index(3);
+
+    for (int ii=0; ii < A.n_cols; ii++)
+        {
+        for (int jj=0; jj < A.n_cols; jj++)
+        {
+          if((ii == jj){
+                  if(-(A(ii,jj)) > MIN(3)){
+                    MIN(3) = A(ii,jj);
+                    index(3) = ii;
+                        if(-(A(ii,jj)) > MIN(2)){
+                            MIN(3) = MIN(2);
+                            index(3) = index(2);
+                            MIN(2) = A(ii,jj);
+                            index(2) = ii;
+                                if(-(A(ii,jj)) > MIN(1)){
+                                    MIN(2) = MIN(1);
+                                    index(2) = index(1);
+                                    MIN(1) = A(ii,jj);
+                                    index(1) = ii;
+
+
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+        }
+
 double abs_sum_offdiag(const arma::Mat<double> &A) // Can be used for tolerance check
 {
   double sum = 0;
