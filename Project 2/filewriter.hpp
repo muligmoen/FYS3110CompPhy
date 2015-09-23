@@ -1,14 +1,11 @@
 #ifndef filewriter_h
 #define filewriter_h
 
+
 #include <armadillo>
 #include <fstream>
 
-struct Energies
-{
-  double Energy[3];
-  int indexes[3];
-};
+#include "helper_files.hpp"
 
 
 class FileWriter
@@ -23,12 +20,5 @@ public:
   void print(const arma::Col <double> &Evec);
 };
 
-
-
-
-
-
-
-
-
 #endif
+

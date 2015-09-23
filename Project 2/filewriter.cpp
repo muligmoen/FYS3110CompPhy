@@ -1,7 +1,7 @@
 #include <fstream>
 
 #include "filewriter.hpp"
-
+#include "helper_files.hpp"
 
 
 FileWriter::FileWriter(const char* name) : outf(name) 
