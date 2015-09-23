@@ -12,5 +12,7 @@ void max_err_offdiag(const arma::Mat<double> &A, int &k, int &l, double &err);
 
 double abs_sum_offdiag(const arma::Mat<double> &A);
 
+void rotate_to_diag(arma::Mat<double> &A, double tolerance);
 
+void rotate_to_diag_with_eigvec(arma::Mat<double> &A, arma::Mat<double> S, double tolerance);
 #endif
