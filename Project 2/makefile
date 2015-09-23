@@ -18,7 +18,7 @@ LDLIBS = -larmadillo -llapack -lopenblas -lunittest++
 
 # build executable
 TARGET = project2
-SRCS = $(TARGET).cpp Jacobi_rotation.cpp test.cpp
+SRCS = $(TARGET).cpp Jacobi_rotation.cpp test.cpp filewriter.cpp
 OBJS = $(subst .cpp,.o,$(SRCS))
 
 
