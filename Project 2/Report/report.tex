@@ -311,6 +311,33 @@ $ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $
 \end{tcolorbox} 
 
 
+
+\subsubsection{Eigenvectors}
+
+From the similarity transform we have
+\begin{gather}
+y = Sx\\
+x = \trans{S}y
+\end{gather}
+We obtain a recurrence relation
+\begin{gather}
+\trans{S_{(i)}} = \trans{S_i}\trans{S_{(i-1)}}
+\end{gather}
+For each similarity transform. Saving the terms and renaming them to $A$,
+we obtain 
+\begin{gather}
+\trans{S_{(i)}}y = \tilde{x}
+\end{gather}
+When the similarity transform is completed. This is an accumulation
+of similarity transforms, and can be saved. An easy way to calculate
+the new similarity transform from an existing matrix A is
+\begin{gather}
+a_{ij} \quad for \quad i\neq k,l\\
+a_{kj} = ca_{kj} - sa_{lj}\\
+a_{lj} = sa_{kj} - ca_{lj}
+\end{gather}
+
+
 \subsubsection{Fonseca thingy}
 
 Following the paper from C.M. da Fonseca
