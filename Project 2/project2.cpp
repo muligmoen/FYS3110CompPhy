@@ -19,38 +19,37 @@ Energies min_three_diag(const arma::Mat<double> &A);
 
 arma::vec get_eigv(const arma::Mat<double> &S, int index);
 
-
-//int main(int argc, char *argv[])
-int main()
+void check_args(int argc, char *argv[], int &N, double &rho_0, double &rho_inf,
+		bool &two_electron, double &omega_r)
 {
-  UnitTest::RunAllTests();
-  /*
-  int N = -1;
-  int rho_inf;
-  
-  if (argc < 3)
-  {
-    N = 100;
-    rho_inf = 10;
-    
-    std::cout << "Running standard settings" << std::endl;
-    std::cout << "N = " << N << std::endl;
-    std::cout << "rho_inf = " << rho_inf << std::endl;
-  }
-  else 
+  if (argc>2)
   {
     N = std::atoi(argv[1]);
     rho_inf = std::atof(argv[2]);
-    if (N<1 || rho_inf<=0)
-    {
-      std::cerr << "Invalid arguments, exiting" << std::endl;
-      std::exit(1);
-    }
-  }*/
+    rho_0 = 0;
+  } else if (argc>3)
+  {
+    two_electron = true;
+    omega_r = std::atof(argv[3]);
+  } else
+  {
+    std::cerr << "Usage: " << argv[0] << " <N> <rho_inf> <optional: omega_r> \n\n";
+    std::cerr << "<N> an integer which gives the size and approximation\n";
+    std::cerr << "<rho_inf> max limit of rho to simulate infinity\n";
+    std::cerr << "<omega_r> given if it is a two_electron problem" << std::endl;
+    std::exit(1);
+  }
+}
 
-  double rho_0 = 0.0;
-  double rho_inf = 10.0;
-  int N = 5;
+int main(int argc, char *argv[])
+{
+  UnitTest::RunAllTests();
+  
+  int N;
+  double rho_0, rho_inf, omega_r;
+  bool two_electrons;
+  
+  check_args(argc, argv, N, rho_0, rho_inf, two_electrons, omega_r);
   
   
   arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf);
@@ -61,12 +60,16 @@ int main()
 
   auto E = min_three_diag(A);
   
-  auto Evec = get_eigv(S, E.indexes[0]);
   
   FileWriter file("test.txt");
   file.print(N, rho_0, rho_inf);
   file.print(E);
-  file.print(Evec);
+  
+  for (int iii=0; iii<3; iii++)
+  {
+    auto Evec = get_eigv(S, E.indexes[iii]);
+    file.print(Evec);
+  }
   
   return 0;
 }
@@ -161,7 +164,6 @@ arma::vec get_eigv(const arma::Mat<double> &S, int index)
     square_sum += S_ij*S_ij;
   }
   x /= square_sum;
-  
   
   return x;
 }
