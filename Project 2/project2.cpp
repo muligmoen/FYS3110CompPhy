@@ -15,8 +15,12 @@ inline double hydrogen(double r)
 
 int main(int argc, char *argv[])
 {
-  UnitTest::RunAllTests();
-  std::cout << std::endl;
+  if (argc < 2)
+  {
+    UnitTest::RunAllTests();
+    std::cout << std::endl;
+  }
+  
   int N;
   double rho_0, rho_inf, omega_r;
   bool two_electrons;

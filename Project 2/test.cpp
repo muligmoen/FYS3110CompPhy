@@ -3,13 +3,13 @@
 #include <cmath>
 
 #include "Jacobi_rotation.hpp"
+#include "helper_files.hpp"
 #include "unittest++/UnitTest++.h"
 
-
+const double tolerance = 1e-10;
 
 SUITE(Jacobi)
 {
-  double tolerance = 1e-10;
   TEST(Rotate)
   {
     int N = 5;
@@ -99,6 +99,102 @@ SUITE(Jacobi)
       << 4 << 999 << 9;
     
     CHECK_CLOSE( abs_sum_offdiag(A), 6+1+4+9, tolerance);
+    
+  }
+}
+
+
+SUITE(helper_files)
+{
+  TEST(Sort)
+  {
+    int N = 6;
+    arma::Mat<double> A(N, N, arma::fill::zeros);
+    A(0,0) = 9;
+    A(1,1) = 4;
+    A(2,2) = 5;
+    A(3,3) = -6;
+    A(5,5) = 400;
+    
+    A(5,3) = -78;
+    
+    auto E = min_three_diag(A);
+    CHECK_CLOSE(E.Energy[0], -6, tolerance);
+    CHECK_CLOSE(E.Energy[1], 0, tolerance);
+    CHECK_CLOSE(E.Energy[2], 4, tolerance);
+    
+    CHECK_EQUAL(E.indexes[0], 3);
+    CHECK_EQUAL(E.indexes[1], 4);
+    CHECK_EQUAL(E.indexes[2], 1);
+  }
+  
+  TEST(Identity)
+  {
+    int N = 3;
+    auto A = identity(N);
+    for (int iii=0; iii<N; iii++)
+    {
+      for (int jjj=0; jjj<N; jjj++)
+      {
+	if (iii!=jjj)
+	{
+	  CHECK_CLOSE(A(iii,jjj), 0, tolerance);
+	} else
+	{
+	  CHECK_CLOSE(A(iii,jjj), 1, tolerance);
+	}
+      }
+    }
+    
+  }
+
+  TEST(Hamiltonian)
+  {
+    int N = 5;
+    const auto A = ham_matrix(N, 0, 10);
+    double h = 10/(double)N;
+    
+    for (int iii=0; iii<N; iii++) // diagonal elements
+    {
+      double compare = 2/(h*h) + (h*iii)*(h*iii);
+      CHECK_CLOSE(compare, A(iii,iii), tolerance);
+    }
+    
+    for (int iii=2; iii<N; iii++) // two of the diagonal
+    {
+      CHECK_CLOSE(0, A(0,iii), tolerance);
+    }
+    
+    for (int iii=0; iii<N-1; iii++) // one of the diagonal
+    {
+      CHECK_CLOSE(-1/(h*h), A(iii, iii+1), tolerance);
+    }
+  }
+  
+  TEST(Eigenvector)
+  {
+    int N = 5;
+    arma::Mat<double> A(N, N, arma::fill::randu);
+    
+
+    
+    int index = 3;
+    
+    auto eigv = get_eigv(A, index);
+    
+    
+    double sum = 0;
+    for (int iii=0; iii<N; iii++)
+    {
+      sum += (A(index, iii))*(A(index, iii));
+    }
+    A /= std::sqrt(sum);
+    
+    
+    for (int iii=0; iii<N; iii++)
+    {
+      CHECK_CLOSE(A(index, iii), eigv(iii), tolerance);
+    }
     
   }
 }

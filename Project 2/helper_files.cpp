@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <cmath>
 
 #include <armadillo>
 
@@ -135,7 +136,9 @@ arma::vec get_eigv(const arma::Mat<double> &S, int index)
     x(jjj) = S_ij;
     square_sum += S_ij*S_ij;
   }
-  x /= square_sum;
+  
+  double sum = std::sqrt(square_sum);
+  x /= sum;
   
   return x;
 }
