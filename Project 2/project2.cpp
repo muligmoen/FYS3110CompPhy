@@ -10,7 +10,7 @@
 
 inline double hydrogen(double r)
 {
-  return -1/r;  
+  return -5/r;  
 }
 
 int main(int argc, char *argv[])
@@ -25,9 +25,9 @@ int main(int argc, char *argv[])
   check_args(argc, argv, N, rho_0, rho_inf, two_electrons, omega_r);
   
   
-  //arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, two_electrons, omega_r);
+  arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, two_electrons, omega_r);
   
-  arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, hydrogen);
+  //arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, hydrogen);
   
   arma::Mat<double> S = identity(N);
   
