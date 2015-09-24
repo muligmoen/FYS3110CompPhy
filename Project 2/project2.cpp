@@ -8,26 +8,31 @@
 
 #include "unittest++/UnitTest++.h"
 
-
-
-
+inline double hydrogen(double r)
+{
+  return -1/r;  
+}
 
 int main(int argc, char *argv[])
 {
   UnitTest::RunAllTests();
-  
+  std::cout << std::endl;
   int N;
   double rho_0, rho_inf, omega_r;
   bool two_electrons;
   
+  rho_0 = 0;
   check_args(argc, argv, N, rho_0, rho_inf, two_electrons, omega_r);
   
   
-  arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, two_electrons, omega_r);
+  //arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, two_electrons, omega_r);
+  
+  arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, hydrogen);
   
   arma::Mat<double> S = identity(N);
   
-  rotate_to_diag_with_eigvec(A, S, 1e-10);
+  rotate_to_diag_with_eigvec(A, S, 1e-8);
+  
 
   auto E = min_three_diag(A);
   

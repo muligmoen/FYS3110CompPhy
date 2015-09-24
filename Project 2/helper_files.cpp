@@ -13,7 +13,7 @@ void check_args(int argc, char *argv[], int &N, double &rho_0, double &rho_inf,
     two_electron = true;
     omega_r = std::atof(argv[3]);
   }
-  if (argc > 3)
+  if (argc > 2)
   {
     N = std::atoi(argv[1]);
     rho_inf = std::atof(argv[2]);
@@ -28,7 +28,25 @@ void check_args(int argc, char *argv[], int &N, double &rho_0, double &rho_inf,
   }
 }
 
-
+arma::Mat<double> ham_matrix(int N, double rho_0, double rho_inf,
+			     double (*V)(double))
+{
+  arma::Mat<double> A(N, N, arma::fill::zeros);
+  
+  double h = (rho_inf-rho_0)/(double)N;
+  double inv_h_square = 1/(h*h);
+  A.diag(1) -= inv_h_square;
+  A.diag(-1) -= inv_h_square;
+  
+  
+  for (int iii=0; iii<N; iii++)
+  {
+    double rho = rho_0 + iii*h;
+    A(iii,iii) = 2*inv_h_square + V(rho);
+  }
+  
+  return A;
+}
 
 arma::Mat<double> ham_matrix(int N, double rho_0, double rho_inf,
 			     bool two_electrons, double omega_r)

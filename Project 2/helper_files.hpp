@@ -19,6 +19,8 @@ arma::vec get_eigv(const arma::Mat<double> &S, int index);
 arma::Mat<double> ham_matrix(int N, double rho_0, double rho_inf,
 			     bool two_electrons=false, double omega_r=1);
 
+arma::Mat<double> ham_matrix(int N, double rho_0, double rho_inf,
+			     double (*V)(double));
 
 arma::Mat<double> identity(int N);
 

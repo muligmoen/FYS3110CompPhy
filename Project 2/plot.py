@@ -7,23 +7,34 @@ f = open('test.txt')
 lines = f.readlines()
 
 N = int(lines[0].split()[0])
+
 rhos = lines[1].split()
 rho_0 = float(rhos[0])
 rho_inf = float(rhos[1])
 
 rho = np.linspace(rho_0, rho_inf, N)
 
+two_electrons = (lines[2].split()[0] == 'true')
+omega_r = float(lines[3].split()[0])
+
+E = [float(lines[i].split()[0]) for i in range(5, 8)]
+
+
 plt.xlim(rho_0, rho_inf)
 plt.xlabel(r'$\rho$')
-plt.ylabel('Probability density')
+plt.ylabel('Probability density $|\psi|^2$')
 
-psi_0 = [float(x)**2 for x in lines[9].split()]
-psi_1 = [float(x)**2 for x in lines[10].split()]
-psi_2 = [float(x)**2 for x in lines[11].split()]
+if two_electrons:
+  plt.title('Two electrons with coupling $\omega_r = {}$'.format(omega_r))
+else:
+  plt.title('Radial part of Schrödinger equation in a harmonic oscillator')
 
-plt.plot(rho, psi_0, label='$\psi_0$')
-plt.plot(rho, psi_1, label='$\psi_1$')
-plt.plot(rho, psi_2, label='$\psi_2$')
+psi = [[],[],[]];
+for i in range(3):
+  psi[i] = [float(x)**2 for x in lines[9+i].split()]
+  plt.plot(rho, psi[i], linewidth=2,
+	   label='$\psi_{0}, E_{0} = {1}$'.format(i, E[i]))
+  
 
 plt.legend(loc='upper right')
 plt.show()
