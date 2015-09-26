@@ -9,8 +9,12 @@ RM = rm -f
 # compiler flags:
 # -g debugging information to executable
 # -Wall most compiler warnings enabled
-# -Werrer turns warnings into errors
-CPPFLAGS = -g -std=c++11 -Wall -Wextra -Werror -O3 -pedantic
+# -Werror turns warnings into errors
+# -O3 optimiation level 3
+# -pedantic warns about GCC spesific options
+# -MMD & -MP makes automatic dependancy files
+CPPFLAGS = -g -std=c++11 -Wall -Wextra -Werror -O3 -pedantic -MMD -MP
+
 # linker flags
 LDFLAGS = -g -Wall
 
@@ -38,7 +42,7 @@ $(TARGET): $(OBJS)
 
 obj/%.o: src/%.cpp
 	@mkdir -p obj
-	$(CXX) -MMD -MP $(CPPFLAGS) -c -o $@ $<
+	$(CXX) $(CPPFLAGS) -c -o $@ $<
 	
 
 .phony: all clean dist-clean
@@ -47,8 +51,9 @@ clean:
 	$(RM) $(OBJS)
 
 dist-clean: clean
-	$(RM) -f obj
-	$(RM) $(TARGET) $(subst *.o,*.d,$(OBJS))
+	$(RM) -r obj
+	$(RM) $(TARGET)
+	$(RM) $(patsubst %.o,%.d,$(OBJS))
 
 
 
