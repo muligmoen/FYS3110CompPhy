@@ -48,11 +48,19 @@ frame=l,
 
 \newcommand{\spac}{\hspace{5mm}}
 
-\newenvironment{algorithm}{\begin{tcolorbox}
-\centerline{Algorithm \algnum}\vspace{2mm}}{\end{tcolorbox}}
+
 
 \newcounter{algcounter}
-\newcommand{\algnum}{\stepcounter{algcounter}\Roman{algcounter}}
+\renewcommand{\thealgcounter}{\Roman{algcounter}}
+
+\newenvironment{algorithm}{%
+\refstepcounter{algcounter}
+\begin{tcolorbox}
+\centerline{Algorithm \thealgcounter}\vspace{2mm}
+}
+{\end{tcolorbox}}
+
+
 
 \title{FYS3150/4150\\Computational Physics\\Project 2}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
@@ -295,21 +303,30 @@ Chosing the smaller $t$ makes $c$ the larger and minimizes
 
 The Jacobi algorithm takes the form
 \begin{algorithm}
+\label{alg:jacobi}
 Find the largest element, $a_{k,l}$, in $A$ \\
-Compute $\tau:$ \\
-$ \tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}$ \\
-Compute t according to:  \\
-$t=  -\tau + \sqrt{1+\tau^2}, \quad   0  \geq \tau \\
-t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0 $ \\
-Set \\
-$ c= \frac{1}{\sqrt{1+t^2}}, \quad s= ct$ \\
-Compute the new matrix elements: \\
-$ b_{kl} = a_{kl}, \quad k,l \neq i,j$ \\
-$ b_{ik} = b_{ki} = ca_{ik}-sa_{jk}, \quad k \neq i,j$ \\
-$ b_{jk} = b_{kj} = sa_{ik}+ca_{jk}, \quad k \neq i,j$ \\
-$ b_{ij} = b_{ji} = (c^2 - s^2)a_{ij} + cs(a_{ii}-a_{jj}) $ \\
-$ b_{ii} = c^2 a_{ii} - 2csa_{ij} + s^2 a_{jj} $ \\
-$ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $ 
+Compute $\tau:$
+\begin{gather*}
+  \tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}
+\end{gather*}
+Compute t according to: 
+\begin{gather*}
+t=  -\tau + \sqrt{1+\tau^2}, \quad   0  \geq \tau \\
+t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0
+\end{gather*}
+Set
+\begin{gather*}
+c= \frac{1}{\sqrt{1+t^2}}, \quad s= ct
+\end{gather*}
+Compute the new matrix elements:
+\begin{align*}
+ b_{kl} &= a_{kl}, \quad k,l \neq i,j \\
+ b_{ik} &= b_{ki} = ca_{ik}-sa_{jk}, \quad k \neq i,j \\
+ b_{jk} &= b_{kj} = sa_{ik}+ca_{jk}, \quad k \neq i,j \\
+ b_{ij} &= b_{ji} = (c^2 - s^2)a_{ij} + cs(a_{ii}-a_{jj})  \\
+ b_{ii} &= c^2 a_{ii} - 2csa_{ij} + s^2 a_{jj}  \\
+ b_{jj} &= s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} 
+\end{align*}
 \end{algorithm}
 
 
@@ -331,29 +348,30 @@ the recurrence relation
 \end{gather}
 And finally
 \begin{gather}
-x = \trans{S}_i y
+x = \trans{S}_N y
 \end{gather}
 With y as the identity vector
 
 \begin{algorithm}
-When each similarity transform is completed, the new matrice\\
-$\trans{\tilde{S}_{i+1}} = \trans{S}\trans{\tilde{S}_{i}}$\\
-is computed and saved. An effective way of computing this is 
-\end{algorithm}
+When each similarity transform is completed, the new matrice
+\begin{gather*}
+\tilde{S}^{n+1} = \trans{S}\tilde{S}^{n}
+\end{gather*}
+is computed and saved. An effective way of computing this if
+the factors $c,s, l$ and $k$ from algorithm \ref{alg:jacobi}
+are known, dropping the transpose symbol;
+\begin{align*}
+\tilde{S}^{n+1}_{ij} &= \tilde{S}^n \quad \text{for} \quad i\neq k,l\\
+\tilde{S}^{n+1}_{kj} &= c\tilde{S}^n_{kj} - s\tilde{S}^n_{lj}\\
+\tilde{S}^{n+1}_{lj} &= s\tilde{S}^n_{kj} - c\tilde{S}^n_{lj}
+\end{align*}
+To find the eigenvector belonging to an eigenvector, its index $i$ is 
+found and the eigenvector is given by
+\begin{gather*}
+x_j = \tilde{S}^N_{ji}
+\end{gather*}
 
-For each similarity transform. Saving the terms and renaming them to $A$,
-we obtain 
-\begin{gather}
-\trans{S_{(i)}}y = \tilde{x}
-\end{gather}
-When the similarity transform is completed. This is an accumulation
-of similarity transforms, and can be saved. An easy way to calculate
-the new similarity transform from an existing matrix A is
-\begin{gather}
-a_{ij} \quad for \quad i\neq k,l\\
-a_{kj} = ca_{kj} - sa_{lj}\\
-a_{lj} = sa_{kj} - ca_{lj}
-\end{gather}
+\end{algorithm}
 
 
 \subsubsection{Fonseca thingy}
