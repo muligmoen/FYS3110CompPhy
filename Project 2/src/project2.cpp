@@ -34,9 +34,11 @@ int main(int argc, char *argv[])
   //arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, hydrogen);
   
   arma::Mat<double> S = identity(N);
-  
+  int n_rotations;
+  n_rotations = 
   rotate_to_diag_with_eigvec(A, S, 1e-8);
-  
+  //n_rotations = rotate_to_diag(A, 1e-8);
+  std::cout << "Number of rotations = " << n_rotations << std::endl;
 
   auto E = min_three_diag(A);
   

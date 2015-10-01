@@ -55,6 +55,7 @@ void rotate(arma::Mat<double> &A, double c, double s, int k, int l)
 void rotate_with_eigvec(arma::Mat<double> &A, arma::Mat<double> &S,
 			double c, double s, int k, int l)
 {
+  
   int N = A.n_rows;
   double a_kk = A(k, k);
   double a_ll = A(l, l);
@@ -83,6 +84,7 @@ void rotate_with_eigvec(arma::Mat<double> &A, arma::Mat<double> &S,
     S(k, jjj) = c*s_kj - s*s_lj;
     S(l, jjj) = s*s_kj + c*s_lj;
   }
+  
 }
 
 void max_err_offdiag(const arma::Mat<double> &A, int &k, int &l, double &err)
@@ -105,8 +107,10 @@ void max_err_offdiag(const arma::Mat<double> &A, int &k, int &l, double &err)
   }
 }
 
-void rotate_to_diag(arma::Mat<double> &A, double tolerance)
+int rotate_to_diag(arma::Mat<double> &A, double tolerance)
 {
+  
+  int n_rotations = 0;
   double max_err = tolerance + 1.0;
   
   while (max_err > tolerance)
@@ -118,11 +122,14 @@ void rotate_to_diag(arma::Mat<double> &A, double tolerance)
     find_cos_sin(A(k,k), A(l,l), A(k,l), cos, sin);
     
     rotate(A, cos, sin, k, l);
+    n_rotations++;
   }
+  return n_rotations;
 }
 
-void rotate_to_diag_with_eigvec(arma::Mat<double> &A, arma::Mat<double> &S, double tolerance)
+int rotate_to_diag_with_eigvec(arma::Mat<double> &A, arma::Mat<double> &S, double tolerance)
 {
+  int n_rotations = 0;
   double max_err = tolerance + 1.0;
   
   while (max_err > tolerance)
@@ -134,5 +141,7 @@ void rotate_to_diag_with_eigvec(arma::Mat<double> &A, arma::Mat<double> &S, doub
     find_cos_sin(A(k,k), A(l,l), A(k,l), cos, sin);
     
     rotate_with_eigvec(A, S, cos, sin, k, l);
+    n_rotations++;
   }
+  return n_rotations;
 }
