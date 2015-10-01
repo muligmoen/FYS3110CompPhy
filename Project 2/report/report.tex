@@ -48,6 +48,9 @@ frame=l,
 
 \newcommand{\spac}{\hspace{5mm}}
 
+\newenvironment{algorithm}{\begin{tcolorbox}
+\centerline{Algorithm \algnum}\vspace{2mm}}{\end{tcolorbox}}
+
 \newcounter{algcounter}
 \newcommand{\algnum}{\stepcounter{algcounter}\Roman{algcounter}}
 
@@ -291,8 +294,7 @@ Chosing the smaller $t$ makes $c$ the larger and minimizes
 \subsubsection{Implementation}
 
 The Jacobi algorithm takes the form
-\centerline{Algorithm \algnum}
-\begin{tcolorbox}
+\begin{algorithm}
 Find the largest element, $a_{k,l}$, in $A$ \\
 Compute $\tau:$ \\
 $ \tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}$ \\
@@ -308,7 +310,7 @@ $ b_{jk} = b_{kj} = sa_{ik}+ca_{jk}, \quad k \neq i,j$ \\
 $ b_{ij} = b_{ji} = (c^2 - s^2)a_{ij} + cs(a_{ii}-a_{jj}) $ \\
 $ b_{ii} = c^2 a_{ii} - 2csa_{ij} + s^2 a_{jj} $ \\
 $ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $ 
-\end{tcolorbox} 
+\end{algorithm}
 
 
 
@@ -316,13 +318,29 @@ $ b_{jj} = s^2 a_{ii} + 2csa_{ij} + c^2 a_{jj} $
 
 From the similarity transform we have
 \begin{gather}
-y = Sx\\
+y = Sx
+\end{gather}
+Multiplying by $S^{-1} = \trans{S}$ from the left
+\begin{gather}
 x = \trans{S}y
 \end{gather}
-We obtain a recurrence relation
+By considering multiple similarity transforms we obtain
+the recurrence relation
 \begin{gather}
 \trans{S_{(i)}} = \trans{S_i}\trans{S_{(i-1)}}
 \end{gather}
+And finally
+\begin{gather}
+x = \trans{S}_i y
+\end{gather}
+With y as the identity vector
+
+\begin{algorithm}
+When each similarity transform is completed, the new matrice\\
+$\trans{\tilde{S}_{i+1}} = \trans{S}\trans{\tilde{S}_{i}}$\\
+is computed and saved. An effective way of computing this is 
+\end{algorithm}
+
 For each similarity transform. Saving the terms and renaming them to $A$,
 we obtain 
 \begin{gather}
