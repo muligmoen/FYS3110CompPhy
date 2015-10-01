@@ -7,23 +7,26 @@
 #include "helper_files.hpp"
  
 void check_args(int argc, char *argv[], int &N, double &rho_0, double &rho_inf,
-		bool &two_electron, double &omega_r)
+		bool &two_electron, double &omega_r, bool &eigv)
 {
-  if (argc > 3)
+  if (argc > 4)
   {
     two_electron = true;
-    omega_r = std::atof(argv[3]);
+    omega_r = std::atof(argv[4]);
   }
-  if (argc > 2)
+  if (argc > 3)
   {
     N = std::atoi(argv[1]);
     rho_inf = std::atof(argv[2]);
     rho_0 = 0;
+    eigv = std::atoi(argv[3]);
+    two_electron = false;
   } else
   {
-    std::cerr << "Usage: " << argv[0] << " <N> <rho_inf> <optional: omega_r> \n\n";
+    std::cerr << "Usage: " << argv[0] << " <N> <rho_inf> <eigv> <optional: omega_r> \n\n";
     std::cerr << "<N> an integer which gives the size and approximation\n";
     std::cerr << "<rho_inf> max limit of rho to simulate infinity\n";
+    std::cerr << "<eigv> as 1 for eigenvectors, and 0 to not compute these\n";
     std::cerr << "<omega_r> given if it is a two_electron problem" << std::endl;
     std::exit(1);
   }

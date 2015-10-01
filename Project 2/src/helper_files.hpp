@@ -10,7 +10,7 @@ struct Energies
 };
 
 void check_args(int argc, char *argv[], int &N, double &rho_0, double &rho_inf,
-		bool &two_electron, double &omega_r);
+		bool &two_electron, double &omega_r, bool &eigv);
 
 Energies min_three_diag(const arma::Mat<double> &A);
 
