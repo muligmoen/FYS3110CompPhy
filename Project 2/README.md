@@ -27,6 +27,9 @@ N, the size of the system. This should be a number less than 300 for a reasonabl
 
 rho_inf, the maximum value for the axis. If the resulting eigenvector "collides" with this axis, or the eigenvalues are incorrect, this must be chosen larger.
 
+eig_vec, a flag which determines if the eigenvalues should be calculated or not,
+0 for false.
+
 omega_r, the parameter for the coupling between two electrons in the harmonic oscillator. If omitted, the single electron in the harmonic oscillator is calculated.
 
 The program returns a "test.txt" containing the three lowest energies and the corresponding eigenvectors.
