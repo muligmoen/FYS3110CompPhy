@@ -3,20 +3,18 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-text_file = os.path.join('..','test.txt')
+
+text_file = 'test.txt'
 executable = os.path.join('..','./project2')
 target_folder = os.path.join('..','results')
 
 def get_E(filename=text_file):
   with open(filename) as f:
-    N = int(f.readline().split()[0])
-    rho = list(map(float, f.readline().split()[0:2]))
-    two_electron = f.readline().split()[0] == 'true'
-    omega_r = float(f.readline().split()[0])
-    f.readline()
-    E = [0]*3
-    for i in range(3):
-      E[i] = float(f.readline().split()[0])
+    lines = f.readlines()
+  
+  E = [0]*3
+  for i in range(3):
+    E[i] = float(lines[i+5].strip())
   return E
 
 
