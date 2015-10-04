@@ -60,7 +60,7 @@ frame=l,
 }
 {\end{tcolorbox}}
 
-
+\newcommand{\figurewidth}{.8\textwidth}
 
 \title{FYS3150/4150\\Computational Physics\\Project 2}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
@@ -374,16 +374,43 @@ x_j = \tilde{S}^N_{ji}
 \end{algorithm}
 
 
-\subsubsection{Fonseca thingy}
-
-Following the paper from C.M. da Fonseca
-
-
-
-%\subsubsection{Unit tests}
-
 
 \section{Results and reflection}
+
+
+\subsection{Single electron in harmonic oscillator}
+
+A single electron in the harmonic oscillator potential has been 
+explored using the above algorithms. Analytical solutions has been
+found, and it is therefore possible to compare these cases.
+
+\subsubsection{Energies}
+The three lowest energies are analyticaly known. Comparing gives
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{{results/rel_logE0}.png}
+\caption{Relative error in the first energy level for 
+different N and $\rho_\infty$}
+\label{fig:relE0}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{{results/rel_logE1}.png}
+\caption{Relative error in the second energy level for different N,
+and $\rho_\infty$}
+\label{fig:relE1}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{{results/rel_logE2}.png}
+\caption{Relative error in the third energy level for different N,
+and $\rho_\infty$}
+\label{fig:relE2}
+\end{figure}
+
 
 \section{Concluding remarks }
 

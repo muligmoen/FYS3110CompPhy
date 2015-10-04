@@ -37,7 +37,7 @@ def plt_rel_error(E, Ns, rho_infs, index):
   relE = abs(E[:,:,index]-E_ex[index])/E_ex[index]
 
   for i, rho_inf in enumerate(rho_infs):
-    plt.semilogy(Ns, relE[i], label=r'$\rho_\inf = {}$'.format(rho_inf),
+    plt.semilogy(Ns, relE[i], label=r'$\rho_\infty = {}$'.format(rho_inf),
 	     linewidth=2)
     
   plt.legend(loc='best')
@@ -45,7 +45,7 @@ def plt_rel_error(E, Ns, rho_infs, index):
   plt.xlim([min(Ns), max(Ns)])
   plt.xlabel('Number of mesh points')
   plt.ylabel('Relative error of {} eigenvalue'.format(numbers[index]))
-  plot_name = os.path.join(target_folder,'rel_E{}.png'.format(index))
+  plot_name = os.path.join(target_folder,'rel_logE{}.png'.format(index))
   plt.savefig(plot_name , dpi=400, bbox_inches='tight')
   plt.show()
   
