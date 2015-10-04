@@ -47,7 +47,7 @@ def plot_psi_N(Ns):
     for i in range(3):
       ax[i].plot(rho, psi[i], linewidth=2,
                label='$N = {}$'.format(N))
-      
+  
   for i in range(3):
     ax[i].set_title('$\psi_{}$'.format(i))
     ax[i].legend(loc='upper right')

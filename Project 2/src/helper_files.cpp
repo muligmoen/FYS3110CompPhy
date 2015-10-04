@@ -9,11 +9,7 @@
 void check_args(int argc, char *argv[], int &N, double &rho_0, double &rho_inf,
 		bool &two_electron, double &omega_r, bool &eigv)
 {
-  if (argc > 4)
-  {
-    two_electron = true;
-    omega_r = std::atof(argv[4]);
-  }
+  
   if (argc > 3)
   {
     N = std::atoi(argv[1]);
@@ -21,7 +17,13 @@ void check_args(int argc, char *argv[], int &N, double &rho_0, double &rho_inf,
     rho_0 = 0;
     eigv = std::atoi(argv[3]);
     two_electron = false;
-  } else
+  } 
+  if (argc > 4)
+  {
+    two_electron = true;
+    omega_r = std::atof(argv[4]);
+  }
+  if (argc < 3)
   {
     std::cerr << "Usage: " << argv[0] << " <N> <rho_inf> <eigv> <optional: omega_r> \n\n";
     std::cerr << "<N> an integer which gives the size and approximation\n";

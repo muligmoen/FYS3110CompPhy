@@ -60,7 +60,7 @@ frame=l,
 }
 {\end{tcolorbox}}
 
-\newcommand{\figurewidth}{.8\textwidth}
+\newcommand{\figurewidth}{.9\textwidth}
 
 \title{FYS3150/4150\\Computational Physics\\Project 2}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
@@ -137,7 +137,7 @@ The radial part of the Schrödinger's equation now reads:
 The $l$ quantum number tends to ''throw'' the radial part outwards,
 and works as a sentrifugal barrier.
 
-\subsubsection{Harmonic oscillator}
+\subsection{Harmonic oscillator}
 In our case $V(r)$ is the harmonic oscillator potential 
 $V = \frac{1}{2}k r^2$ with
 $k=m\omega^2$. 
@@ -191,7 +191,7 @@ we can rewrite Schrödinger's equation as
 This equation can now be discretized and solved as a linear system 
 using for example Jacobi's algorithm for eigenvalues. 
 
-\subsubsection{Eigenvalues of the Hamiltonian}
+\subsubsection{Eigenvalues of the harmonic oscillator}
 The eigenvalues of \eqref{eq:radial} can be found analytically,
 and are the energies
 \begin{gather}
@@ -199,6 +199,19 @@ E_{nl}=  \hbar \omega \left(2n+l+\frac{3}{2}\right),
 \end{gather}
 where $n$ and $l$ are quantum numbers, with $n = 0, 1, 2, \dots$ and
 $l = 0, 1, 2,  \dots $.
+ 
+ \subsubsection{Two electrons in harmonic oscillator}
+If two electrons are put in the same potential a respulse Coulomb 
+interaction will emerge between them. If we use a relative coordinate
+and a COM coordinate, it can be shown that Schrödinger's equation
+reduces to
+\begin{gather}
+ -\frac{d^2}{d\rho^2} \psi(\rho) + \omega_r^2\rho^2\psi(\rho) 
+ +\frac{1}{\rho} = \lambda \psi(\rho)
+\end{gather}
+with $\omega_r$ reflecting the strength of the potential. 
+
+ 
  
  
 \subsection{Discretization}
@@ -256,6 +269,11 @@ latter equation as a matrix eigenvalue problem
              \end{pmatrix} 
       \label{eq:sematrix}
 \end{equation} 
+
+Some care has to be taken when the limits are selected. Our 
+approach har linear spacing between points, and an upper limit 
+of $\rho$ must be chosen. Care has to be taken to make sure the 
+solution does not depend upon this selection.
 
 We will now move on the see how we can solve this eivenvalue problem using Jacobi's algorithm. 
  
@@ -389,7 +407,7 @@ The three lowest energies are analyticaly known. Comparing gives
 
 \begin{figure}
 \centering
-\includegraphics[width=\figurewidth]{{results/rel_logE0}.png}
+\includegraphics[width=\figurewidth]{../results/rel_logE0.png}
 \caption{Relative error in the first energy level for 
 different N and $\rho_\infty$}
 \label{fig:relE0}
@@ -397,7 +415,7 @@ different N and $\rho_\infty$}
 
 \begin{figure}
 \centering
-\includegraphics[width=\figurewidth]{{results/rel_logE1}.png}
+\includegraphics[width=\figurewidth]{../results/rel_logE1.png}
 \caption{Relative error in the second energy level for different N,
 and $\rho_\infty$}
 \label{fig:relE1}
@@ -405,10 +423,43 @@ and $\rho_\infty$}
 
 \begin{figure}
 \centering
-\includegraphics[width=\figurewidth]{{results/rel_logE2}.png}
+\includegraphics[width=\figurewidth]{../results/rel_logE2.png}
 \caption{Relative error in the third energy level for different N,
 and $\rho_\infty$}
 \label{fig:relE2}
+\end{figure}
+
+
+\subsection{Two electrons}
+
+For a selection of $\omega_r$ with $N = 100$ and $\rho_\infty = 6$ we
+obtain plot \ref{fig:omegar0}, \ref{fig:omegar1} and \ref{fig:omegar2}
+for the three lowest eigenvalues.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/psi_compare_omegar0.png}
+\caption{Wave function with lowest energy eigenvalue
+for different values of $\omega_r$}
+\label{fig:omegar0}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/psi_compare_omegar1.png}
+\caption{Wave function with second lowest energy eigenvalue
+for different values of $\omega_r$}
+\label{fig:omegar1}
+\end{figure}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/psi_compare_omegar2.png}
+\caption{Wave function with third lowest energy eigenvalue
+for different values of $\omega_r$}
+\label{fig:omegar2}
 \end{figure}
 
 

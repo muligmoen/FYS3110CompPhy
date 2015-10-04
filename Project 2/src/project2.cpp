@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
     
     FileWriter file("test.txt");
     file.print(N, rho_0, rho_inf, two_electrons, omega_r);
-    file.print(E);    
+    file.print(E);
     
   }
   return 0;
