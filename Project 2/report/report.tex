@@ -72,7 +72,7 @@ frame=l,
 
 \section{Introduction}
 
-In this projct the Schrödinger's equation for two electrons in a
+In this project the Schrödinger's equation for two electrons in a
 three-dimensional harmonic oscillator well will be solved numerically. 
 Both computational and physical aspects of the problem will be discussed 
 throughout the report. 
@@ -135,7 +135,7 @@ The radial part of the Schrödinger's equation now reads:
 \label{eq:radial}
 \end{gather}
 The $l$ quantum number tends to ''throw'' the radial part outwards,
-and works as a sentrifugal barrier.
+and works as a centrifugal barrier.
 
 \subsection{Harmonic oscillator}
 In our case $V(r)$ is the harmonic oscillator potential 
@@ -150,7 +150,7 @@ equation and obtain
                                     \right ) u(r)  = E u(r) .
 \end{gather}
 The boundary conditions are $u(0)=0$ and $u(\infty)=0$ to avoid
-an unnormalizable wavefunction.
+an unnormalizable wave function.
 
 Introducing the dimensionless variable $\rho = (1/\alpha) r$
 where $\alpha$ is a constant with dimension length we get
@@ -221,7 +221,7 @@ Using a standard center approximation for the second derivative:$u$
     u''=\frac{u(\rho+h) -2u(\rho) +u(\rho-h)}{h^2} +O(h^2),
     \label{eq:diffoperation}
 \end{equation} 
-where $h$ is our steplength.
+where $h$ is our step length.
 
 For a finite value of $\rho_{\mathrm{max}}$, we can define 
 \begin{gather}
@@ -239,7 +239,7 @@ Then rewrite the Schrödinger equation for $\rho_i$ as
 \end{gather}
 where $V_i=\rho_i^2$ is the harmonic oscillator potential.
 
-Defning 
+Defining 
 \begin{gather}
    d_i=\frac{2}{h^2}+V_i, \hspace{0.5cm } e_i=-\frac{1}{h^2}.
 \end{gather}
@@ -276,17 +276,34 @@ of $\rho$ must be chosen. Care has to be taken to make sure the
 solution does not depend upon this selection.
 
 We will now move on the see how we can solve this eivenvalue problem using Jacobi's algorithm. 
- 
+
 \subsection{Jacobi's eigenvalue algorithm}
 
-\textcolor{red}{KSK: These are straight up answers to a). A more complete subsection should be made.}
+To obtain the eigenvalues of our matrix we are going to apply similarity transformations so that
+\begin{align*}
+S_N^T S_{N-1}^T .. S_1^T A S_1 .. S_{N_1} S_{N} = D
+\end{align*}
+using an orthogonal transformation matrix on the form:
+\begin{align*}
+\begin{pmatrix} 1 & 0 & \dots   & \dots    & 0     \\
+                0 & 1 & 0 & \dots    & 0   \\
+                \vdots & 0 & cos(\theta) & \dots  & sin(\theta)        \\
+        \vdots  & \dots & \dots & \ddots   &\dots \\
+ 0   & \dots & -sin(\theta) & \dots  & cos(\theta)  
+             \end{pmatrix}
+\end{align*}
 
-Having defined the quantities $\tan\theta = t= s/c$, with $s=\sin\theta$ and $c=\cos\theta$ and
+To make this process effective we hunt down the largest non-diagonal element, say $a_{kl}$, and choose the angle of rotation, $\theta$, so that the $kl$-element of the transformed matrix becomes zero. That means solving
+\begin{align*}
+(a_{kk}-a_{ll})cos(\theta)sin(\theta)+a_{kl}(cos^2 (\theta) - sin^2 (\theta)) = 0
+\end{align*}
+
+Defining the quantities $\tan\theta = t= s/c$, with $s=\sin\theta$ and $c=\cos\theta$ and
 \begin{gather}\cot 2\theta=\tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}.
 \end{gather}
 
 We can then define the angle $\theta$ so that the non-diagonal matrix elements of the transformed matrix 
-$a_{kl}$ become non-zero and
+ become non-zero and
 we obtain the quadratic equation (using $\cot 2\theta=1/2(\cot \theta-\tan\theta)$
 \begin{gather}
 t^2+2\tau t-1= 0,
@@ -296,20 +313,20 @@ resulting in
   t = -\tau \pm \sqrt{1+\tau^2},
 \end{gather}
 
-Here a clever choice of roots must be made. For for a well trained computational physisist this equation should be a red warning sign of loss of numerical precision. To avoid subtraction of to almost equal numbers the following chioice should be made:
+Here a clever choice of roots must be made. For for a well trained computational physicist this equation should be a red warning sign of loss of numerical precision. To avoid subtraction of to almost equal numbers the following choice should be made:
 
 \begin{align*}
 t=  -\tau + \sqrt{1+\tau^2}, \quad   0  \geq \tau \\
 t=  -\tau - \sqrt{1+\tau^2}, \quad   \tau <  0
 \end{align*}
 
-From the equations above we obtain the folowing relation for $c$ and $t$
+From the equations above we obtain the following relation for $c$ and $t$
 \begin{gather}
    c = \frac{1}{\sqrt{1+t^2}}.
 \end{gather}
 Knowing that $t \in [0,1]$ we put restrictions such that $c \in [\frac{1}{\sqrt{2}}, 1]$ which focres $\theta$ to be in the interval $[- \frac{\pi}{4},\frac{\pi}{4}]$.  
 
-Chosing the smaller $t$ makes $c$ the larger and minimizes 
+Choosing the smaller $t$ makes $c$ the larger and minimizes 
 \begin{gather}
 ||{\bf B}-{\bf A}||_F^2=4(1-c)\sum_{i=1,i\ne k,l}^n(a_{ik}^2+a_{il}^2) +\frac{2a_{kl}^2}{c^2}.
 \end{gather}
@@ -322,7 +339,7 @@ Chosing the smaller $t$ makes $c$ the larger and minimizes
 The Jacobi algorithm takes the form
 \begin{algorithm}
 \label{alg:jacobi}
-Find the largest element, $a_{k,l}$, in $A$ \\
+Find the largest element, $a_{kl}$, in $A$ \\
 Compute $\tau:$
 \begin{gather*}
   \tau = \frac{a_{ll}-a_{kk}}{2a_{kl}}
@@ -351,7 +368,7 @@ Compute the new matrix elements:
 
 \subsubsection{Eigenvectors}
 
-From the similarity transform we have
+From the similarity transformation we have
 \begin{gather}
 y = Sx
 \end{gather}
@@ -359,7 +376,7 @@ Multiplying by $S^{-1} = \trans{S}$ from the left
 \begin{gather}
 x = \trans{S}y
 \end{gather}
-By considering multiple similarity transforms we obtain
+By considering multiple similarity transformations we obtain
 the recurrence relation
 \begin{gather}
 \trans{S_{(i)}} = \trans{S_i}\trans{S_{(i-1)}}
@@ -371,7 +388,7 @@ x = \trans{S}_N y
 With y as the identity vector
 
 \begin{algorithm}
-When each similarity transform is completed, the new matrice
+When each similarity transformation is completed, the new matrix
 \begin{gather*}
 \tilde{S}^{n+1} = \trans{S}\tilde{S}^{n}
 \end{gather*}
@@ -403,7 +420,7 @@ explored using the above algorithms. Analytical solutions has been
 found, and it is therefore possible to compare these cases.
 
 \subsubsection{Energies}
-The three lowest energies are analyticaly known. Comparing gives
+The three lowest energies are analytically known. Comparing gives
 
 \begin{figure}
 \centering
@@ -428,6 +445,8 @@ and $\rho_\infty$}
 and $\rho_\infty$}
 \label{fig:relE2}
 \end{figure}
+
+\subsection{Reproduction of results}
 
 
 \subsection{Two electrons}
