@@ -10,7 +10,7 @@
 
 inline double hydrogen(double r)
 {
-  return -5/r;  
+  return -10/r;  
 }
 
 int main(int argc, char *argv[])
@@ -30,7 +30,7 @@ int main(int argc, char *argv[])
   
   
   arma::Mat<double> A = ham_matrix(N, rho_0, rho_inf, two_electrons, omega_r);
-  
+  //arma::mat A = ham_matrix(N, rho_0, rho_inf, hydrogen);
   int n_rotations;
   
   if (eigv)

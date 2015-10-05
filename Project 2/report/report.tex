@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english,draft]{article}
+\documentclass[11pt,a4paper,english,final]{article}
 \usepackage[english]{babel} % Using babel for hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -42,11 +42,9 @@ frame=l,
 \renewcommand{\hat}[1]{\oldhat{#1}}
 \newcommand{\trans}[1]{#1^\top}
 \newcommand{\herm}[1]{#1^\dagger}
-%\renewcommand{\thefootnote}{\fnsymbol{footnote}} % Gir fotnote-symboler
+
 \newcommand{\Real}{\mathbb{R}}
 \newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
-
-\newcommand{\spac}{\hspace{5mm}}
 
 
 
@@ -77,6 +75,10 @@ three-dimensional harmonic oscillator well will be solved numerically.
 Both computational and physical aspects of the problem will be discussed 
 throughout the report. 
 
+The program and results of this project is found in a GitHub repository
+available at 
+\url{https://github.com/mulimoen/FYS3150CompPhy} under the 
+\url{/project 2} folder.
 
 \section{Method}
 
@@ -473,11 +475,14 @@ different values of N, \ref{fig:psi0N}, \ref{fig:psi1N} and
 
 When N is increased the solutions tends to decrease and get smoother.
 This decrease is due to a better approximation of the integral for 
-larger N.
+larger N, as the granularity causes the wave function to not be normalized
+appropriately.
 
 The different values of $\rho_\infty$ gives different eigenvectors.
 If it is chosen to low, the wave function will have a cutoff, and some 
-of the true behaviour may be lost.
+of the true behaviour may be lost. On the other hand will choosing this
+limit to high ensure a worse approximation, since we do not
+sample the most critical points.
 
 
 \begin{figure}
@@ -532,11 +537,39 @@ the eigenvector associated with the third lowest energy}
 
 For a selection of $\omega_r$ with $N = 100$ and $\rho_\infty = 6$ we
 obtain the plots \ref{fig:omegar0}, \ref{fig:omegar1} and 
-\ref{fig:omegar2} for the three lowest eigenvalues. The 
+\ref{fig:omegar2} for the three lowest eigenvalues and 
+associated eigenvectors.
 
-\subsection{Reproduction of results}
+It is clear that the strength of the harmonic oscillator determines
+the spread of the distribution. If the well is weak the wave function
+will spread past the normal limits from the single electron case. For the 
+case $\omega_r$ approaching zero, it is not bound and one expects 
+the electrons to separate, which is visible in figure \ref{fig:omegar0}
+and have a binding energy that approaches zero.
+
+For stronger bindings the binding energies increases, and the wave
+function concentrates closer to the centrum of the potential.
+
+\subsection{Hydrogen}
+
+My making some small modifications the program can be used for any 
+potential. If supplied with the Coulomb interaction with a sufficiently
+strong interaction we achieve the bound states. An example is shown in
+figure \ref{fig:H}.
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/hydrogen.png}
+\caption{Electron around hydrogen atom. Title in picture is incorrect}
+\label{fig:H}
+\end{figure}
 
 
+
+%\subsection{Reproduction of results}
+
+%Some runs for different $N$ and $\rho_inf$ has been run and is included
+%in the results folder in the GitHub repository.
 
 
 
@@ -566,6 +599,16 @@ for different values of $\omega_r$}
 \end{figure}
 
 
-\section{Concluding remarks }
+
+
+\section{Concluding remarks}
+
+Solving the Schrödinger equation with the help of matrices gives 
+sufficiently good energy eigenvalues as long as care is taken to assure 
+that the boundaries give stable solutions.
+
+The Jacobi method is not scalable for larger N, as it requires over 15000
+rotations for the $100\!\cross\!100$ case. Other methods should be 
+investigated to solve larger systems with less calculations.
 
 \end{document}
