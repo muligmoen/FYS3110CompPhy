@@ -60,7 +60,7 @@ frame=l,
 }
 {\end{tcolorbox}}
 
-\newcommand{\figurewidth}{.9\textwidth}
+\newcommand{\figurewidth}{.85\textwidth}
 
 \title{FYS3150/4150\\Computational Physics\\Project 2}
 \author{Magnus Ulimoen\\Krister Stræte Karlsen}
@@ -420,7 +420,23 @@ explored using the above algorithms. Analytical solutions has been
 found, and it is therefore possible to compare these cases.
 
 \subsubsection{Energies}
-The three lowest energies are analytically known. Comparing gives
+
+The three lowest energies are analytically known. Comparing these values
+with the one numerically computed gives plots \ref{fig:relE0}, 
+\ref{fig:relE1} and \ref{fig:relE2}. If a higher N is chosen, the 
+absolute error tends to decrease.
+
+This is however not the case for all selections 
+of $\rho\infty$. If this limit is chosen too low the energies will 
+not be as accurate, since the wave function can not unfold itself.
+An example of this is for the lowest energy level, figure \ref{fig:relE0},
+where the error for $\rho_\infty = 2$ does not tend to zero.
+
+For larger energies this lower limit must be selected larger, as the 
+wave function tends outwards. For the third lowest eigenvalue, 
+\ref{fig:relE2} one must choose a higher $\rho_\infty$ to compensate 
+for this.
+
 
 \begin{figure}
 \centering
@@ -446,14 +462,82 @@ and $\rho_\infty$}
 \label{fig:relE2}
 \end{figure}
 
-\subsection{Reproduction of results}
+\subsubsection{Wave function}
 
+The wave function is found by squaring the eigenvectors found for the 
+Hamiltonian. The three lowest wave functions have been selected and
+plotted for different values of $\rho_\infty$,
+\ref{fig:psi0rho}, \ref{fig:psi1rho}, \ref{fig:psi2rho} and 
+different values of N, \ref{fig:psi0N}, \ref{fig:psi1N} and 
+\ref{fig:psi2N}.
+
+When N is increased the solutions tends to decrease and get smoother.
+This decrease is due to a better approximation of the integral for 
+larger N.
+
+The different values of $\rho_\infty$ gives different eigenvectors.
+If it is chosen to low, the wave function will have a cutoff, and some 
+of the true behaviour may be lost.
+
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/psi_inf_compare_psi0.png}
+\caption{Wave function for different values of $\rho_\infty$ for
+the eigenvector associated with the lowest energy}
+\label{fig:psi0rho}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/psi_inf_compare_psi1.png}
+\caption{Wave function for different values of $\rho_\infty$ for
+the eigenvector associated with the second lowest energy}
+\label{fig:psi1rho}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/psi_inf_compare_psi2.png}
+\caption{Wave function for different values of $\rho_\infty$ for
+the eigenvector associated with the third lowest energy}
+\label{fig:psi2rho}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/N_compare_psi0.png}
+\caption{Wave function for different values of $N$ for
+the eigenvector associated with the lowest energy}
+\label{fig:psi0N}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/N_compare_psi1.png}
+\caption{Wave function for different values of $N$ for
+the eigenvector associated with the second lowest energy}
+\label{fig:psi1N}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{../results/N_compare_psi2.png}
+\caption{Wave function for different values of $N$ for
+the eigenvector associated with the third lowest energy}
+\label{fig:psi2N}
+\end{figure}
 
 \subsection{Two electrons}
 
 For a selection of $\omega_r$ with $N = 100$ and $\rho_\infty = 6$ we
-obtain plot \ref{fig:omegar0}, \ref{fig:omegar1} and \ref{fig:omegar2}
-for the three lowest eigenvalues.
+obtain the plots \ref{fig:omegar0}, \ref{fig:omegar1} and 
+\ref{fig:omegar2} for the three lowest eigenvalues. The 
+
+\subsection{Reproduction of results}
+
+
+
 
 
 \begin{figure}

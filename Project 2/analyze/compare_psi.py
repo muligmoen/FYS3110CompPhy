@@ -51,6 +51,8 @@ def plot_psi_N(Ns):
   for i in range(3):
     ax[i].set_title('$\psi_{}$'.format(i))
     ax[i].legend(loc='upper right')
+    ax[i].set_xlabel(r'$|\psi|^2$')
+    ax[i].set_ylabel(r'$\rho$')
     savename = os.path.join(target_folder, 'N_compare_psi{}.png'.format(i))
     fig[i].savefig(savename, dpi = 400,
                    bbox_inches='tight')
@@ -72,6 +74,8 @@ def plot_psi_rho(rhos):
   for i in range(3):
     ax[i].set_title('$\psi_{}$'.format(i))
     ax[i].legend(loc='upper right')
+    ax[i].set_xlabel(r'$|\psi|^2$')
+    ax[i].set_ylabel(r'$\rho$')
     ax[i].set_xlim((0,max(rhos)))
     savename = os.path.join(target_folder, 
                             'psi_inf_compare_psi{}.png'.format(i))
@@ -80,10 +84,10 @@ def plot_psi_rho(rhos):
   
   
 Ns = [10, 25, 50, 75, 100]
-#plot_psi_N(Ns)
+plot_psi_N(Ns)
 
 rhos = [2, 3, 4, 5, 6]
-#plot_psi_rho(rhos)
+plot_psi_rho(rhos)
 
 
 

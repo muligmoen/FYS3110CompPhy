@@ -48,12 +48,12 @@ obj/%.o: src/%.cpp
 .phony: all clean dist-clean
 
 clean:
+	$(RM) $(patsubst %.o,%.d,$(OBJS))
 	$(RM) $(OBJS)
 
 dist-clean: clean
-	$(RM) -r obj
 	$(RM) $(TARGET)
-	$(RM) $(patsubst %.o,%.d,$(OBJS))
+	@rmdir --ignore-fail-on-non-empty obj 
 
 
 
