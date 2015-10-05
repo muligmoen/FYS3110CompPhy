@@ -417,21 +417,18 @@ x_j = \tilde{S}^N_{ji}
 \subsubsection{Similarity transformations and matrix dimensionality}
 
 Doing numerical experiments, simply counting the similarity transformations needed in \emph{Jacobi's algorithm}, we tried to extract a general behavior.   
-
 \begin{table}[H]
 \centering
   \caption{Number of similarity transformations needed in Jacobi's algorithm and matrix dimensionality }
-\vspace{3mm}
+\vspace{2mm}
 
 \begin{tabular}{ |l|l| }
   \hline
-  \textbf{Matrix dimension} & \textbf{No. similarity transformations} \\
+  \textbf{Matrix dimension(N)} & \textbf{No. similarity transformations} \\
   \hline
   25 & 950 \\
   \hline
   50 & 3945 \\
-  \hline
-  75  & 9037 \\
   \hline
   100 & 16377 \\
   \hline
@@ -440,9 +437,9 @@ Doing numerical experiments, simply counting the similarity transformations need
   200 & 66079 \\
   \hline
 \end{tabular}
-\vspace{0.5cm}
+\vspace{0.2cm}
 \end{table}
-
+A rough estimate is that a doubling of $N$ leads to 4 times as many rotations. 
 
 \subsection{Single electron in harmonic oscillator}
 
