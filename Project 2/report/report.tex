@@ -277,7 +277,7 @@ approach har linear spacing between points, and an upper limit
 of $\rho$ must be chosen. Care has to be taken to make sure the 
 solution does not depend upon this selection.
 
-We will now move on the see how we can solve this eivenvalue problem using Jacobi's algorithm. 
+We will now move on the see how we can solve this eigenvalue problem using Jacobi's algorithm. 
 
 \subsection{Jacobi's eigenvalue algorithm}
 
@@ -413,6 +413,32 @@ x_j = \tilde{S}^N_{ji}
 
 
 \section{Results and reflection}
+
+\subsubsection{Similarity transformations and matrix dimensionality}
+
+Doing numerical experiments, simply counting the similarity transformations needed in \emph{Jacobi's algorithm}, we tried to extract a general behavior.   
+
+\begin{center}
+\begin{tabular}{ |l|l| }
+  \hline
+  \textbf{Matrix dimension} & \textbf{No. similarity transformations} \\
+  \hline
+  25 & 950 \\
+  \hline
+  50 & 3945 \\
+  \hline
+  75  & 9037 \\
+  \hline
+  100 & 16377 \\
+  \hline
+  150 & 36903 \\
+  \hline
+  200 & 66079 \\
+  \hline
+\end{tabular}
+\vspace{0.5cm}
+\end{center}
+
 
 
 \subsection{Single electron in harmonic oscillator}
