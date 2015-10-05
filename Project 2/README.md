@@ -44,5 +44,6 @@ python3 plot.py
 when a textfile has been generated with the above program. These can be chained to give the plot straight away, for example;
 
 ```
-./project2 100 10 && python3 plot.py
+./project2 100 6 1 && python3 plot.py
 ```
+Which will plot the three lowest energies and the associated eigenvectors (squared).
