@@ -1,23 +1,13 @@
 
 
-#include "unittest++/UnitTest++.h"
+#include "catch.hpp"
 
 
-const double tolerance = 1e-10;
+//const double tolerance = 1e-10;
 
-TEST(sanity)
+TEST_CASE( "SANITY" )
 {
-  CHECK_EQUAL(1, 2 - 1);
-} 
-  
-  
-SUITE(functions)
-{
-  TEST(H)
-  {
-    double r = 5.0 + 3;
-    r = r+r;
-    CHECK_CLOSE( 0, 0, tolerance);
-  }
-    
+  REQUIRE( 1==1 );
+  REQUIRE( 2 !=  2+1 );
 }
+

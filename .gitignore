@@ -4,6 +4,7 @@
 
 #test-files
 test.txt
+testit
 
 #C++ files
 *.o

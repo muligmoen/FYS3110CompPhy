@@ -20,17 +20,22 @@ LDFLAGS = -g -Wall
 
 
 # libraries to link into executable
-LDLIBS =  -lunittest++
+LDLIBS = 
 
 # build executable
 TARGET = project3
-CPP_FILES = main.cpp tests.cpp functions.cpp
-
+CPP_FILES = main.cpp functions.cpp
 
 SRCS = $(addprefix src/,$(notdir $(CPP_FILES)))
-
-
 OBJS = $(patsubst src/%.cpp,obj/%.o,$(SRCS))
+
+
+TEST_TARGET = testit
+TEST_FILES = tests.cpp catch.cpp
+TEST_SRCS = $(addprefix src/,$(notdir $(TEST_FILES)))
+TEST_OBJS = $(patsubst src/%.cpp,obj/%.o,$(TEST_SRCS))
+
+
 
 
 
@@ -45,11 +50,20 @@ obj/%.o: src/%.cpp
 	$(CXX) $(CPPFLAGS) -c -o $@ $<
 	
 
-.phony: all clean dist-clean
 
+test: $(TEST_TARGET)
+
+$(TEST_TARGET): $(TEST_OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+	
+
+
+.phony: all clean dist-clean test
 clean:
 	$(RM) $(patsubst %.o,%.d,$(OBJS))
 	$(RM) $(OBJS)
+	$(RM) $(patsubst %.o,%.d,$(TEST_OBJS))
+	$(RM) $(TEST_OBJS)
 
 dist-clean: clean
 	$(RM) $(TARGET)
