@@ -1,0 +1,73 @@
+\documentclass[11pt,a4paper,english,final]{article}
+\usepackage[english]{babel} % Using babel for hyphenation
+\usepackage{lmodern} % Changing the font
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+%\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
+\usepackage{tcolorbox}
+\tcbuselibrary{hooks}
+\usepackage[parfill]{parskip} % Removes indents
+\usepackage{amsmath} % Environment, symbols etc...
+\usepackage{amssymb}
+\usepackage{float} % Fixing figure locations
+\usepackage{multirow} % For nice tables
+%\usepackage{wasysym} % Astrological symbols
+\usepackage{graphicx} % For pictures etc...
+\usepackage{enumitem} % Points/lists
+\usepackage{physics} % Typesetting of mathematical physics examples: 
+                     % \bra{}, \ket{}, expval{}
+\usepackage{url}
+
+\definecolor{red}{RGB}{255,10,10}
+
+% To include code(-snippets) with æøå
+\usepackage{listings}
+\lstset{
+language=c++,
+showspaces=false,
+showstringspaces=false,
+frame=l,
+}
+
+\tolerance = 5000 % Bedre tekst
+\hbadness = \tolerance
+\pretolerance = 2000
+
+\numberwithin{equation}{section}
+
+\newcommand{\conj}[1]{#1^*}
+\newcommand{\ve}[1]{\mathbf{#1}} % Vektorer i bold
+\let\oldhat\hat
+\renewcommand{\hat}[1]{\oldhat{#1}}
+\newcommand{\trans}[1]{#1^\top}
+\newcommand{\herm}[1]{#1^\dagger}
+
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+
+
+
+\newcounter{algcounter}
+\renewcommand{\thealgcounter}{\Roman{algcounter}}
+
+\newenvironment{algorithm}{%
+\refstepcounter{algcounter}
+\begin{tcolorbox}
+\centerline{Algorithm \thealgcounter}\vspace{2mm}
+}
+{\end{tcolorbox}}
+
+\newcommand{\figurewidth}{.85\textwidth}
+
+\title{FYS3150\\Computational Physics\\Project 3}
+\author{Magnus Ulimoen}
+\date{\today}
+
+\begin{document}
+\tcbset{before app=\parfillskip0pt}
+\maketitle
+
+
+
+\end{document}
