@@ -24,7 +24,7 @@ LDLIBS =  -lunittest++
 
 # build executable
 TARGET = project3
-CPP_FILES = main.cpp
+CPP_FILES = main.cpp tests.cpp functions.cpp
 
 
 SRCS = $(addprefix src/,$(notdir $(CPP_FILES)))
