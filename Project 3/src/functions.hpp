@@ -3,12 +3,17 @@
 #ifndef functions_h
 #define functions_h
 
-inline double hydrogen_1s(const double r, const double alpha);
+inline double square_diff(const double x, const double y)
+{
+  return (x-y)*(x-y); 
+}
 
-inline double square_diff(const double x, const double y);
+inline double square_diff(const double x, const double y, const double z)
+{
+  return x*x + y*y + z*z;
+}
 
-inline double inverse_diff_distance(const double x1, const double y1, const double z1,
-                                    const double x2, const double y2, const double z2);
-
+void gauss_laguerre(double *x_return, double *w_return,
+                    const int n, const double alf);
 
 #endif

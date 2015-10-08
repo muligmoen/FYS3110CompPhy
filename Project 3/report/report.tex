@@ -69,5 +69,31 @@ frame=l,
 \maketitle
 
 
+\section{Introduction}
+
+We are interested in the correlation energy between two electrons in
+the helium atom. We do not have an analytical solution to this, so 
+we assume that it is almost like two 1s-hydrogen atoms.
+
+
+\section{Method}
+
+\subsection{Wave function}
+
+We overlay the simplest solution of the hydrogen atom on top of each
+other, and end up with
+\begin{gather}
+\psi = e^{-\alpha r_1}e^{-\alpha r_2}
+\end{gather}
+Where we have discarded the normalization constant
+
+
+\section{Implementation}
+\subsection{Six-dimensional integral}
+This is shortened to the loop
+\begin{gather}
+sum += \frac{f(r_1, r_2)}{\abs{\ve{r_1} - \ve{r_2}}} *w[i_x]\dots
+\end{gather}
+
 
 \end{document}
