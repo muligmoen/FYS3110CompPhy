@@ -4,6 +4,11 @@
 #include <cmath>
 
 const double pi = 4*std::atan(1);
+const int MAXIT = 10;
+const double EPS = 3e-14;
+const double ZERO = 1.0E-10;
+const double tolerance = 1e-9;
+
 
 inline double square_diff(const double x, const double y)
 {

@@ -2,10 +2,6 @@
 
 #include "functions.hpp"
 
-const int MAXIT = 10;
-const double EPS = 3e-14;
-const double ZERO = 1.0E-10;
-const double tolerance = 1e-9;
 
 double gammln(double);
 
@@ -119,19 +115,19 @@ double loop_6dim(const int N, const double *x, const double *w,
   for (int ll = 0; ll<N; ll++){
   for (int mm = 0; mm<N; mm++){
   for (int nn = 0; nn<N; nn++){
-  const double rdiff_sum_square = square_sum((x[ii]-x[ll]), 
-                          (x[jj] - x[mm]), (x[kk] - x[nn]));
-  if (rdiff_sum_square > tolerance){ 
-    const double r1 = std::sqrt(square_sum(x[ii], x[jj], x[kk]));
-    const double r2 = std::sqrt(square_sum(x[ll], x[mm], x[nn]));
-    const double weigths = w[ii]*w[jj]*w[kk]*w[ll]*w[mm]*w[nn];
-    sum += std::exp(-2*alpha*(r1 + r2))/std::sqrt(rdiff_sum_square)*weigths;
+    const double rdiff_sum_square = square_sum((x[ii]-x[ll]), 
+                            (x[jj] - x[mm]), (x[kk] - x[nn]));
+    if (rdiff_sum_square > tolerance){ 
+      const double r1 = std::sqrt(square_sum(x[ii], x[jj], x[kk]));
+      const double r2 = std::sqrt(square_sum(x[ll], x[mm], x[nn]));
+      const double weigths = w[ii]*w[jj]*w[kk]*w[ll]*w[mm]*w[nn];
+      sum += std::exp(-2*alpha*(r1 + r2))/std::sqrt(rdiff_sum_square)*weigths;
   }}}}}}}
   return sum;
 }
 
-double loop_6dim(const int Nr, const int Ntheta, const int Nphi,
-                 const double *r, const double *theta, const double *phi,
+double loop_6dim(const int Nx, const int Ntheta, const int Nphi,
+                 const double *x, const double *theta, const double *phi,
                  const double *wr, const double *wtheta, const double *wphi,
                  const double alpha)
 {
@@ -139,23 +135,23 @@ double loop_6dim(const int Nr, const int Ntheta, const int Nphi,
   using std::sin;
   
   double sum = 0;
-  for (int ii = 0; ii<Nr; ii++){
-  for (int jj = 0; jj<Nr; jj++){
+  for (int ii = 0; ii<Nx; ii++){
+  for (int jj = 0; jj<Nx; jj++){
   for (int kk = 0; kk<Ntheta; kk++){
   for (int ll = 0; ll<Ntheta; ll++){
   for (int mm = 0; mm<Nphi; mm++){
   for (int nn = 0; nn<Nphi; nn++){
-    const double beta = cos(theta[kk])*cos(theta[ll]) + 
+    const double cos_beta = cos(theta[kk])*cos(theta[ll]) + 
                        sin(theta[jj])*sin(theta[ll])*cos(phi[mm]-phi[nn]);
-    const double r12_square = (r[ii]*r[ii] + r[jj]*r[jj]
-                                  - 2*r[ii]*r[jj]*cos(beta))*(2*alpha)*(2*alpha);
-    if (r12_square > tolerance) {
+    const double x12_square = (x[ii]*x[ii] + x[jj]*x[jj]
+                          - 2*x[ii]*x[jj]*cos_beta);
+    if (x12_square > tolerance) {
       const double weights = wr[ii]*wr[jj]*wtheta[jj]*wtheta[ll]*wphi[mm]*wphi[nn];
-      sum += 1.0/std::sqrt(r12_square)*weights;
+      sum += weights*sin(theta[kk])*sin(theta[ll])/std::sqrt(x12_square);
     }
   }}}}}}
-  sum /= std::pow(2*alpha, 6);
-  
+  sum /= std::pow(2*alpha, 5);
+  sum *= 2; // magic factor
   
   return sum;
 }
