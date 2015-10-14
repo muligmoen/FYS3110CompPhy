@@ -31,7 +31,7 @@ OBJS = $(patsubst src/%.cpp,obj/%.o,$(SRCS))
 
 
 TEST_TARGET = testit
-TEST_FILES = tests.cpp catch.cpp
+TEST_FILES = tests.cpp catch.cpp functions.cpp
 TEST_SRCS = $(addprefix src/,$(notdir $(TEST_FILES)))
 TEST_OBJS = $(patsubst src/%.cpp,obj/%.o,$(TEST_SRCS))
 
