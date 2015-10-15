@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   bool method[6] = {}; // all init to false
   process_args(argc, argv, N, limit, method);
   
-  
+  const double alpha = 2;
 
   
   if (method[0]) { // analytical
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
         const double r1 = std::sqrt(square_sum(x[0], x[1], x[2]));
         const double r2 = std::sqrt(square_sum(x[3], x[4], x[5]));
       
-        result += std::exp(-4*(r1 + r2))/std::sqrt(rdiff_sum_square);
+        result += std::exp(-2*alpha*(r1 + r2))/std::sqrt(rdiff_sum_square);
       }
     }
     
@@ -139,11 +139,12 @@ int main(int argc, char **argv)
       const double r12_square = r[0]*r[0] + r[1]*r[1]
                                   - 2*r[0]*r[1]*cos_beta;
       if (r12_square > tolerance) {
-        sum += r[0]*r[0]*r[1]*r[1]*sin(theta[0])*sin(theta[1])/std::sqrt(r12_square);
+        const double dV = r[0]*r[0]*r[1]*r[1]*sin(theta[0])*sin(theta[1]);
+        sum += std::exp(-2*alpha*(r[0]+r[1]))/std::sqrt(r12_square)*dV;
       }
     }
     
-    sum *= (limit*limit)*(pi*pi)*(2*pi*2*pi);
+    sum *= (pi*pi)*(2*pi*2*pi)*(limit*limit);
     sum /= (double)N;
     
     std::cout << "I = " << sum << "\tMonte Carlo radial" << std::endl;
