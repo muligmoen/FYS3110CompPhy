@@ -105,7 +105,7 @@ void gauss_legendre(double *x, double *w, const int n,
 
 
 
-double loop_6dim(const int N, const double *x, const double *w, 
+double cartesian_loop(const int N, const double *x, const double *w, 
                  const double alpha)
 {
   double sum = 0;
@@ -126,7 +126,7 @@ double loop_6dim(const int N, const double *x, const double *w,
   return sum;
 }
 
-double loop_6dim(const int Nx, const int Ntheta, const int Nphi,
+double polar_loop(const int Nx, const int Ntheta, const int Nphi,
                  const double *x, const double *theta, const double *phi,
                  const double *wr, const double *wtheta, const double *wphi,
                  const double alpha)

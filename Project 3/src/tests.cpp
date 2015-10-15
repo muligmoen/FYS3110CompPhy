@@ -13,10 +13,6 @@ TEST_CASE( "SANITY" )
   REQUIRE( 2 !=  2+1 );
 }
 
-TEST_CASE( "SQUARE_DIFF" , "[functions]")
-{
-  CHECK( square_diff(5, 2) == Approx( 9.0 ) );
-}
 
 TEST_CASE( "SQUARE_SUM" , "[functions]")
 {

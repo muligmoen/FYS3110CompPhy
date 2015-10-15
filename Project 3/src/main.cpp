@@ -1,59 +1,91 @@
 #include <iostream>
 #include <cmath>
 #include <cstdlib>
-#include <random>
-#include <ctime>
-#include <functional>
+#include <cstring>
+
+#include <omp.h>
 
 #include "functions.hpp"
 
+
+// uniform number generator
+auto uniform_distribution(const double lower, const double upper)
+{
+  static const auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  static std::default_random_engine gen(seed);
+  
+  std::uniform_real_distribution<double> dist(lower, upper);
+  auto uniform = std::bind(dist, gen);
+  return uniform;
+}
+
+void process_args(int argc, char **argv, int &N, double &limit, 
+                  bool *met);
 
 
 
 int main(int argc, char **argv)
 {
-  auto seed = std::time(nullptr);
-  std::default_random_engine gen(seed);
-    
   int N;
   double limit;
-  if (argc < 3) {
-    N = 15;
-    limit = 5;
-  } else {
-    N = std::atoi(argv[1]);
-    limit = std::atof(argv[2]);
-  }
+  bool method[6] = {}; // all init to false
+  process_args(argc, argv, N, limit, method);
+  
+  
 
   
-  if (true) { // analytical
+  if (method[0]) { // analytical
     double analytical = 5*pi*pi/double(16*16);
     std::cout << "I = " << analytical << "\tAnalytical" << std::endl;
   }
-  if (false) { // gauss legendre
+  if (method[1]) { // gauss legendre
     double *x = new double[N];
     double *w = new double[N];
     
     gauss_legendre(x, w, N, -limit, limit);
     
 
-    std::cout << "I = " << loop_6dim(N, x, w, 2)
+    std::cout << "I = " << cartesian_loop(N, x, w, 2)
               << "\tLegendre" << std::endl;
     
     delete[] x;
     delete[] w;
   }
-  if (false) { // brute monte carlo cartesian
+  if (method[2]) { // laguerre
+    double *r = new double[N];
+    double *wr = new double[N];
+    gauss_laguerre(r, wr, N, 2);
+    
+    double *theta = new double[N];
+    double *wtheta = new double[N];
+    gauss_legendre(theta, wtheta, N, 0, pi);
+    
+    double *phi = new double[N];
+    double *wphi = new double[N];
+    gauss_legendre(phi, wphi, N, 0, 2*pi);
+    
+    double result = polar_loop(N, N, N, r, theta, phi, wr, wtheta, wphi, 2);
+    
+    std::cout << "I = " << result << "\tGauss-Laguerre and Gauss-Legendre"
+              << std::endl;
+              
+    delete[] r;
+    delete[] theta;
+    delete[] phi;
+    delete[] wr;
+    delete[] wtheta;
+    delete[] wphi;
+  }
+  if (method[3]) { // brute monte carlo cartesian
     
     const int dim = 6;
-    //auto seed = std::time(nullptr);
-    //std::default_random_engine gen(seed);
-    std::uniform_real_distribution<double> RNG(-limit, limit);
-    auto get_num = std::bind(RNG, gen);
+    
+    auto get_num = uniform_distribution(-limit, limit);
     
     double x[dim];
     double result = 0;
     
+    #pragma omp parallel for private(x) reduction(+:result)
     for (int jj=0; jj<N; jj++) {
       for (int ii=0; ii<dim; ii++) {
         x[ii] = get_num();
@@ -77,39 +109,11 @@ int main(int argc, char **argv)
               << "\tBrute Monte Carlo" << std::endl;
 
   }
-  if (false) { // laguerre
-    double *r = new double[N];
-    double *wr = new double[N];
-    gauss_laguerre(r, wr, N, 2);
+  if (method[4]) { // brute monte carlo radial
     
-    double *theta = new double[N];
-    double *wtheta = new double[N];
-    gauss_legendre(theta, wtheta, N, 0, pi);
-    
-    double *phi = new double[N];
-    double *wphi = new double[N];
-    gauss_legendre(phi, wphi, N, 0, 2*pi);
-    
-    double result = loop_6dim(N, N, N, r, theta, phi, wr, wtheta, wphi, 2);
-    
-    std::cout << "I = " << result << "\tGauss-Laguerre and Gauss-Legendre"
-              << std::endl;
-              
-    delete[] r;
-    delete[] theta;
-    delete[] phi;
-    delete[] wr;
-    delete[] wtheta;
-    delete[] wphi;
-  }
-  if (false) { // brute monte carlo radial
-    std::uniform_real_distribution<double> r_rng(0, limit);
-    std::uniform_real_distribution<double> theta_rng(0, pi);
-    std::uniform_real_distribution<double> phi_rng(0, 2*pi);
-    
-    auto r_rand = std::bind(r_rng, gen);
-    auto theta_rand = std::bind(theta_rng, gen);
-    auto phi_rand = std::bind(phi_rng, gen);
+    auto r_rand = uniform_distribution(0, limit);
+    auto theta_rand = uniform_distribution(0, pi);
+    auto phi_rand = uniform_distribution(0, 2*pi);
     
     using std::cos;
     using std::sin;
@@ -121,6 +125,7 @@ int main(int argc, char **argv)
     
     double sum = 0;
     
+    #pragma omp parallel for private(r, theta, phi) reduction(+:sum)
     for (int jj=0; jj<N; jj++) {
       for (int ii = 0; ii< dim; ii++) {
         r[ii] = r_rand();
@@ -138,55 +143,89 @@ int main(int argc, char **argv)
       }
     }
     
-    //sum *= (limit*limit)*(pi*pi)*(2*pi*2*pi);
+    sum *= (limit*limit)*(pi*pi)*(2*pi*2*pi);
     sum /= (double)N;
     
     std::cout << "I = " << sum << "\tMonte Carlo radial" << std::endl;
     
     
   }
-  if (true) { // monte carlo importance sampling
+  if (method[5]) { // monte carlo importance sampling
     
-    std::uniform_real_distribution<double> r_rng(0, 1);
-    std::uniform_real_distribution<double> theta_rng(-1, 1);
-    std::uniform_real_distribution<double> phi_rng(0, 2*pi);
+    auto cos_theta = uniform_distribution(-1, 1);
+    auto phi = uniform_distribution(0, 2*pi);
     
-    
-    auto cos_theta = std::bind(theta_rng, gen);
-    auto phi = std::bind(phi_rng, gen);
-    auto r_rnd = std::bind(r_rng, gen);
-    
+    // mapping cos(beta) from uniform distributions
     auto cos_beta = [&cos_theta, &phi](){
       double thet1 = cos_theta();
       double thet2 = cos_theta();
       double phi_1 = phi();
       double phi_2 = phi();
-      return thet1*thet2+ std::sqrt(1-thet1*thet1)*std::sqrt(1-thet2*thet2)*std::cos(phi_1 - phi_2);
+      return thet1*thet2 + std::sqrt(1-thet1*thet1)*std::sqrt(1-thet2*thet2)*std::cos(phi_1 - phi_2);
     };
     
-    auto r = [&r_rnd](double lambda){
-      double x = r_rnd();
-      return -lambda*(1.0-x);
-    };
     
     const double alpha = 2;
     const double lambda = 1/(double)(2*alpha);
-    const double norm_factor = (2*2)*(2*pi*2*pi);
+    
+    // Mapping to exponential distribution with a lambda func
+    auto x = uniform_distribution(0, 1);
+    auto r = [&x, lambda](){return -lambda*std::log(1-x());};
+    
+    const double norm_factor = (2*2)*(2*pi*2*pi)*(lambda*lambda);
     
     double result = 0;
+    
+    #pragma omp parallel for reduction(+:result)
     for (int ii=0; ii<N; ii++)
     {
-      const double r1 = r(lambda);
-      const double r2 = r(lambda);
+      const double r1 = r();
+      const double r2 = r();
       const double cos_b = cos_beta();
-      result += r1*r1*r2*r2/std::sqrt(r1*r1+r2*r2 - 2*r1*r2*cos_b);
+      result += r1*r1*r2*r2/std::sqrt(r1*r1 + r2*r2 - 2*r1*r2*cos_b);
     }
     result *= norm_factor;
-    result /= N*(2*alpha*2*alpha);
+    
+    
+    result /= N;
     
     
     std::cout << "I = " << result << "\tMonte Carlo importance" << std::endl;
   }
     
+  
+}
+
+
+void process_args(int argc, char **argv, int &N, double &limit, 
+                  bool *met)
+{
+  if (argc < 2) {
+    std::cerr << "Usage : " << argv[0] << " N <-l lim> <methods>\n" <<
+                 "Where the limit can be specified with the -l flag\n\n" << 
+                 "Methods available are \n" << 
+                 "ANA -> analytical solution\n" <<
+                 "GLE -> gauss legendre quadrature\n" <<
+                 "GLA -> gauss laguerre quadrature\n" <<
+                 "MCC -> Monte Carlo with cartesian coordinates\n" << 
+                 "MCR -> Monte Carlo with spherical coordinates\n" << 
+                 "MCI -> Monte Carlo with importance sampling" << std::endl;
+    std::exit(1);
+  } else {
+    N = std::atof(argv[1]);
+  }
+  
+  limit = 5;
+  
+  for (int SearchI=0; SearchI < argc; SearchI++)
+  {
+    if (!std::strcmp(argv[SearchI], "-l")) limit = std::atof(argv[SearchI+1]);
+    if (!std::strcmp(argv[SearchI], "ANA")) met[0] = true;
+    if (!std::strcmp(argv[SearchI], "GLE")) met[1] = true;
+    if (!std::strcmp(argv[SearchI], "GLA")) met[2] = true;
+    if (!std::strcmp(argv[SearchI], "MCC")) met[3] = true;
+    if (!std::strcmp(argv[SearchI], "MCR")) met[4] = true;
+    if (!std::strcmp(argv[SearchI], "MCI")) met[5] = true;
+  }
   
 }

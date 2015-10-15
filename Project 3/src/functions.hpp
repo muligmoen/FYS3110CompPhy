@@ -2,6 +2,11 @@
 #define functions_h
 
 #include <cmath>
+#include <functional>
+#include <random>
+#include <chrono>
+
+
 
 const double pi = 4*std::atan(1);
 const int MAXIT = 10;
@@ -10,10 +15,7 @@ const double ZERO = 1.0E-10;
 const double tolerance = 1e-9;
 
 
-inline double square_diff(const double x, const double y)
-{
-  return (x-y)*(x-y); 
-}
+
 
 inline double square_sum(const double x, const double y, const double z)
 {
@@ -27,10 +29,10 @@ void gauss_legendre(double *x, double *w, const int n,
                     const double x1, const double x2);
 
 
-double loop_6dim(const int N, const double* x, const double* w, 
+double cartesian_loop(const int N, const double* x, const double* w, 
                  const double alpha);
 
-double loop_6dim(const int Nr, const int Ntheta, const int Nphi,
+double polar_loop(const int Nr, const int Ntheta, const int Nphi,
                  const double *r, const double *theta, const double *phi,
                  const double *wr, const double *wtheta, const double *wphi,
                  const double alpha);
