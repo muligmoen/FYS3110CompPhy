@@ -37,4 +37,10 @@ double polar_loop(const int Nr, const int Ntheta, const int Nphi,
                  const double *wr, const double *wtheta, const double *wphi,
                  const double alpha);
 
+// uniform number generator, could be replaced by a simple function or lambda
+// function to give a generator with the ranges specified
+std::_Bind<std::uniform_real_distribution<double>(std::default_random_engine)> 
+            uniform_distribution(const double lower, const double upper);
+            
+
 #endif

@@ -13,7 +13,7 @@ RM = rm -f
 # -O3 optimiation level 3
 # -pedantic warns about GCC spesific options
 # -MMD & -MP makes automatic dependancy files
-CPPFLAGS = -g -std=c++14 -Wall -Wextra -Werror -O3 -pedantic -MMD -MP -fopenmp
+CPPFLAGS = -g -std=c++11 -Wall -Wextra -Werror -O3 -pedantic -MMD -MP -fopenmp
 
 # linker flags
 LDFLAGS = -g -Wall -fopenmp

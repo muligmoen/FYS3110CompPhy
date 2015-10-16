@@ -1,5 +1,7 @@
 #include <cmath>
 
+#include <omp.h>
+
 #include "functions.hpp"
 
 
@@ -131,9 +133,7 @@ double polar_loop(const int Nx, const int Ntheta, const int Nphi,
                  const double *wr, const double *wtheta, const double *wphi,
                  const double alpha)
 {
-  using std::cos;
-  using std::sin;
-  
+
   double sum = 0;
   for (int ii = 0; ii<Nx; ii++){
   for (int jj = 0; jj<Nx; jj++){
@@ -141,17 +141,34 @@ double polar_loop(const int Nx, const int Ntheta, const int Nphi,
   for (int ll = 0; ll<Ntheta; ll++){
   for (int mm = 0; mm<Nphi; mm++){
   for (int nn = 0; nn<Nphi; nn++){
-    const double cos_beta = cos(theta[kk])*cos(theta[ll]) + 
-                       sin(theta[jj])*sin(theta[ll])*cos(phi[mm]-phi[nn]);
-    const double x12_square = (x[ii]*x[ii] + x[jj]*x[jj]
-                          - 2*x[ii]*x[jj]*cos_beta);
+    const double cos_beta = std::cos(theta[kk])*std::cos(theta[ll]) + 
+                       std::sin(theta[jj])*std::sin(theta[ll])*std::cos(phi[mm]-phi[nn]);
+    const double x12_square = x[ii]*x[ii] + x[jj]*x[jj]
+                          - 2*x[ii]*x[jj]*cos_beta;
     if (x12_square > tolerance) {
       const double weights = wr[ii]*wr[jj]*wtheta[jj]*wtheta[ll]*wphi[mm]*wphi[nn];
-      sum += weights*sin(theta[kk])*sin(theta[ll])/std::sqrt(x12_square);
+      sum += weights*std::sin(theta[kk])*std::sin(theta[ll])/std::sqrt(x12_square);
     }
   }}}}}}
   sum /= std::pow(2*alpha, 5);
-  sum *= 2; // magic factor
+  //sum *= 2; // magic factor
   
   return sum;
+}
+
+
+std::_Bind<std::uniform_real_distribution<double>(std::default_random_engine)> 
+            uniform_distribution(const double lower, const double upper)
+/*
+ * Binds a generator and a uniform distribution 
+ * to a new function which gives the number in the uniform 
+ * range from lower to upper
+ */
+{
+  static const auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  static std::default_random_engine gen(seed);
+  
+  std::uniform_real_distribution<double> dist(lower, upper);
+  auto uniform = std::bind(dist, gen);
+  return uniform;
 }

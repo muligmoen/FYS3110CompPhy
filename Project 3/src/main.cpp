@@ -7,21 +7,10 @@
 
 #include "functions.hpp"
 
+            
 
-// uniform number generator
-auto uniform_distribution(const double lower, const double upper)
-{
-  static const auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-  static std::default_random_engine gen(seed);
-  
-  std::uniform_real_distribution<double> dist(lower, upper);
-  auto uniform = std::bind(dist, gen);
-  return uniform;
-}
-
-void process_args(int argc, char **argv, int &N, double &limit, 
-                  bool *met);
-
+void process_args(const int argc, char **argv, int &N, double &limit, 
+                  bool *methods);
 
 
 int main(int argc, char **argv)
@@ -32,13 +21,15 @@ int main(int argc, char **argv)
   process_args(argc, argv, N, limit, method);
   
   const double alpha = 2;
+  
+  
 
   
   if (method[0]) { // analytical
     double analytical = 5*pi*pi/double(16*16);
     std::cout << "I = " << analytical << "\tAnalytical" << std::endl;
   }
-  if (method[1]) { // gauss legendre
+  if (method[1]) { // Gauss Quadrature Legendre
     double *x = new double[N];
     double *w = new double[N];
     
@@ -51,7 +42,7 @@ int main(int argc, char **argv)
     delete[] x;
     delete[] w;
   }
-  if (method[2]) { // laguerre
+  if (method[2]) { // Gauss Quadrature Laguerre
     double *r = new double[N];
     double *wr = new double[N];
     gauss_laguerre(r, wr, N, 2);
@@ -158,15 +149,14 @@ int main(int argc, char **argv)
     
     // mapping cos(beta) from uniform distributions
     auto cos_beta = [&cos_theta, &phi](){
-      double thet1 = cos_theta();
-      double thet2 = cos_theta();
+      double x1 = cos_theta();
+      double x2 = cos_theta();
       double phi_1 = phi();
       double phi_2 = phi();
-      return thet1*thet2 + std::sqrt(1-thet1*thet1)*std::sqrt(1-thet2*thet2)*std::cos(phi_1 - phi_2);
+      return x1*x2 + std::sqrt(1-x1*x1)*std::sqrt(1-x2*x2)*std::cos(phi_1 - phi_2);
     };
     
     
-    const double alpha = 2;
     const double lambda = 1/(double)(2*alpha);
     
     // Mapping to exponential distribution with a lambda func
@@ -183,8 +173,11 @@ int main(int argc, char **argv)
       const double r1 = r();
       const double r2 = r();
       const double cos_b = cos_beta();
-      result += r1*r1*r2*r2/std::sqrt(r1*r1 + r2*r2 - 2*r1*r2*cos_b);
+      const double dV = r1*r1*r2*r2;
+      result += dV/std::sqrt(r1*r1 + r2*r2 - 2*r1*r2*cos_b);
     }
+    
+    
     result *= norm_factor;
     
     
@@ -198,19 +191,19 @@ int main(int argc, char **argv)
 }
 
 
-void process_args(int argc, char **argv, int &N, double &limit, 
-                  bool *met)
+void process_args(const int argc, char **argv, int &N, double &limit, 
+                  bool *methods)
 {
   if (argc < 2) {
     std::cerr << "Usage : " << argv[0] << " N <-l lim> <methods>\n" <<
                  "Where the limit can be specified with the -l flag\n\n" << 
                  "Methods available are \n" << 
-                 "ANA -> analytical solution\n" <<
-                 "GLE -> gauss legendre quadrature\n" <<
-                 "GLA -> gauss laguerre quadrature\n" <<
-                 "MCC -> Monte Carlo with cartesian coordinates\n" << 
-                 "MCR -> Monte Carlo with spherical coordinates\n" << 
-                 "MCI -> Monte Carlo with importance sampling" << std::endl;
+                 "ANA : analytical solution\n" <<
+                 "GLE : gauss legendre quadrature\n" <<
+                 "GLA : gauss laguerre quadrature\n" <<
+                 "MCC : Monte Carlo with cartesian coordinates\n" << 
+                 "MCR : Monte Carlo with spherical coordinates\n" << 
+                 "MCI : Monte Carlo with importance sampling" << std::endl;
     std::exit(1);
   } else {
     N = std::atof(argv[1]);
@@ -220,13 +213,15 @@ void process_args(int argc, char **argv, int &N, double &limit,
   
   for (int SearchI=0; SearchI < argc; SearchI++)
   {
-    if (!std::strcmp(argv[SearchI], "-l")) limit = std::atof(argv[SearchI+1]);
-    if (!std::strcmp(argv[SearchI], "ANA")) met[0] = true;
-    if (!std::strcmp(argv[SearchI], "GLE")) met[1] = true;
-    if (!std::strcmp(argv[SearchI], "GLA")) met[2] = true;
-    if (!std::strcmp(argv[SearchI], "MCC")) met[3] = true;
-    if (!std::strcmp(argv[SearchI], "MCR")) met[4] = true;
-    if (!std::strcmp(argv[SearchI], "MCI")) met[5] = true;
+    if (!std::strcmp(argv[SearchI], "-l")) limit = std::atof(argv[++SearchI]);
+    if (!std::strcmp(argv[SearchI], "ANA")) methods[0] = true;
+    if (!std::strcmp(argv[SearchI], "GLE")) methods[1] = true;
+    if (!std::strcmp(argv[SearchI], "GLA")) methods[2] = true;
+    if (!std::strcmp(argv[SearchI], "MCC")) methods[3] = true;
+    if (!std::strcmp(argv[SearchI], "MCR")) methods[4] = true;
+    if (!std::strcmp(argv[SearchI], "MCI")) methods[5] = true;
   }
   
 }
+
+

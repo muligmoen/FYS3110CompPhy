@@ -46,7 +46,7 @@ frame=l,
 \newcommand{\Real}{\mathbb{R}}
 \newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
 
-
+\newcommand{\di}{\mathrm{d}}
 
 \newcounter{algcounter}
 \renewcommand{\thealgcounter}{\Roman{algcounter}}
@@ -60,7 +60,7 @@ frame=l,
 
 \newcommand{\figurewidth}{.85\textwidth}
 
-\title{FYS3150\\Computational Physics\\Project 3}
+\title{FYS3150 -- Computational Physics\\Project 3}
 \author{Magnus Ulimoen}
 \date{\today}
 
@@ -71,29 +71,244 @@ frame=l,
 
 \section{Introduction}
 
-We are interested in the correlation energy between two electrons in
-the helium atom. We do not have an analytical solution to this, so 
-we assume that it is almost like two 1s-hydrogen atoms.
+The goal of this project is to find the correlation energy between two 
+electrons in the helium atom ground state. We do not have the analytical 
+solution to this problem, so it is taken as an ansatz that the electrons 
+can be superpositioned from hydrogen 1s-orbitals.
 
+The program can be found under folder \url{Project3} in the github 
+repository at \url{https://github.com/mulimoen/FYS3150CompPhy}.
 
 \section{Method}
 
 \subsection{Wave function}
 
-We overlay the simplest solution of the hydrogen atom on top of each
-other, and end up with
+The 1s-orbital for hydrogen has a wave function given by
 \begin{gather}
-\psi = e^{-\alpha r_1}e^{-\alpha r_2}
+\psi(\ve{r}) = R_n(r)Y_l^m(\theta, \phi)
 \end{gather}
-Where we have discarded the normalization constant
+For hydrogen in 1s, the wave function does not depend upon angles,
+\begin{gather}
+\psi(r) = C e^{-\alpha \frac{r}{a_0}}
+\end{gather}
+Where C is a normalisation constant and $\alpha$ is a parameter 
+determing the strength of the potential. 
+For our helium-atom this is chosen $\alpha = Z = 2$, corresponding to 
+a charge of $2e$ for the helium atom. $r$ will be used in natural units, 
+where $a_0 = 1$ and the normalisation constant is discarded.
+
+The wave function for the electrons can not be found exact, but an 
+ansatz can be taken, that the wavefunctions is simply two overlapping 
+hydrogen 1s-orbitals.
+\begin{gather}
+\psi(r_1, r_2) = e^{-\alpha(r_1 + r_2)}
+\end{gather}
+
+
+\subsection{Interaction energy}
+
+Since the electrons are not localized, but rather spread out over all the 
+space, it is necessary to find the expectation value of the energy. 
+Classically the energy between two objects are given by
+\begin{gather}
+V = k\frac{qQ}{\abs{\ve{r}_1 - \ve{r}_2}} = k\frac{qQ}{\abs{\ve{r}_{12}}}
+\end{gather}
+This suggest that the quantum mechanical interaction energy is the 
+ensemble over all the space,
+\begin{gather}
+E_{\text{interaction}} \propto  
+\expval{\frac{1}{\abs{\ve{r}_1 - \ve{r}_2}}}
+\end{gather}
+Which can be written out 
+\begin{gather}
+E_{int} \propto \int\!\! \int \conj{\psi} 
+\frac{1}{\abs{\ve{r}_{12}}} \psi 
+\,\, \di\ve{r}_1\di\ve{r}_2 = I
+\label{eq:I}
+\end{gather}
+An analytical solution of this is
+\begin{gather}
+I = \frac{5\pi^2}{16}
+\end{gather}
+
+
+
+\subsubsection{Cartesian coordinates}
+
+The integral \eqref{eq:I} takes the following form in cartesian 
+coordinates;
+\begin{gather} I = 
+\int\!\!\int\!\!\int\!\!\int\!\!\int\!\!\int
+\frac{e^{-2\alpha\left(\abs{\ve{r}_1} + \abs{\ve{r}_2 }\right)}
+}{\abs{\ve{r}_{12}}}
+\di x_1\di y_1\di z_1\di x_2\di y_2\di z_2
+\label{eq:Ecart}
+\end{gather}
+with all the limits from $-\infty$ to $\infty$
+
+
+\subsubsection{Polar coordinates}
+Since the integral constains a large amount of elements which depend 
+on the radial distance, a change to polar coordinates could lead to 
+better algorithms and solutions.
+
+In order to change into polar coordinates we need to have the volume 
+element $\di V$. This is given by 
+\begin{gather}
+\di V_1 = r_1^2\sin\theta_1 \di r_1\di\theta_1
+\end{gather}
+The term $\abs{\ve{r}_1 - \ve{r}_2}$ is expressed in these coordinates
+\begin{gather}
+\abs{\ve{r}_1 - \ve{r}_2} = \abs{r_1 \ve{e}_{r_1} - r_2\ve{e}_{r_2}}
+ = \sqrt{(r_1 \ve{e}_{r_1} -  r_2\ve{e}_{r_2})\cdot 
+ (r_1 \ve{e}_{r_1} - r_2\ve{e}_{r_2})}\\
+ = \sqrt{r_1^2\ve{e}_{r_1}^2 + r_2^2\ve{e}_{r_2}^2  
+ - 2r_1r_2 \ve{e}_{r_1}\cdot \ve{e}_{r_2}}
+\end{gather}
+The inner product of $\ve{e}_{r_i}$ with itself is one. It is necessary 
+to find the dot product $\ve{e}_{r_1}\cdot \ve{e}_{r_2}$ which is the 
+angle between the two unit vects, $\cos\beta$.
+Writing out the radial unit vector in 
+polar coordinates,
+\begin{gather}
+\ve{e}_r = \cos\phi\sin\theta \ve{i} + \sin\phi\sin\theta\ve{j} 
++ \cos\theta\ve{k}
+\end{gather}
+The inner product of the two radial unit vectors are 
+\begin{gather}
+\cos\beta = \cos(\theta_1)\cos(\theta_2)
++ \sin(\theta_1)\sin(\theta_2)\cos(\phi_1 - \phi_2)
+\label{eq:cosbeta}
+\end{gather}
+And the integral \eqref{eq:I} takes the form
+\begin{gather} I = 
+\int\limits_0^{2\pi}\!\int\limits_0^{2\pi}\!
+\int\limits_0^\pi\!\int\limits_0^\pi\!
+\int\limits_0^\infty\!\int\limits_0^\infty 
+\frac{r_1^2r_2^2 e^{-2\alpha(r_1 + r_2)} \sin(\theta_1)\sin(\theta_2)
+}{\sqrt{ r_1^2 + r_2^2 - 2r_1r_2\cos\beta }}
+\di r_1\di r_2\di\theta_1 \di\theta_2 \di\phi_1 \di\phi_2
+\label{eq:IR}
+\end{gather}
+
+\section{Numerical approximations}
+
+To solve this integral numerically some precautions must be taken.
+A straight forward method requires all of the space to be integrated. 
+The function should only be integrated where it is interresting, which 
+is close to origo to due the decaying exponential. A suitable limit 
+is chosen based on where the wave function is approximately zero.
+
+Another problem is the singularity that arises when $\ve{r}_{12}$ is zero. 
+This is solved by not letting this part contribute if this occurs.
+
+The amount of variables used gives a large amount of intertwined 
+variables that needs to be permuted. This gives a complexity of 
+$N^6$ calculations of the function that is integrated. This 
+requires better methods than linear mappings to solve, and Gauss 
+Quadrature and Monte Carlo integration is employed.
+
+\subsection{Gauss Quadrature}
+
+The Gauss Quadrature uses orthogonal polynomials to capture the 
+function in its space. The two methods used are Legendre polynomials 
+and Laguerre polynomials.
+
+\subsubsection{Legendre}
+
+The Legendre 
+quadrature uses the weight function 
+\begin{gather}
+I = \int_a^b f(y) dy = \int_{-1}^1 W(x) f(x) dx 
+\approx \sum_i w_i f(x_i)
+\end{gather}
+The legendre polynomials are defined for integrals with limits $[-1,1]$.
+A linear mapping is used, which maps the limits to $[0,\text{limit}]$.
+
+\subsubsection{Laguerre}
+
+This Laguerre quadrature uses the weight function
+\begin{gather}
+I = \int f(y) dy = \int_0^\infty \frac{W(x)}{x^\alpha e^{-x}} f(x) dx
+\approx \sum_i w_i f(x_i)
+\end{gather}
+If this is used on \eqref{eq:IR}, 
+
+
+
+\subsection{Monte Carlo}
+
+In order to calculate the integral Monte Carlo methods are employed.
+
+\subsubsection{Brute force}
+
+We can map the cartesian integral from two limits, and then integrate 
+over these using a linear mapping. We than map the interval $[0,1]$ to 
+$[-\text{limit}, \text{limit}]$ to guess the solution.
+
+The mapping is then $x_i = -\text{limit} + 
+2\text{ limit } z_i$, where $z_i$ are the numbers 
+produced by the random number generator. One would suspect this does 
+not use the rng effective, as the function rapidly decays.
+
+Normalisation factor is $(2\text{ limit})^6$, the size of the box 
+which is integrated over.
+
+\subsubsection{Radial MC}
+
+Can use the radial coordinates instead, with different (linear) mapping,
+$\theta_i = \pi z_i$, $\phi_i = 2\pi z_i$, $r_i = \text{limit} z_i$. 
+We are then mapping the sphere to a box, and we can use the same method 
+as above. The normalisation factor is $\pi^2(2\pi)^2(\text{limit})^2$,
+which is the size of box.
+
+\subsubsection{Importance sampling}
+
+The method will not show good properties since the least important parts 
+are sampled a lot more than necessary. It is therefore wise to have a 
+closer look at the variables used and adapt the MC-sampling.
+
+The spherical part has the factor $\sin\theta d\theta$. This can be 
+changed to 
+\begin{gather}
+\frac{d\cos \theta}{d\theta} = \sin\theta\\
+d\cos\theta = \sin \theta d\theta
+\end{gather}
+By replacing this with the uniform distribution the variable $d\cos\theta$
+is replaced with dx, with the limit substitution $-1, 1$.
+
+We can also simplify \eqref{eq:cosbeta} to use this choice of variable,
+\begin{gather}
+\cos\beta = x_1 x_2 + \sqrt{1-x_1^2}\sqrt{1-x_2^2}\cos(\phi_1-\phi_2)
+\end{gather}
+
+For the radial part we choose an exponential distribution. This gives 
+\begin{gather}
+\int_0^\infty p(y)f(y) dy = \int_0^\infty e^{-y}f(y) dy
+\end{gather}
+Our integral takes the form
+\begin{gather}
+\int \!\! dr \,\, r^2e^{-2\alpha r} f(r)\cdots\\
+y = 2\alpha r = \frac{r}{\lambda}\\
+r_i = -\lambda\ln(1-z)\\
+\int_0^1 r^2f(r)
+\end{gather}
+
+
 
 
 \section{Implementation}
 \subsection{Six-dimensional integral}
-This is shortened to the loop
-\begin{gather}
-sum += \frac{f(r_1, r_2)}{\abs{\ve{r_1} - \ve{r_2}}} *w[i_x]\dots
-\end{gather}
+Looping over selected values of $x_1,x_2,y_1,y_2,\dots$ based on positions 
+from GQ. This is a six-dimensional loop. In this loop there could be a 
+singularity, which is ignored when the distance is to small.
+
+Calculating the denominator of \eqref{eq:Ecart} and only calculating 
+when this value is greater than some chosen tolerance. Then calculating 
+r1 and r2, and getting the weights. This is added to the sum.
+
+\subsubsection{Polar coordinates}
+Much the same, but now r is used more, and 
 
 
 \end{document}
