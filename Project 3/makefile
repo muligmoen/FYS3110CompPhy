@@ -39,7 +39,7 @@ TEST_OBJS = $(patsubst src/%.cpp,obj/%.o,$(TEST_SRCS))
 
 
 
-all: $(TARGET) 
+all: $(TARGET) $(TEST_TARGET)
 
 
 $(TARGET): $(OBJS)
@@ -67,6 +67,7 @@ clean:
 
 dist-clean: clean
 	$(RM) $(TARGET)
+	$(RM) $(TEST_TARGET)
 	@rmdir --ignore-fail-on-non-empty obj 
 
 

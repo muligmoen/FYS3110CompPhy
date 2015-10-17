@@ -16,5 +16,9 @@ This is achieved through LU-decomposition and an adaption of Thomas algorithm cu
 ## Project 2 
 This project aims to solve the radial part of the harmonic oscillator Schrödinger equation for one and two electrons.
 
+## Project 3
+This projects computes the correlation energy between electrons in the helium atom, 
+taking as ansatz that the electrons are in the hydrogen 1s orbitals.
+
 ## Course information
 Course descriptions can be found at http://www.uio.no/studier/emner/matnat/fys/FYS3150/
