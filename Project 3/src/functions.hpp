@@ -14,7 +14,12 @@ const double EPS = 3e-14;
 const double ZERO = 1.0E-10;
 const double tolerance = 1e-9;
 
-
+inline double cos_beta(const double theta1, const double theta2,
+                       const double phi1, const double phi2)
+{
+   return std::cos(theta1)*std::cos(theta2) +
+            std::sin(theta1)*std::sin(theta2)*std::cos(phi1 - phi2);
+}
 
 
 inline double square_sum(const double x, const double y, const double z)
@@ -29,13 +34,14 @@ void gauss_legendre(double *x, double *w, const int n,
                     const double x1, const double x2);
 
 
-double cartesian_loop(const int N, const double* x, const double* w, 
+double sum_elements_6dim_cartesian(const int N, const double* x, const double* w, 
                  const double alpha);
 
-double polar_loop(const int Nr, const int Ntheta, const int Nphi,
+
+
+double sum_elements_6dim_polar(const int Nr, const int Ntheta, const int Nphi,
                  const double *r, const double *theta, const double *phi,
-                 const double *wr, const double *wtheta, const double *wphi,
-                 const double alpha);
+                 const double *wr, const double *wtheta, const double *wphi);
 
 // uniform number generator, could be replaced by a simple function or lambda
 // function to give a generator with the ranges specified

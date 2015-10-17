@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     gauss_legendre(x, w, N, -limit, limit);
     
 
-    std::cout << "I = " << cartesian_loop(N, x, w, 2)
+    std::cout << "I = " << sum_elements_6dim_cartesian(N, x, w, 2)
               << "\tLegendre" << std::endl;
     
     delete[] x;
@@ -55,7 +55,9 @@ int main(int argc, char **argv)
     double *wphi = new double[N];
     gauss_legendre(phi, wphi, N, 0, 2*pi);
     
-    double result = polar_loop(N, N, N, r, theta, phi, wr, wtheta, wphi, 2);
+    double result = sum_elements_6dim_polar(N, N, N, r, theta, phi, wr, wtheta, wphi);
+    
+    result /=  std::pow(2*alpha, 5);
     
     std::cout << "I = " << result << "\tGauss-Laguerre and Gauss-Legendre"
               << std::endl;
@@ -74,9 +76,10 @@ int main(int argc, char **argv)
     auto get_num = uniform_distribution(-limit, limit);
     
     double x[dim];
-    double result = 0;
+    double sum = 0;
+    double sum_squares = 0;
     
-    #pragma omp parallel for private(x) reduction(+:result)
+    #pragma omp parallel for private(x) reduction(+:sum,sum_squares)
     for (int jj=0; jj<N; jj++) {
       for (int ii=0; ii<dim; ii++) {
         x[ii] = get_num();
@@ -84,20 +87,27 @@ int main(int argc, char **argv)
       
       const double rdiff_sum_square = square_sum( x[0] - x[3], 
                                     x[1] - x[4], x[2] - x[5] );
-      if (rdiff_sum_square > 1e-9){ 
+      if (rdiff_sum_square > tolerance){ 
         const double r1 = std::sqrt(square_sum(x[0], x[1], x[2]));
         const double r2 = std::sqrt(square_sum(x[3], x[4], x[5]));
       
-        result += std::exp(-2*alpha*(r1 + r2))/std::sqrt(rdiff_sum_square);
+        const double part_sum = std::exp(-2*alpha*(r1 + r2))/std::sqrt(rdiff_sum_square);
+        sum += part_sum;
+        sum_squares += part_sum*part_sum;
       }
     }
     
-    result *= 64*limit*limit*limit*limit*limit*limit; // normation from 
-                                                      // change of limits
-    result /= (double)N;
+    const double norm_factor = std::pow(2*limit, 6); // normation from change of limits
+    sum *= norm_factor;
+    sum_squares *= norm_factor*norm_factor;
     
-    std::cout << "I = " << result
-              << "\tBrute Monte Carlo" << std::endl;
+    
+    const double mean = sum/(double)N;
+    const double variance = sum_squares/(double)N - mean*mean;
+    
+    
+    std::cout << "I = " << mean << "\tsigma = " << std::sqrt(variance/(double)N)
+              << "\tMonte Carlo cartesian" << std::endl;
 
   }
   if (method[4]) { // brute monte carlo radial
@@ -106,8 +116,6 @@ int main(int argc, char **argv)
     auto theta_rand = uniform_distribution(0, pi);
     auto phi_rand = uniform_distribution(0, 2*pi);
     
-    using std::cos;
-    using std::sin;
     
     const int dim = 2;
     double r[dim];
@@ -115,8 +123,9 @@ int main(int argc, char **argv)
     double phi[dim];
     
     double sum = 0;
+    double sum_squares = 0;
     
-    #pragma omp parallel for private(r, theta, phi) reduction(+:sum)
+    #pragma omp parallel for private(r, theta, phi) reduction(+:sum,sum_squares)
     for (int jj=0; jj<N; jj++) {
       for (int ii = 0; ii< dim; ii++) {
         r[ii] = r_rand();
@@ -124,21 +133,27 @@ int main(int argc, char **argv)
         phi[ii] = phi_rand();
       }
       
-      const double cos_beta = cos(theta[0])*cos(theta[1]) +
-                             sin(theta[0])*sin(theta[1])*cos(phi[0]-phi[1]);
+      const double cosbeta = cos_beta(theta[0], theta[1], phi[0], phi[1]);
                              
       const double r12_square = r[0]*r[0] + r[1]*r[1]
-                                  - 2*r[0]*r[1]*cos_beta;
+                                  - 2*r[0]*r[1]*cosbeta;
       if (r12_square > tolerance) {
-        const double dV = r[0]*r[0]*r[1]*r[1]*sin(theta[0])*sin(theta[1]);
-        sum += std::exp(-2*alpha*(r[0]+r[1]))/std::sqrt(r12_square)*dV;
+        const double dV = r[0]*r[0]*r[1]*r[1]*std::sin(theta[0])*std::sin(theta[1]);
+        const double part_sum = std::exp(-2*alpha*(r[0]+r[1]))/std::sqrt(r12_square)*dV;
+        sum += part_sum;
+        sum_squares += part_sum*part_sum;
       }
     }
+    const double norm_factor = (pi*pi)*(2*pi*2*pi)*(limit*limit);
+    sum *= norm_factor;
+    sum_squares *= norm_factor*norm_factor;
     
-    sum *= (pi*pi)*(2*pi*2*pi)*(limit*limit);
-    sum /= (double)N;
+    const double mean = sum/(double)N;
+    const double variance = sum_squares/(double)N  - mean*mean;
     
-    std::cout << "I = " << sum << "\tMonte Carlo radial" << std::endl;
+    
+    std::cout << "I = " << mean << "\tsigma = " << std::sqrt(variance/(double)N)
+              << "\tMonte Carlo polar" << std::endl;
     
     
   }
@@ -163,28 +178,35 @@ int main(int argc, char **argv)
     auto x = uniform_distribution(0, 1);
     auto r = [&x, lambda](){return -lambda*std::log(1-x());};
     
-    const double norm_factor = (2*2)*(2*pi*2*pi)*(lambda*lambda);
+    double sum = 0;
+    double sum_squares = 0;
     
-    double result = 0;
-    
-    #pragma omp parallel for reduction(+:result)
+    #pragma omp parallel for reduction(+:sum,sum_squares)
     for (int ii=0; ii<N; ii++)
     {
       const double r1 = r();
       const double r2 = r();
       const double cos_b = cos_beta();
       const double dV = r1*r1*r2*r2;
-      result += dV/std::sqrt(r1*r1 + r2*r2 - 2*r1*r2*cos_b);
+      const double r12_square = r1*r1 + r2*r2 - 2*r1*r2*cos_b;
+      if (r12_square > tolerance) {
+        const double part_sum = dV/std::sqrt(r12_square);
+        sum += part_sum;
+        sum_squares += part_sum*part_sum;
+      }
     }
     
-    
-    result *= norm_factor;
-    
-    
-    result /= N;
+    const double norm_factor = (2*2)*(2*pi*2*pi)*(lambda*lambda);
+    sum *= norm_factor;
+    sum_squares *= norm_factor*norm_factor;
     
     
-    std::cout << "I = " << result << "\tMonte Carlo importance" << std::endl;
+    const double mean = sum/(double)N;
+    const double variance = sum_squares/(double)N - mean*mean;
+    
+    
+    std::cout << "I = " << mean <<  "\tsigma = " << std::sqrt(variance/(double)N)
+              << "\tMonte Carlo importance" << std::endl;
   }
     
   
@@ -202,7 +224,7 @@ void process_args(const int argc, char **argv, int &N, double &limit,
                  "GLE : gauss legendre quadrature\n" <<
                  "GLA : gauss laguerre quadrature\n" <<
                  "MCC : Monte Carlo with cartesian coordinates\n" << 
-                 "MCR : Monte Carlo with spherical coordinates\n" << 
+                 "MCP : Monte Carlo with polar coordinates\n" << 
                  "MCI : Monte Carlo with importance sampling" << std::endl;
     std::exit(1);
   } else {
@@ -218,7 +240,7 @@ void process_args(const int argc, char **argv, int &N, double &limit,
     if (!std::strcmp(argv[SearchI], "GLE")) methods[1] = true;
     if (!std::strcmp(argv[SearchI], "GLA")) methods[2] = true;
     if (!std::strcmp(argv[SearchI], "MCC")) methods[3] = true;
-    if (!std::strcmp(argv[SearchI], "MCR")) methods[4] = true;
+    if (!std::strcmp(argv[SearchI], "MCP")) methods[4] = true;
     if (!std::strcmp(argv[SearchI], "MCI")) methods[5] = true;
   }
   

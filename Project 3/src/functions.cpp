@@ -5,6 +5,8 @@
 #include "functions.hpp"
 
 
+
+
 double gammln(double);
 
 void gauss_laguerre(double *x_return, double *w_return,
@@ -107,7 +109,7 @@ void gauss_legendre(double *x, double *w, const int n,
 
 
 
-double cartesian_loop(const int N, const double *x, const double *w, 
+double sum_elements_6dim_cartesian(const int N, const double *x, const double *w, 
                  const double alpha)
 {
   double sum = 0;
@@ -128,10 +130,11 @@ double cartesian_loop(const int N, const double *x, const double *w,
   return sum;
 }
 
-double polar_loop(const int Nx, const int Ntheta, const int Nphi,
+
+
+double sum_elements_6dim_polar(const int Nx, const int Ntheta, const int Nphi,
                  const double *x, const double *theta, const double *phi,
-                 const double *wr, const double *wtheta, const double *wphi,
-                 const double alpha)
+                 const double *wr, const double *wtheta, const double *wphi)
 {
 
   double sum = 0;
@@ -141,16 +144,16 @@ double polar_loop(const int Nx, const int Ntheta, const int Nphi,
   for (int ll = 0; ll<Ntheta; ll++){
   for (int mm = 0; mm<Nphi; mm++){
   for (int nn = 0; nn<Nphi; nn++){
-    const double cos_beta = std::cos(theta[kk])*std::cos(theta[ll]) + 
-                       std::sin(theta[jj])*std::sin(theta[ll])*std::cos(phi[mm]-phi[nn]);
+    const double cosbeta = cos_beta(theta[kk], theta[ll],
+                                       phi[mm], phi[nn]);
+    
     const double x12_square = x[ii]*x[ii] + x[jj]*x[jj]
-                          - 2*x[ii]*x[jj]*cos_beta;
+                                     - 2*x[ii]*x[jj]*cosbeta;
     if (x12_square > tolerance) {
-      const double weights = wr[ii]*wr[jj]*wtheta[jj]*wtheta[ll]*wphi[mm]*wphi[nn];
+      const double weights = wr[ii]*wr[jj]*wtheta[kk]*wtheta[ll]*wphi[mm]*wphi[nn];
       sum += weights*std::sin(theta[kk])*std::sin(theta[ll])/std::sqrt(x12_square);
     }
   }}}}}}
-  sum /= std::pow(2*alpha, 5);
   //sum *= 2; // magic factor
   
   return sum;
