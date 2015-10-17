@@ -160,6 +160,13 @@ double sum_elements_6dim_polar(const int Nx, const int Ntheta, const int Nphi,
 }
 
 
+std::default_random_engine static_gen()
+{
+  const static auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  static std::default_random_engine gen(seed);
+  return gen;
+}
+
 std::_Bind<std::uniform_real_distribution<double>(std::default_random_engine)> 
             uniform_distribution(const double lower, const double upper)
 /*
@@ -168,10 +175,21 @@ std::_Bind<std::uniform_real_distribution<double>(std::default_random_engine)>
  * range from lower to upper
  */
 {
-  static const auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-  static std::default_random_engine gen(seed);
+  auto gen = static_gen();
   
   std::uniform_real_distribution<double> dist(lower, upper);
   auto uniform = std::bind(dist, gen);
   return uniform;
+}
+
+
+
+std::_Bind<std::exponential_distribution<double>(std::default_random_engine)> 
+            exponential_distribution(const double lambda)
+{
+  auto gen = static_gen();
+  std::exponential_distribution<double> dist(1/lambda); // lambda is defined as the inverse
+                                                        // of the one in the report
+  auto exp = std::bind(dist, gen);
+  return exp;
 }

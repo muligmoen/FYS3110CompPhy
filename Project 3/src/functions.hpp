@@ -48,5 +48,8 @@ double sum_elements_6dim_polar(const int Nr, const int Ntheta, const int Nphi,
 std::_Bind<std::uniform_real_distribution<double>(std::default_random_engine)> 
             uniform_distribution(const double lower, const double upper);
             
+std::_Bind<std::exponential_distribution<double>(std::default_random_engine)> 
+            exponential_distribution(const double lambda);
+            
 
 #endif

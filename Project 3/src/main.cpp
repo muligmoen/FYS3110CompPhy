@@ -172,11 +172,13 @@ int main(int argc, char **argv)
     };
     
     
-    const double lambda = 1/(double)(2*alpha);
+    const double lambda = 1.0/(2*alpha);
     
     // Mapping to exponential distribution with a lambda func
-    auto x = uniform_distribution(0, 1);
-    auto r = [&x, lambda](){return -lambda*std::log(1-x());};
+    //auto x = uniform_distribution(0, 1);
+    //auto r = [&x, lambda](){return -lambda*std::log(1-x());};
+    auto r = exponential_distribution(lambda);
+    
     
     double sum = 0;
     double sum_squares = 0;
