@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
@@ -7,7 +8,7 @@
 
 #include "functions.hpp"
 
-            
+const int nThreads = 4; // number of threads to use
 
 void process_args(const int argc, char **argv, int &N, double &limit, 
                   bool *methods);
@@ -23,7 +24,7 @@ int main(int argc, char **argv)
   const double alpha = 2;
   
   
-
+  std::cout << std::setiosflags( std::ios::fixed ) << std::setprecision(9);
   
   if (method[0]) { // analytical
     double analytical = 5*pi*pi/double(16*16);
@@ -69,7 +70,7 @@ int main(int argc, char **argv)
     delete[] wtheta;
     delete[] wphi;
   }
-  if (method[3]) { // brute monte carlo cartesian
+  if (method[3]) { // brute Monte Carlo Cartesian
     
     const int dim = 6;
     
@@ -79,7 +80,8 @@ int main(int argc, char **argv)
     double sum = 0;
     double sum_squares = 0;
     
-    #pragma omp parallel for private(x) reduction(+:sum,sum_squares)
+    double time_start = omp_get_wtime();
+    #pragma omp parallel for private(x) reduction(+:sum,sum_squares) num_threads(nThreads)
     for (int jj=0; jj<N; jj++) {
       for (int ii=0; ii<dim; ii++) {
         x[ii] = get_num();
@@ -96,6 +98,9 @@ int main(int argc, char **argv)
         sum_squares += part_sum*part_sum;
       }
     }
+    double time_end = omp_get_wtime();
+    
+    
     
     const double norm_factor = std::pow(2*limit, 6); // normation from change of limits
     sum *= norm_factor;
@@ -108,9 +113,11 @@ int main(int argc, char **argv)
     
     std::cout << "I = " << mean << "\tsigma = " << std::sqrt(variance/(double)N)
               << "\tMonte Carlo cartesian" << std::endl;
+    std::cout << "\tTime elapsed = " << time_end - time_start << 
+                 " seconds, " << nThreads << " thread(s) used" << std::endl;
 
   }
-  if (method[4]) { // brute monte carlo radial
+  if (method[4]) { // brute Monte Carlo Polar
     
     auto r_rand = uniform_distribution(0, limit);
     auto theta_rand = uniform_distribution(0, pi);
@@ -125,7 +132,8 @@ int main(int argc, char **argv)
     double sum = 0;
     double sum_squares = 0;
     
-    #pragma omp parallel for private(r, theta, phi) reduction(+:sum,sum_squares)
+    double time_start = omp_get_wtime();
+    #pragma omp parallel for private(r, theta, phi) reduction(+:sum,sum_squares) num_threads(nThreads)
     for (int jj=0; jj<N; jj++) {
       for (int ii = 0; ii< dim; ii++) {
         r[ii] = r_rand();
@@ -144,6 +152,10 @@ int main(int argc, char **argv)
         sum_squares += part_sum*part_sum;
       }
     }
+    double time_end = omp_get_wtime();
+    
+
+                 
     const double norm_factor = (pi*pi)*(2*pi*2*pi)*(limit*limit);
     sum *= norm_factor;
     sum_squares *= norm_factor*norm_factor;
@@ -154,10 +166,12 @@ int main(int argc, char **argv)
     
     std::cout << "I = " << mean << "\tsigma = " << std::sqrt(variance/(double)N)
               << "\tMonte Carlo polar" << std::endl;
+    std::cout << "\tTime elapsed = " << time_end - time_start << 
+                 " seconds, " << nThreads << " thread(s) used" << std::endl;
     
     
   }
-  if (method[5]) { // monte carlo importance sampling
+  if (method[5]) { // Monte Carlo Importance sampling
     
     auto cos_theta = uniform_distribution(-1, 1);
     auto phi = uniform_distribution(0, 2*pi);
@@ -174,29 +188,28 @@ int main(int argc, char **argv)
     
     const double lambda = 1.0/(2*alpha);
     
-    // Mapping to exponential distribution with a lambda func
-    //auto x = uniform_distribution(0, 1);
-    //auto r = [&x, lambda](){return -lambda*std::log(1-x());};
-    auto r = exponential_distribution(lambda);
-    
+    auto y = exponential_distribution(lambda);
     
     double sum = 0;
     double sum_squares = 0;
     
-    #pragma omp parallel for reduction(+:sum,sum_squares)
+    double time_start = omp_get_wtime();
+    #pragma omp parallel for reduction(+:sum,sum_squares) num_threads(nThreads)
     for (int ii=0; ii<N; ii++)
     {
-      const double r1 = r();
-      const double r2 = r();
+      const double y1 = y();
+      const double y2 = y();
       const double cos_b = cos_beta();
-      const double dV = r1*r1*r2*r2;
-      const double r12_square = r1*r1 + r2*r2 - 2*r1*r2*cos_b;
-      if (r12_square > tolerance) {
-        const double part_sum = dV/std::sqrt(r12_square);
+      const double dV = y1*y1*y2*y2;
+      const double y12_square = y1*y1 + y2*y2 - 2*y1*y2*cos_b;
+      if (y12_square > tolerance) {
+        const double part_sum = dV/std::sqrt(y12_square);
         sum += part_sum;
         sum_squares += part_sum*part_sum;
       }
     }
+    double time_end = omp_get_wtime();
+    
     
     const double norm_factor = (2*2)*(2*pi*2*pi)*(lambda*lambda);
     sum *= norm_factor;
@@ -209,6 +222,8 @@ int main(int argc, char **argv)
     
     std::cout << "I = " << mean <<  "\tsigma = " << std::sqrt(variance/(double)N)
               << "\tMonte Carlo importance" << std::endl;
+    std::cout << "\tTime elapsed = " << time_end - time_start << 
+                 " seconds, " << nThreads << " thread(s) used" << std::endl;
   }
     
   

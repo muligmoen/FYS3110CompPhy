@@ -45,10 +45,10 @@ double sum_elements_6dim_polar(const int Nr, const int Ntheta, const int Nphi,
 
 // uniform number generator, could be replaced by a simple function or lambda
 // function to give a generator with the ranges specified
-std::_Bind<std::uniform_real_distribution<double>(std::default_random_engine)> 
+std::_Bind<std::uniform_real_distribution<double>(std::mt19937_64)> 
             uniform_distribution(const double lower, const double upper);
             
-std::_Bind<std::exponential_distribution<double>(std::default_random_engine)> 
+std::_Bind<std::exponential_distribution<double>(std::mt19937_64)> 
             exponential_distribution(const double lambda);
             
 

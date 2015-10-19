@@ -160,36 +160,35 @@ double sum_elements_6dim_polar(const int Nx, const int Ntheta, const int Nphi,
 }
 
 
-std::default_random_engine static_gen()
+
+
+static std::mt19937_64 *static_gen()
 {
   const static auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-  static std::default_random_engine gen(seed);
-  return gen;
+  static std::mt19937_64 gen(seed);
+  return &gen;
 }
 
-std::_Bind<std::uniform_real_distribution<double>(std::default_random_engine)> 
+std::_Bind<std::uniform_real_distribution<double>(std::mt19937_64)> 
             uniform_distribution(const double lower, const double upper)
 /*
  * Binds a generator and a uniform distribution 
  * to a new function which gives the number in the uniform 
  * range from lower to upper
  */
-{
-  auto gen = static_gen();
-  
+{  
   std::uniform_real_distribution<double> dist(lower, upper);
-  auto uniform = std::bind(dist, gen);
+  auto uniform = std::bind(dist, *static_gen());
   return uniform;
 }
 
 
 
-std::_Bind<std::exponential_distribution<double>(std::default_random_engine)> 
+std::_Bind<std::exponential_distribution<double>(std::mt19937_64)> 
             exponential_distribution(const double lambda)
 {
-  auto gen = static_gen();
   std::exponential_distribution<double> dist(1/lambda); // lambda is defined as the inverse
-                                                        // of the one in the report
-  auto exp = std::bind(dist, gen);
+                                                          // of the one in the report
+  auto exp = std::bind(dist, *static_gen());
   return exp;
 }
