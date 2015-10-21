@@ -86,15 +86,52 @@ E = -J\sum_{\expval{kl}}^N s_k s_l
 With $s_i = \pm 1$, N number of spins, J coupling constant, summed over 
 neighbours only.
 
+\begin{figure}[H]
+\begin{center}
+  \includegraphics[scale=0.15]{simple_lattice.png}
+  \caption{ Illustration of the simple, "$L=2$"-lattice and a graphical interpretation the periodic boundary conditions.}
+  \end{center}
+\end{figure}
+
 Using periodic boundary conditions,
 \begin{gather}
-s_k = s_{k+L}
+s_k = s_{k \pm L}
 \end{gather}
+
+For the simple case of only two spins in each dimension($L=2$) the energies are:
+\begin{align*}
+E_1 = -J\sum_{<kl>}^{N}s_k s_l = -J[2(s_1 s_2)+2(s_1 s_3)] \\
+E_2 = -J\sum_{<kl>}^{N}s_k s_l = -J[2(s_2 s_1)+2(s_2 s_4)] \\
+E_3 = -J\sum_{<kl>}^{N}s_k s_l = -J[2(s_3 s_1)+2(s_3 s_4)] \\
+E_4 = -J\sum_{<kl>}^{N}s_k s_l = -J[2(s_4 s_2)+2(s_4 s_3)] 
+\end{align*}
+
 
 \subsection{Statistical mechanics}
 \begin{gather}
 Z = \sum_i \exp(-\beta\varepsilon_i)
 \end{gather}
+
+\section{Implementation}
+
+\subsection{The metropolis algorithm}
+
+\subsubsection{Choice of random number generator}
+
+\subsection{Test environment}
+
+\section{Results}
+
+\subsection{Reproduction of results}
+
+To see banchmark calculations along with programs used see:
+
+\url{https://github.com/mulimoen/FYS3150CompPhy/tree/master/Project\%204}
+
+
+\section{Conclusion}
+
+\section{Refrences}
 
 
 
