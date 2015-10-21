@@ -61,11 +61,41 @@ frame=l,
 \newcommand{\figurewidth}{.85\textwidth}
 
 \title{FYS3150 -- Computational Physics\\Project 4}
-\author{Magnus Ulimoen}
+\author{Candidate number ??}
 \date{\today}
 
 \begin{document}
 \tcbset{before app=\parfillskip0pt}
 \maketitle
+
+\begin{abstract}
+This project explores the Ising model applied to spins in two dimensions.
+\end{abstract}
+
+
+
+\section{Introduction}
+
+
+\section{Theory}
+
+The energy of a spin system in the Ising model 
+\begin{gather}
+E = -J\sum_{\expval{kl}}^N s_k s_l
+\end{gather}
+With $s_i = \pm 1$, N number of spins, J coupling constant, summed over 
+neighbours only.
+
+Using periodic boundary conditions,
+\begin{gather}
+s_k = s_{k+L}
+\end{gather}
+
+\subsection{Statistical mechanics}
+\begin{gather}
+Z = \sum_i \exp(-\beta\varepsilon_i)
+\end{gather}
+
+
 
 \end{document}
