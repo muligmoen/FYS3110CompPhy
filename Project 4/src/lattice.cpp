@@ -126,7 +126,7 @@ lat_t init::ones(int, int)
 
 namespace init { namespace rand {
   auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-  std::mt19937_64 generator(seed);
+  std::mt19937 generator(seed);
   const std::uniform_int_distribution<lat_t> distribution(0,1);
   auto rand = std::bind(distribution, generator);
 }}

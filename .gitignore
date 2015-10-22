@@ -8,6 +8,7 @@ testit
 
 #C++ files
 *.o
+*.a
 
 #makefile
 .depend
@@ -18,6 +19,7 @@ obj
 *.gz
 *.aux
 *.backup
+*.out
 
 # Kdevelop project files
 .kdev4/

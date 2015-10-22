@@ -4,6 +4,8 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+\usepackage{hyperref}
+
 %\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
 \usepackage{tcolorbox}
 \tcbuselibrary{hooks}
@@ -84,7 +86,13 @@ The energy of a spin system in the Ising model
 E = -J\sum_{\expval{kl}}^N s_k s_l
 \end{gather}
 With $s_i = \pm 1$, N number of spins, J coupling constant, summed over 
-the closest neighbours only.
+the closest neighbours only. This leads to a boundary problem, which 
+can be solved in multiple ways. In our model we are 
+using periodic boundary conditions,
+\begin{gather}
+s_k = s_{k \pm L}
+\end{gather}
+An illustration of this is visible in figure \ref{eq:spin_neighbours}.
 
 \begin{figure}[H]
 \centering
@@ -93,18 +101,8 @@ the closest neighbours only.
 \label{eq:spin_neighbours}
 \end{figure}
 
-Using periodic boundary conditions,
-\begin{gather}
-s_k = s_{k \pm L}
-\end{gather}
 
-For the simple case of only two spins in each dimension($L=2$) the energies are:
-\begin{align*}
-E_1 = -J\sum_{<1l>}^{N}s_1 s_l = -J[2(s_1 s_2)+2(s_1 s_3)] \\
-E_2 = -J\sum_{<2l>}^{N}s_2 s_l = -J[2(s_2 s_1)+2(s_2 s_4)] \\
-E_3 = -J\sum_{<3l>}^{N}s_3 s_l = -J[2(s_3 s_1)+2(s_3 s_4)] \\
-E_4 = -J\sum_{<4l>}^{N}s_4 s_l = -J[2(s_4 s_2)+2(s_4 s_3)] 
-\end{align*}
+
 
 
 \subsection{Statistical mechanics}
@@ -112,14 +110,59 @@ E_4 = -J\sum_{<4l>}^{N}s_4 s_l = -J[2(s_4 s_2)+2(s_4 s_3)]
 Z = \sum_i \exp(-\beta E_i)
 \end{gather}
 
+\subsubsection{Magnetisation}
+
+The net magnetisation is defined by
+\begin{gather}
+\expval{M} = \sum_k s_k
+\end{gather}
+There should be a critical temperature where this one flips from 
+zero to some value for ferromagnets (positive J)
+
+
+\subsection{Simple system}
+For the simple case of only two spins in each dimension($L=2$) the energies are:
+\begin{align*}
+E_1 = -J\sum_{<1l>}^{N}s_1 s_l = -J[2(s_1 s_2)+2(s_1 s_3)] \\
+E_2 = -J\sum_{<2l>}^{N}s_2 s_l = -J[2(s_2 s_1)+2(s_2 s_4)] \\
+E_3 = -J\sum_{<3l>}^{N}s_3 s_l = -J[2(s_3 s_1)+2(s_3 s_4)] \\
+E_4 = -J\sum_{<4l>}^{N}s_4 s_l = -J[2(s_4 s_2)+2(s_4 s_3)] 
+\end{align*}
+And the total energy for a state 
+\begin{equation}
+E = -4J(s_1s_2 + s_1s_3 + s_1s_4 + s_2s_3 + s_2s_4 + s_3s_4)
+\end{equation}
+Which seems very symmetric. Listing up all the different energies,
+with degeneracy
+\begin{gather*}
+ E = 
+\begin{cases}
+-24J,\,\,n_{up} = 0,\quad d = 1\\
+-8J,\quad n_{up} = 1,\quad d = 4\\
+\phantom{-}4J, \quad n_{up} = 2, \quad d = 6\\
+-8J,\quad n_{up} = 3, \quad d= 4\\
+-24J,\,\,\,n_{up} = 4, \quad d = 1
+\end{cases}
+\end{gather*}
+
 \section{Implementation}
 
 \subsection{The metropolis algorithm}
 
 \subsubsection{Choice of random number generator}
-The pseudo random number generator used for the simulations covered in this report is \emph{Mersene Twister 19937 generator (64 bit)}. This is available in the \texttt{<random>} library of \emph{C++} and has a period of the \emph{mersenne number}, $2^{(n-1)w}-1$, for $w=64$ and $n=312$.	
+The pseudo random number generator used for the simulations covered in 
+this report is the Mersenne Twister engine
+instantated with the parameters of 
+\emph{Mersene Twister 19937 generator} seeded with the time.
+This is available in the \texttt{<random>} header of the standard
+library in \emph{C++} and has a period of the \emph{mersenne number}, $2^{(n-1)w}-1$.
+The instatation chosen gives $w=32$ and $n=624$.	
 
 \subsection{Test environment}
+
+The testing framework is \href{https://github.com/philsquared/Catch}{Catch}.
+The testcases should be self-explanatory.
+
 
 \section{Results}
 
@@ -127,7 +170,7 @@ The pseudo random number generator used for the simulations covered in this repo
 
 To see benchmark calculations along with programs used see:\\
 \url{https://github.com/mulimoen/FYS3150CompPhy/}\\
-Under the folder \url{Project 4}.
+Under the folder \emph{Project 4}.
 
 \section{Conclusion}
 
