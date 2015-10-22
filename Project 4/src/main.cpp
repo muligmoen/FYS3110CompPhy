@@ -9,4 +9,7 @@ int main()
   
   
   std::cout << lat;
+  
+  std::cout << "Sum of the spins = " << lat.sum_spins() << std::endl;
+  std::cout << "Energy of the lattice = " << lat.energy(1) << std::endl;
 }

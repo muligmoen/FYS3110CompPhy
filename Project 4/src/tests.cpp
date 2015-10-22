@@ -10,7 +10,7 @@ TEST_CASE( "SANITIY" )
 }
 
 
-TEST_CASE( "Setting matrix, indexing and changing elements" , "[lattice]")
+TEST_CASE( "Setting lattice, indexing and changing elements" , "[lattice]")
 {
   int max_x = 2;
   int max_y = 4;
@@ -43,7 +43,21 @@ TEST_CASE( "Setting matrix, indexing and changing elements" , "[lattice]")
       CHECK(lattice(1, -1) == 3); // wrap around negative
     }
   }
+}
+
+
+TEST_CASE( "Energies and spins in lattice", "lattice" )
+{
+  Lattice lattice(2, 2, init::ones);
   
+  SECTION( "Check total spins" ) {
+    CHECK( lattice.sum_spins() == Approx(4) );
+    lattice(1,0) = -5;
+    CHECK( lattice.sum_spins() == Approx(3-5) );
+  }
   
+  SECTION( "Check energy" ) {
+    CHECK( lattice.energy(2) == Approx(-2*4*4) ); // 4 spins with 
+  }
 }
 

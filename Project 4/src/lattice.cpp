@@ -41,24 +41,24 @@ Lattice::~Lattice()
 
 lat_t Lattice::operator()(const int x, const int y) const
 {
-  if (x < 0) {
-    return Lattice::operator()(Lx + x, y);
-  } else if (y < 0) {
-    return Lattice::operator()(x, Ly + y);
-  } else {
-    return lattice[y%Ly][x%Lx];
-  }
+  int x_index = x%Lx;
+  if (x_index < 0) x_index += Lx;
+  
+  int y_index = y%Ly;
+  if (y_index <0) y_index += Ly;
+  
+  return lattice[y_index][x_index];
 }
 
 lat_t& Lattice::operator()(const int x, const int y)
 {
-  if (x < 0) {
-    return Lattice::operator()(Lx + x, y);
-  } else if (y < 0) {
-    return Lattice::operator()(x, Ly + y);
-  } else {
-    return lattice[y%Ly][x%Lx];
-  }
+  int x_index = x%Lx;
+  if (x_index < 0) x_index += Lx;
+  
+  int y_index = y%Ly;
+  if (y_index <0) y_index += Ly;
+  
+  return lattice[y_index][x_index];
 }
 
 
@@ -83,7 +83,7 @@ void Lattice::set_print_format(std::string (*print_func)(lat_t))
 std::string print_t::numbers(lat_t num)
 {
   std::ostringstream stringy;
-  stringy << (int)num;
+  stringy << (int)num << " ";
   return stringy.str();
 }
 
@@ -96,6 +96,17 @@ std::string print_t::arrows(lat_t num)
     stringy << "▼";
   } else {
     stringy << "-";
+  }
+  return stringy.str();
+}
+
+std::string print_t::crazy(lat_t num)
+{
+  std::ostringstream stringy;
+  if (num>0) {
+    stringy << "  ໒( • ͜ʖ • )७  ";
+  } else {
+    stringy << " ლ( ◕ 益 ◕ ) ლ ";
   }
   return stringy.str();
 }
@@ -127,4 +138,30 @@ lat_t init::random(int, int)
   } else {
     return 1;
   }
+}
+
+
+double Lattice::sum_spins() const
+{
+  double sum = 0;
+  for (int ii=0; ii<Ly; ii++) {
+    for (int jj=0; jj<Lx; jj++) {
+      sum += this->operator()(jj, ii);
+    }
+  }
+  return sum;
+}
+
+double Lattice::energy(const double J) const
+{
+  double sum_E = 0;
+  for (int y = 0; y<Ly; y++) {
+    for (int x = 0; x<Lx; x++) {
+      double E = this->operator()(x, y);
+      E *= this->operator()(x+1,y) + this->operator()(x-1,y) // horisontal neighbours
+          + this->operator()(x,y-1) + this->operator()(x,y+2); // vertical neighbours
+      sum_E += E;
+    }
+  }
+  return -J*sum_E;
 }

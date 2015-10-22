@@ -20,17 +20,22 @@ public:
   Lattice(const int lx, const int ly, lat_t (*init)(int, int));
   ~Lattice();
   
-  void set_print_format(std::string (*print_func)(lat_t));
   
   lat_t &operator() (const int x, const int y);
   lat_t operator() (const int x, const int y) const;
   
+  void set_print_format(std::string (*print_func)(lat_t));
   friend std::ostream& operator<< (std::ostream &out, const Lattice &lat);
+  
+  
+  double sum_spins() const;
+  double energy(const double J) const;
 };
 
 namespace print_t {
   std::string arrows(lat_t num);
   std::string numbers(lat_t num);
+  std::string crazy(lat_t num);
 }
 
 namespace init {
