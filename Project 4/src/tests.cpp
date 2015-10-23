@@ -1,6 +1,9 @@
 #include "catch.hpp"
 
 #include "lattice.hpp"
+#include "metropolis.hpp"
+
+#include <cmath>
 
 
 TEST_CASE( "SANITIY" )
@@ -46,18 +49,48 @@ TEST_CASE( "Setting lattice, indexing and changing elements" , "[lattice]")
 }
 
 
-TEST_CASE( "Energies and spins in lattice", "lattice" )
+TEST_CASE( "Energies and spins in lattice", "[lattice]" )
 {
   Lattice lattice(2, 2, init::ones);
   
   SECTION( "Check total spins" ) {
-    CHECK( lattice.sum_spins() == Approx(4) );
+    CHECK( lattice.sum_spins() == 4 );
     lattice(1,0) = -5;
-    CHECK( lattice.sum_spins() == Approx(3-5) );
+    CHECK( lattice.sum_spins() == 3-5 );
   }
   
-  SECTION( "Check energy" ) {
-    CHECK( lattice.energy(2) == Approx(-2*4*4) ); // 4 spins with 
+  SECTION( "Check total energy" ) {
+    CHECK( lattice.energy() == -4*4 ); // 4 spins with 4 energy 
+  }
+  SECTION( "Change in energy by flipping single spin" ) {
+    const int deltaE = lattice.dE(1,1);
+    const int Ebefore = lattice.energy();
+    lattice(1,1) *= -1; //flipping
+    const int Eafter = lattice.energy();
+    CHECK( deltaE == Eafter - Ebefore );
+    CHECK( lattice.dE(1,1) == Ebefore - Eafter ); // Reverse flip
   }
 }
 
+TEST_CASE( "Precomputation of exp(-J*Delta E)", "[metropolis]" )
+{
+  double *thingy = new double[2];
+  SECTION( "beta = 1" )
+  {
+    const double beta = 1;
+    pre_compute_exp(thingy, beta);
+    
+    CHECK( std::exp(-beta*6) == Approx(thingy[0]) );
+    CHECK( std::exp(-beta*12) == Approx(thingy[1]) );
+  }
+  SECTION( "beta = 0.43" )
+  {
+    const double beta = 1;
+    pre_compute_exp(thingy, beta);
+    
+    CHECK( std::exp(-beta*6) == Approx(thingy[0]) );
+    CHECK( std::exp(-beta*12) == Approx(thingy[1]) );
+  }
+}
+    
+    

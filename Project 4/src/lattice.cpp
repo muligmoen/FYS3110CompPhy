@@ -6,6 +6,13 @@
 
 #include "lattice.hpp"
 
+// The following functions makes the compiler compile so the
+// most (un)likely gets a preference, used in periodic boundary.
+// This may not be supported in the architecture, and might be superfluous
+// anyway as the CPU has autobranching itself
+
+#define likely(x)      __builtin_expect((x), 1)
+#define unlikely(x)    __builtin_expect((x), 0)
 
 Lattice::Lattice(const int lx, const int ly) : Lx(lx), Ly(ly)
 {
@@ -39,24 +46,35 @@ Lattice::~Lattice()
   delete[] lattice;
 }
 
+void Lattice::get_size(int& Lx, int& Ly) const
+{
+  Lx = this->Lx;
+  Ly = this->Ly;
+}
+
+
 lat_t Lattice::operator()(const int x, const int y) const
 {
-  int x_index = x%Lx;
-  if (x_index < 0) x_index += Lx;
+  int x_index = x;
+  if (unlikely(x_index >= Lx)) x_index = x%Lx;
+  if (unlikely(x_index < 0)) x_index = x%Lx + Lx;
   
-  int y_index = y%Ly;
-  if (y_index <0) y_index += Ly;
+  int y_index = y;
+  if (unlikely(y_index >= Ly)) y_index = y%Ly;
+  if (unlikely(y_index < 0)) y_index = y%Ly + Ly;
   
   return lattice[y_index][x_index];
 }
 
 lat_t& Lattice::operator()(const int x, const int y)
 {
-  int x_index = x%Lx;
-  if (x_index < 0) x_index += Lx;
+  int x_index = x;
+  if (unlikely(x_index >= Lx)) x_index = x%Lx;
+  if (unlikely(x_index < 0)) x_index = x%Lx + Lx;
   
-  int y_index = y%Ly;
-  if (y_index <0) y_index += Ly;
+  int y_index = y;
+  if (unlikely(y_index >= Ly)) y_index = y%Ly;
+  if (unlikely(y_index < 0)) y_index = y%Ly + Ly;
   
   return lattice[y_index][x_index];
 }
@@ -141,9 +159,9 @@ lat_t init::random(int, int)
 }
 
 
-double Lattice::sum_spins() const
+int Lattice::sum_spins() const
 {
-  double sum = 0;
+  int sum = 0;
   for (int ii=0; ii<Ly; ii++) {
     for (int jj=0; jj<Lx; jj++) {
       sum += this->operator()(jj, ii);
@@ -152,9 +170,9 @@ double Lattice::sum_spins() const
   return sum;
 }
 
-double Lattice::energy(const double J) const
+int Lattice::energy() const
 {
-  double sum_E = 0;
+  int sum_E = 0;
   for (int y = 0; y<Ly; y++) {
     for (int x = 0; x<Lx; x++) {
       double E = this->operator()(x, y);
@@ -163,5 +181,19 @@ double Lattice::energy(const double J) const
       sum_E += E;
     }
   }
-  return -J*sum_E;
+  return -sum_E;
 }
+
+int Lattice::energy(const int x, const int y) const
+{
+  const int sum_neighbours = this->operator()(x+1, y) + this->operator()(x-1,y)
+          + this->operator()(x, y+1) + this->operator()(x, y-1);
+  const int dE = this->operator()(x,y)*sum_neighbours;
+  return -dE;
+}
+
+int Lattice::dE(const int x, const int y) const
+{
+  return -3*this->energy(x, y);
+}
+

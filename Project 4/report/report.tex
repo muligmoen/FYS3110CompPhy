@@ -4,7 +4,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
-\usepackage{hyperref}
+\usepackage[colorlinks=true]{hyperref}
 
 %\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
 \usepackage{tcolorbox}
@@ -91,14 +91,15 @@ can be solved in multiple ways. In our model we are
 using periodic boundary conditions,
 \begin{gather}
 s_k = s_{k \pm L}
+\label{eq:boundary}
 \end{gather}
-An illustration of this is visible in figure \ref{eq:spin_neighbours}.
+An illustration of this is visible in figure \ref{fig:spin_neighbours}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.15]{pics/simple_lattice.png}
 \caption{ Illustration of the simple, ''$L=2$''-lattice and a graphical interpretation the periodic boundary conditions.}
-\label{eq:spin_neighbours}
+\label{fig:spin_neighbours}
 \end{figure}
 
 
@@ -106,6 +107,7 @@ An illustration of this is visible in figure \ref{eq:spin_neighbours}.
 
 
 \subsection{Statistical mechanics}
+The partition function
 \begin{gather}
 Z = \sum_i \exp(-\beta E_i)
 \end{gather}
@@ -145,9 +147,50 @@ with degeneracy
 \end{cases}
 \end{gather*}
 
+Now to find the partition function and calculate all the properties,
+
 \section{Implementation}
 
+A lattice class with periodic boundary conditions, so access of an
+element follows \eqref{eq:boundary}. The energy of an element in the 
+lattice and the total energy is easily calculated from the definition
+of the energy. 
+
 \subsection{The metropolis algorithm}
+
+The probability of transition from i to j 
+is modelled by the Boltzmann coefficient
+\begin{gather}
+w_j = \exp(-\beta (E_i - E_j))
+\end{gather}
+This suggest the following probabilities for moving to this state:
+\begin{gather}
+p = \begin{cases}
+1 \quad\text{ if }  E_i - E_j \le 0\\
+\exp(-\beta \Delta E) \text{ else}
+\end{cases}
+\label{eq:transition}
+\end{gather}
+For our lattices the factor $\Delta E$ is rather simple. Considering 
+a case with one spin $s_0$ surrounded by $s_1,s_2,s_3, s_4$. 
+
+\textcolor{red}{MU: Could you please make a figure like \ref{fig:spin_neighbours}
+for this case? Thanks!}
+
+This gives a flip of spin $s_0$ results in a n
+energy-difference of the lattice which is
+is -3 times the energy of $s_0$.
+\begin{gather}
+\Delta E = -3s_0(s_1 + s_2 + s_3 + s_4)
+\end{gather}
+It is also clear that this is quantized, which means that the 
+exponential function in \eqref{eq:transition} can be precomputed.
+\begin{gather}
+\Delta E \in \{12, 6, 0, -6, -12\}
+\end{gather}
+
+
+
 
 \subsubsection{Choice of random number generator}
 The pseudo random number generator used for the simulations covered in 

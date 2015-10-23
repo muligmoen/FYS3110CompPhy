@@ -20,6 +20,7 @@ public:
   Lattice(const int lx, const int ly, lat_t (*init)(int, int));
   ~Lattice();
   
+  void get_size(int &Lx, int&Ly) const;
   
   lat_t &operator() (const int x, const int y);
   lat_t operator() (const int x, const int y) const;
@@ -28,8 +29,10 @@ public:
   friend std::ostream& operator<< (std::ostream &out, const Lattice &lat);
   
   
-  double sum_spins() const;
-  double energy(const double J) const;
+  int sum_spins() const;
+  int energy() const;
+  int energy(const int x, const int y) const;
+  int dE(const int x, const int y) const;
 };
 
 namespace print_t {
