@@ -21,5 +21,6 @@ int try_flip(Lattice& lat, const int x, const int y, const double* exp_beta);
 void pre_compute_exp(double* exp, const double beta);
 // Changes exp to: exp = [exp(-beta*6), exp(-beta*12)]
 
+void full_thingy(const int Lx, const int Ly, const int seed, const double beta);
 
 #endif

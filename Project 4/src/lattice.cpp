@@ -130,8 +130,6 @@ std::string print_t::crazy(lat_t num)
 }
 
 
-
-
 lat_t init::zeros(int, int)
 {
   return 0;

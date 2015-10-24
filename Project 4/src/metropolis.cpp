@@ -23,7 +23,8 @@ void get_indexes(int &x, int &y, const int Lx, const int Ly)
   std::uniform_int_distribution<int> Ly_distribution(0, Ly);
   y = Ly_distribution(generator);
 }
-//exp_bet = [exp(-beta*6), exp(-beta*12)]
+
+// exp_bet = [exp(-beta*6), exp(-beta*12)]
 int try_flip(Lattice& lat, const int x, const int y, const double* exp_beta)
 {
   const int energy_diff = lat.dE(x, y);
@@ -33,7 +34,7 @@ int try_flip(Lattice& lat, const int x, const int y, const double* exp_beta)
     return FlipCodes::FLIPPED;
   } else {
     
-    const int comparator = rand_uniform();
+    const double comparator = rand_uniform();
     
     double exp_bet;
     if (energy_diff == 6) {
@@ -44,7 +45,7 @@ int try_flip(Lattice& lat, const int x, const int y, const double* exp_beta)
       throw "Energy error";
     }
     
-    if (comparator > exp_bet) {
+    if (comparator < exp_bet) {
       lat(x,y) *= -1;
       return FlipCodes::RAND_FLIPPED;
     } else {
