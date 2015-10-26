@@ -9,7 +9,7 @@ Open the terminal in this folder and type
 make
 ```
 
-This makes two executables, project3 and testit. 
+This makes three executables, project3, testit and animation. 
 
 ##Usage
 In the terminal type
@@ -23,3 +23,9 @@ This should give the input parameters required to run the program. To run the un
 ```
 ./testit
 ```
+
+For a visual look at the evolution of the system run
+```
+./animation
+```
+

@@ -2,9 +2,11 @@
 .*
 !.gitignore
 
-#test-files
+#test-files and executables
 test.txt
 testit
+animation
+
 
 #C++ files
 *.o

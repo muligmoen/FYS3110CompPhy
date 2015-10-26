@@ -46,9 +46,12 @@ public:
   double rand_uniform(); // gives 0,...,1
   
   void flip(const int x, const int y, const int dS, const int dE);
+  
   int try_flip();
   
   void try_flip(const int N);
+  
+  void to_image_buffer(int *buffer) const;
   
   friend std::ostream& operator<< (std::ostream &out, const Ising &ising);
   

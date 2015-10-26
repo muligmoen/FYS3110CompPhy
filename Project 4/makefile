@@ -35,6 +35,11 @@ TEST_FILES = tests.cpp catch.cpp lattice.cpp metropolis.cpp
 TEST_SRCS = $(addprefix src/,$(notdir $(TEST_FILES)))
 TEST_OBJS = $(patsubst src/%.cpp,obj/%.o,$(TEST_SRCS))
 
+ANIMATE_TARGET = animation
+ANIMATE_FILES = animate.cpp lattice.cpp ising.cpp 
+ANIMATE_SRCS = $(addprefix src/,$(notdir $(ANIMATE_FILES)))
+ANIMATE_OBJS = $(patsubst src/%.cpp,obj/%.o,$(ANIMATE_SRCS))
+ANIMATE_LIBS = -lX11 -lpthread
 
 
 all: $(TARGET) $(TEST_TARGET)
@@ -55,20 +60,29 @@ test: $(TEST_TARGET)
 
 $(TEST_TARGET): $(TEST_OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS)
+
+
+animate: $(ANIMATE_TARGET)
+
+$(ANIMATE_TARGET): $(ANIMATE_OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(ANIMATE_LIBS)
 	
 
 
-.phony: all clean dist-clean test
+.phony: all clean dist-clean test animation
 
 clean:
 	$(RM) $(patsubst %.o,%.d,$(OBJS))
 	$(RM) $(OBJS)
 	$(RM) $(patsubst %.o,%.d,$(TEST_OBJS))
 	$(RM) $(TEST_OBJS)
+	$(RM) $(patsubst %.o,%.d,$(ANIMATE_OBJS))
+	$(RM) $(ANIMATE_OBJS)
 
 dist-clean: clean
 	$(RM) $(TARGET)
 	$(RM) $(TEST_TARGET)
+	$(RM) $(ANIMATE_TARGET)
 	@rmdir --ignore-fail-on-non-empty obj
 
 
