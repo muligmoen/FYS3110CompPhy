@@ -57,8 +57,8 @@ int try_flip(Lattice& lat, const int x, const int y, const double* exp_beta)
 
 void pre_compute_exp(double* exp, const double beta)
 {
-  exp[0] = std::exp(-beta*6);
-  exp[1] = std::exp(-beta*12);
+  exp[0] = std::exp(-beta*8);
+  exp[1] = std::exp(-beta*16);
 }
 
 

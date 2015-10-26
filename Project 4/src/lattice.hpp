@@ -22,8 +22,8 @@ public:
   
   void get_size(int &Lx, int&Ly) const;
   
-  lat_t &operator() (const int x, const int y);
-  lat_t operator() (const int x, const int y) const;
+  lat_t &operator() (int x, int y);
+  lat_t operator() (int x, int y) const;
   
   void set_print_format(std::string (*print_func)(lat_t));
   friend std::ostream& operator<< (std::ostream &out, const Lattice &lat);

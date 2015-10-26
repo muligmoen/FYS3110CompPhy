@@ -1,5 +1,5 @@
 #Project 4
-
+This project aims to find the critical temperature and some other parameters of the two-dimensional Ising model.
 
 
 ##Installation

@@ -16,15 +16,15 @@ RM = rm -f
 CPPFLAGS = -g -std=c++11 -Wall -Wextra -Werror -O3 -pedantic -MMD -MP -fopenmp
 
 # linker flags
-LDFLAGS = -g -Wall -fopenmp
+LDFLAGS = -g -Wall
 
 
 # libraries to link into executable
-LDLIBS = 
+LDLIBS =  -fopenmp
 
 # build executable
 TARGET = project4
-CPP_FILES = main.cpp lattice.cpp metropolis.cpp
+CPP_FILES = main.cpp lattice.cpp metropolis.cpp ising.cpp
 
 SRCS = $(addprefix src/,$(notdir $(CPP_FILES)))
 OBJS = $(patsubst src/%.cpp,obj/%.o,$(SRCS))

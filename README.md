@@ -18,7 +18,10 @@ This project aims to solve the radial part of the harmonic oscillator Schröding
 
 ## Project 3
 This projects computes the correlation energy between electrons in the helium atom, 
-taking as ansatz that the electrons are in the hydrogen 1s orbitals.
+taking as ansatz two electrons in the hydrogen 1s orbitals.
+
+## Project 4
+This project computes the magnetism and energy in the two dimensional Ising model.
 
 ## Course information
 Course descriptions can be found at http://www.uio.no/studier/emner/matnat/fys/FYS3150/

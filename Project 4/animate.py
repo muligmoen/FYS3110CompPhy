@@ -5,16 +5,6 @@ import matplotlib.animation as animation
 import subprocess
 
 
-def runProcess(exe):    
-    p = subprocess.Popen(exe, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    while(True):
-      retcode = p.poll() #returns None while subprocess is running
-      line = p.stdout.readline()
-      yield line
-      if(retcode is not None):
-        break
-
-
 def get_output():
   command = ['./project4']
   res = subprocess.check_output(command,universal_newlines=True)
@@ -35,23 +25,20 @@ def get_state(N):
     string = simulation[N+i].split()
     for j in range(Lx):
       state[i,j] = int(string[j])
-    #N += 1
   return state
 
-istate = get_state(5)
+istate = get_state(5) # initial state
 
-#plt.matshow(istate)
-#plt.show()
-  
-
+#This updates the state
 def update(data):
   mat.set_data(data)
   return mat
 
+#This feeds update()
 def data_gen():
   Nstart = 5
   Nstep = Ly + 1
-  N = Nstart + Nstep
+  N = Nstart + Nstep # The initial is already plotted
   while N + Nstep < len(simulation):
     yield get_state(N)
     N += Nstep
@@ -60,33 +47,8 @@ def data_gen():
 fig, ax = plt.subplots()
 mat = ax.matshow(istate, cmap='coolwarm')
 ax.axis('off')
+ax.set_title(r'Ising 2D-lattice, $\beta = {}, L = {}\times {}$'.format(beta, Lx,Ly))
 
 ani = animation.FuncAnimation(fig, update, data_gen, interval=500,
                               save_count=50,repeat=False)
 plt.show()
-"""
-
-def line_numbers():
-  N = 5 + Lx + 2
-  while N < len(simulation):
-    N += Lx + 2
-    yield N
-    
-def yield_state():
-  yield get_state(line_numbers)
-  
-def init():
-  mat = ax.matshow(istate)
-  return mat
-
-def update(data):
-  mat.set_data(data)
-  return mat
-  
-fig, ax = plt.subplots()
-mat = ax.matshow(istate)
-  
-ani = animation.FuncAnimation(fig, update, yield_state,
-                              interval=500, save_count=50)
-plt.show()
-"""

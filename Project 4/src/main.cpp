@@ -1,10 +1,13 @@
 #include <iostream>
+#include <ctime>
 
 #include "lattice.hpp"
-#include "metropolis.hpp"
+//#include "metropolis.hpp"
+#include "ising.hpp"
 
 int main()
 {
+  /* Uncomment to run python thingy
   const int Nsteps = 10000;
   const int plot_every = Nsteps/30;
   const int lx = 20;
@@ -49,5 +52,14 @@ int main()
   //std::cout << "Less energy flips = " << easy_flips << std::endl;
   //std::cout << "Temperature flips = " << hard_flips << std::endl;
   //std::cout << "Not flipped = " << not_flips << std::endl;
+  */
+  const int L = 20;
   
+  const int seed = std::clock();
+  const double beta = 0;
+  Ising model(L, seed, beta);
+  model.set_print_format(print_t::arrows);
+  
+  
+  std::cout << model;
 }

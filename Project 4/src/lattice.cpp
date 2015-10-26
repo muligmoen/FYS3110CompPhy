@@ -14,6 +14,7 @@
 #define likely(x)      __builtin_expect((x), 1)
 #define unlikely(x)    __builtin_expect((x), 0)
 
+
 Lattice::Lattice(const int lx, const int ly) : Lx(lx), Ly(ly)
 {
   lattice = new lat_t*[Ly];
@@ -53,30 +54,26 @@ void Lattice::get_size(int& Lx, int& Ly) const
 }
 
 
-lat_t Lattice::operator()(const int x, const int y) const
+lat_t Lattice::operator()(int x, int y) const
 {
-  int x_index = x;
-  if (unlikely(x_index >= Lx)) x_index = x%Lx;
-  if (unlikely(x_index < 0)) x_index = x%Lx + Lx;
+  if (unlikely(x >= Lx)) x = x%Lx;
+  if (unlikely(x < 0)) x = x%Lx + Lx;
   
-  int y_index = y;
-  if (unlikely(y_index >= Ly)) y_index = y%Ly;
-  if (unlikely(y_index < 0)) y_index = y%Ly + Ly;
+  if (unlikely(y >= Ly)) y = y%Ly;
+  if (unlikely(y < 0)) y = y%Ly + Ly;
   
-  return lattice[y_index][x_index];
+  return lattice[y][x];
 }
 
-lat_t& Lattice::operator()(const int x, const int y)
+lat_t& Lattice::operator()(int x, int y)
 {
-  int x_index = x;
-  if (unlikely(x_index >= Lx)) x_index = x%Lx;
-  if (unlikely(x_index < 0)) x_index = x%Lx + Lx;
+  if (unlikely(x >= Lx)) x = x%Lx;
+  if (unlikely(x < 0)) x = x%Lx + Lx;
   
-  int y_index = y;
-  if (unlikely(y_index >= Ly)) y_index = y%Ly;
-  if (unlikely(y_index < 0)) y_index = y%Ly + Ly;
+  if (unlikely(y >= Ly)) y = y%Ly;
+  if (unlikely(y < 0)) y = y%Ly + Ly;
   
-  return lattice[y_index][x_index];
+  return lattice[y][x];
 }
 
 
@@ -173,10 +170,12 @@ int Lattice::energy() const
   int sum_E = 0;
   for (int y = 0; y<Ly; y++) {
     for (int x = 0; x<Lx; x++) {
-      double E = this->operator()(x, y);
-      E *= this->operator()(x+1,y) + this->operator()(x-1,y) // horisontal neighbours
-          + this->operator()(x,y-1) + this->operator()(x,y+2); // vertical neighbours
-      sum_E += E;
+      const int S0 = this->operator()(x, y);
+      const int S1 = this->operator()(x+1, y);
+      const int S2 = this->operator()(x-1, y);
+      const int S3 = this->operator()(x, y+1);
+      const int S4 = this->operator()(x, y-1);
+      sum_E += S0*(S1 + S2 + S3 + S4);
     }
   }
   return -sum_E;
@@ -184,14 +183,18 @@ int Lattice::energy() const
 
 int Lattice::energy(const int x, const int y) const
 {
-  const int sum_neighbours = this->operator()(x+1, y) + this->operator()(x-1,y)
-          + this->operator()(x, y+1) + this->operator()(x, y-1);
-  const int dE = this->operator()(x,y)*sum_neighbours;
+  const int S0 = this->operator()(x, y);
+  const int S1 = this->operator()(x+1, y);
+  const int S2 = this->operator()(x-1, y);
+  const int S3 = this->operator()(x, y+1);
+  const int S4 = this->operator()(x, y-1);
+  
+  const int dE = S0*(S1 + S2 + S3 + S4);
   return -dE;
 }
 
 int Lattice::dE(const int x, const int y) const
 {
-  return -3*this->energy(x, y);
+  return -4*this->energy(x, y);
 }
 

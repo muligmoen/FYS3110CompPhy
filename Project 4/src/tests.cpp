@@ -71,26 +71,4 @@ TEST_CASE( "Energies and spins in lattice", "[lattice]" )
     CHECK( lattice.dE(1,1) == Ebefore - Eafter ); // Reverse flip
   }
 }
-
-TEST_CASE( "Precomputation of exp(-J*Delta E)", "[metropolis]" )
-{
-  double *thingy = new double[2];
-  SECTION( "beta = 1" )
-  {
-    const double beta = 1;
-    pre_compute_exp(thingy, beta);
-    
-    CHECK( std::exp(-beta*6) == Approx(thingy[0]) );
-    CHECK( std::exp(-beta*12) == Approx(thingy[1]) );
-  }
-  SECTION( "beta = 0.43" )
-  {
-    const double beta = 1;
-    pre_compute_exp(thingy, beta);
-    
-    CHECK( std::exp(-beta*6) == Approx(thingy[0]) );
-    CHECK( std::exp(-beta*12) == Approx(thingy[1]) );
-  }
-}
-    
     
