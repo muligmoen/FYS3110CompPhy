@@ -10,7 +10,7 @@ typedef std::int_fast8_t lat_t; // lattice type
 class Lattice
 {
 private:
-  lat_t **lattice;
+  lat_t *lattice;
   const int Lx;
   const int Ly;
   std::string (*print_format)(lat_t);
@@ -19,6 +19,8 @@ public:
   Lattice(const int lx, const int ly);
   Lattice(const int lx, const int ly, lat_t (*init)(int, int));
   ~Lattice();
+  
+  lat_t *buffer();
   
   void get_size(int &Lx, int&Ly) const;
   

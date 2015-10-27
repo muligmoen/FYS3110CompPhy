@@ -119,13 +119,7 @@ int Ising::recompute_magnetisation() const
   return lat.sum_spins();
 }
 
-void Ising::to_image_buffer(int* buffer) const
+lat_t* Ising::buffer()
 {
-  for (int ii=0; ii<L; ii++) {
-    for (int jj=0; jj<L; jj++) {
-      buffer[0*(L*L) + ii*L + jj] = (lat(ii,jj)+1)/2*255; // red
-      buffer[1*(L*L) + ii*L + jj] = 0; // green
-      buffer[2*(L*L) + ii*L + jj] = -(lat(ii,jj)-1)/2*255; // blue
-    }
-  }
+  return lat.buffer();
 }

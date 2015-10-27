@@ -54,6 +54,8 @@ int main()
   //std::cout << "Not flipped = " << not_flips << std::endl;
   */
   const int L = 20;
+
+  
   
   const int seed = std::clock();
   const double beta = 0;

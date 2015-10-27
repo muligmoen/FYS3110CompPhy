@@ -51,7 +51,7 @@ public:
   
   void try_flip(const int N);
   
-  void to_image_buffer(int *buffer) const;
+  lat_t* buffer();
   
   friend std::ostream& operator<< (std::ostream &out, const Ising &ising);
   

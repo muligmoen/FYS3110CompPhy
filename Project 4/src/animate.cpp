@@ -14,17 +14,16 @@ int main() {
   
   Ising model(L, seed, beta);
   
-  const int width = 3;
-  int *image_buffer = new int[L*L*width];
+  const int width = 1;
   
-  // updating the buffer
-  model.to_image_buffer(image_buffer);
+  // Getting the future buffer
+  lat_t* image_buffer = model.buffer();
 
   //making a window
   CImgDisplay window(900,600,"Ising model",0);
   
   //binding a buffer to image
-  CImg<int> image(image_buffer,L,L,1,width,true);
+  CImg<lat_t> image(image_buffer,L,L,1,width,true);
   
   
   while (!window.is_closed()) { // event binding
@@ -36,7 +35,6 @@ int main() {
     
     // updating buffer live here
     model.try_flip();
-    model.to_image_buffer(image_buffer);
     
     window.wait(5); // limits the framerate
   }

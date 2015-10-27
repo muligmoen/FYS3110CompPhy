@@ -17,23 +17,18 @@
 
 Lattice::Lattice(const int lx, const int ly) : Lx(lx), Ly(ly)
 {
-  lattice = new lat_t*[Ly];
-  for (int ii=0; ii<Ly; ii++){
-    lattice[ii] = new lat_t[Lx];
-  }
+  lattice = new lat_t[Ly*Lx];
+
   print_format = print_t::numbers;
 }
 
 Lattice::Lattice(const int lx, const int ly, lat_t (*init)(int, int)) : Lx(lx), Ly(ly)
 {
-  lattice = new lat_t*[Ly];
-  for (int ii=0; ii<Ly; ii++){
-    lattice[ii] = new lat_t[Lx];
-  }
-  
+  lattice = new lat_t[Ly*Lx];
+
   for (int yy=0; yy<Ly; yy++){
     for (int xx=0; xx<Lx; xx++){
-      lattice[yy][xx] = init(xx, yy);
+      lattice[Lx*xx + yy] = init(xx, yy);
     }
   }
   print_format = print_t::numbers;
@@ -41,9 +36,6 @@ Lattice::Lattice(const int lx, const int ly, lat_t (*init)(int, int)) : Lx(lx), 
 
 Lattice::~Lattice()
 {
-  for (int ii=0; ii<Ly; ii++){
-    delete[] lattice[ii];
-  }
   delete[] lattice;
 }
 
@@ -62,7 +54,7 @@ lat_t Lattice::operator()(int x, int y) const
   if (unlikely(y >= Ly)) y = y%Ly;
   if (unlikely(y < 0)) y = y%Ly + Ly;
   
-  return lattice[y][x];
+  return lattice[Lx*x + y];
 }
 
 lat_t& Lattice::operator()(int x, int y)
@@ -73,9 +65,13 @@ lat_t& Lattice::operator()(int x, int y)
   if (unlikely(y >= Ly)) y = y%Ly;
   if (unlikely(y < 0)) y = y%Ly + Ly;
   
-  return lattice[y][x];
+  return lattice[Lx*x + y];
 }
 
+lat_t* Lattice::buffer()
+{
+  return lattice;
+}
 
 
 std::ostream& operator<<(std::ostream& out, const Lattice &lat)
@@ -157,9 +153,9 @@ lat_t init::random(int, int)
 int Lattice::sum_spins() const
 {
   int sum = 0;
-  for (int ii=0; ii<Ly; ii++) {
-    for (int jj=0; jj<Lx; jj++) {
-      sum += this->operator()(jj, ii);
+  for (int y=0; y<Ly; y++) {
+    for (int x=0; x<Lx; x++) {
+      sum += this->operator()(x, y);
     }
   }
   return sum;
