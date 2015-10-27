@@ -68,8 +68,10 @@ $(ANIMATE_TARGET): $(ANIMATE_OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LDLIBS) $(ANIMATE_LIBS)
 	
 
+docs:
+	doxygen Doxyfile
 
-.phony: all clean dist-clean test animation
+.phony: all clean dist-clean test animation docs
 
 clean:
 	$(RM) $(patsubst %.o,%.d,$(OBJS))
@@ -84,6 +86,7 @@ dist-clean: clean
 	$(RM) $(TEST_TARGET)
 	$(RM) $(ANIMATE_TARGET)
 	@rmdir --ignore-fail-on-non-empty obj
+	$(RM) -r html
 
 
 

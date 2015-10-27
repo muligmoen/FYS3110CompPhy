@@ -28,3 +28,7 @@ obj
 *.kdev4
  
 *.kate-swp
+
+#Doxygen
+html
+latex

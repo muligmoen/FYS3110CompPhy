@@ -1,23 +1,26 @@
 #include "catch.hpp"
 
 #include "lattice.hpp"
-#include "metropolis.hpp"
 
 #include <cmath>
 
+/*! \file tests.cpp
+ * \brief Contains unit tests of lattice.hpp
+ */
 
+//! Testing if catch makes a TEST_CASE
 TEST_CASE( "SANITIY" )
 {
   CHECK( 1 == 1 );
   CHECK( 2 == 3-1 );
 }
 
-
+//! Testing basic operations on a lattice
 TEST_CASE( "Setting lattice, indexing and changing elements" , "[lattice]")
 {
   int max_x = 2;
   int max_y = 4;
-  Lattice lattice(max_x, max_y, init::ones);
+  Lattice lattice(max_x, max_y, init::up);
   
   SECTION( "Check successful init") {
     for (int ii=0; ii<max_y; ii++){
@@ -48,10 +51,10 @@ TEST_CASE( "Setting lattice, indexing and changing elements" , "[lattice]")
   }
 }
 
-
+//! Testing energy and magnetism of a lattice
 TEST_CASE( "Energies and spins in lattice", "[lattice]" )
 {
-  Lattice lattice(2, 2, init::ones);
+  Lattice lattice(2, 2, init::up);
   
   SECTION( "Check total spins" ) {
     CHECK( lattice.sum_spins() == 4 );

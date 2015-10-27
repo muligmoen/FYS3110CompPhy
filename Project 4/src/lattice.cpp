@@ -14,7 +14,6 @@
 #define likely(x)      __builtin_expect((x), 1)
 #define unlikely(x)    __builtin_expect((x), 0)
 
-
 Lattice::Lattice(const int lx, const int ly) : Lx(lx), Ly(ly)
 {
   lattice = new lat_t[Ly*Lx];
@@ -123,12 +122,8 @@ std::string print_t::crazy(lat_t num)
 }
 
 
-lat_t init::zeros(int, int)
-{
-  return 0;
-}
 
-lat_t init::ones(int, int)
+lat_t init::up(int, int)
 {
   return 1;
 }
@@ -166,15 +161,10 @@ int Lattice::energy() const
   int sum_E = 0;
   for (int y = 0; y<Ly; y++) {
     for (int x = 0; x<Lx; x++) {
-      const int S0 = this->operator()(x, y);
-      const int S1 = this->operator()(x+1, y);
-      const int S2 = this->operator()(x-1, y);
-      const int S3 = this->operator()(x, y+1);
-      const int S4 = this->operator()(x, y-1);
-      sum_E += S0*(S1 + S2 + S3 + S4);
+      sum_E += this->energy(x,y);
     }
   }
-  return -sum_E;
+  return sum_E;
 }
 
 int Lattice::energy(const int x, const int y) const

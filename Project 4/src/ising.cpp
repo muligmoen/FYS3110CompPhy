@@ -2,19 +2,14 @@
 #include "ising.hpp"
 #include <cmath>
 #include <iostream>
+#include <functional>
 
 Ising::Ising(const int L, const long int seed, const double Jbeta) : L(L), init_seed(seed),
                                             exp_Jbeta{std::exp(-Jbeta*8), std::exp(-Jbeta*16)},
                                             lat(L, L), generator(init_seed)
-{
-  for (int yy=0;yy<L; yy++){
-    for (int xx=0; xx<L; xx++){
-      lat(xx, yy) = this->rand_init();
-    }
-  }
-  Energy = lat.energy();
-  Magnetisation = lat.sum_spins();
+{ 
 }
+
 
 Ising::~Ising() { }
 
@@ -58,10 +53,11 @@ void Ising::try_flip(const int N)
   }
 }
 
-void Ising::flip(const int x, const int y, const int dS, const int dE)
+void Ising::flip(const int x, const int y, const int S, const int dE)
 {
   lat(x,y) *= -1;
-  Magnetisation -= 2*dS;
+  const int dS = -2*S;
+  Magnetisation += dS;
   Energy += dE;
 }
 
@@ -72,13 +68,32 @@ double Ising::rand_uniform()
   return dist(generator);
 }
 
-int Ising::rand_init()
+void Ising::init_rand()
 {
-  static std::uniform_int_distribution<int> dist(0, 1);
-  const int z = dist(generator);
+  static std::uniform_int_distribution<lat_t> dist(0, 1);
+  auto z = std::bind(dist, generator);
   
-  return 2*z-1;
+  for (int yy=0;yy<L; yy++){
+    for (int xx=0; xx<L; xx++){
+      lat(xx, yy) = 2*z()-1;
+    }
+  }
+  Energy = lat.energy();
+  Magnetisation = lat.sum_spins();
 }
+
+void Ising::init_up()
+{
+  for (int yy=0;yy<L; yy++){
+    for (int xx=0; xx<L; xx++){
+      lat(xx, yy) = 1;
+    }
+  }
+  Energy = lat.energy();
+  Magnetisation = lat.sum_spins();
+}
+
+
 
 void Ising::rand_pos(int& x, int& y)
 {

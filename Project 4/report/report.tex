@@ -49,6 +49,7 @@ frame=l,
 \newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
 
 \newcommand{\di}{\mathrm{d}}
+\newcommand{\magM}{\mathcal{M}}
 
 \newcounter{algcounter}
 \renewcommand{\thealgcounter}{\Roman{algcounter}}
@@ -116,7 +117,7 @@ Z = \sum_i \exp(-\beta E_i)
 
 The net magnetisation is defined by
 \begin{gather}
-\expval{M} = \sum_k s_k
+\expval{\magM} = \sum_k s_k
 \end{gather}
 There should be a critical temperature where this one flips from 
 zero to some value for ferromagnets (positive J)
@@ -157,7 +158,7 @@ Now to find the partition function and calculate all the properties,
 Solutions for the Ising model in one dimension for a very large number of particles are known(Plischke and Bergersen, 1994). 
 
 \begin{equation}
-\frac{U}{J} = -N tanh \left( \frac{J}{k_B T} \right) = -N \frac{e^{J/k_B T}-e^{-J/k_B T} }{e^{J/k_B T}+ e^{-J/k_B T} } =  \begin{cases} N, \quad k_B T \to 0 \\ 0, \quad  k_B T \to \infty \end{cases}
+\frac{U}{J} = -N \tanh \left( \frac{J}{k_B T} \right) = -N \frac{e^{J/k_B T}-e^{-J/k_B T} }{e^{J/k_B T}+ e^{-J/k_B T} } =  \begin{cases} N, \quad k_B T \to 0 \\ 0, \quad  k_B T \to \infty \end{cases}
 \end{equation}
 
 The specific heat per particle and the magnetization are given by 
@@ -166,17 +167,17 @@ The specific heat per particle and the magnetization are given by
 C(T) = \frac{1}{N} \frac{dU}{dT} = \frac{(J/k_B T)^2}{cosh^2 (J/k_B T)}
 \end{equation}
 \begin{equation}
-M(T) = \frac{N e^{J / k_B T} sinh(B/k_B T) }{ \sqrt{ e^{2J/k_B T} sinh^2 (B/k_B T) + e^{-2J/ k_B T}  } }
+\magM(T) = \frac{N e^{J / k_B T} sinh(B/k_B T) }{ \sqrt{ e^{2J/k_B T} sinh^2 (B/k_B T) + e^{-2J/ k_B T}  } }
 \end{equation}
 
 \subsubsection{2-D Ising model}
 There are known analytical solution to the two dimensional model as well, 
 
 \begin{equation}
-\mathcal{M}(T) = \begin{cases} 0, \quad T > T_C \\ \frac{(1+z^2)^{1/4} (1-6z^2 + z^4 )^{1/8} }{(1-z^2)^{1/2}}, \quad T < T_C \end{cases}
+\magM (T) = \begin{cases} 0, \quad T > T_C \\ \frac{(1+z^2)^{1/4} (1-6z^2 + z^4 )^{1/8} }{(1-z^2)^{1/2}}, \quad T < T_C \end{cases}
 \end{equation}
 \begin{equation}
-k T_C/J = \frac{2}{ln(1+ \sqrt{2}) } \approx 2.269
+k T_C/J = \frac{2}{\ln(1+ \sqrt{2}) } \approx 2.269
 \end{equation}
 
 here $T_C$ is the \emph{Curie temperature} and $z = e^{-2J/k_B T}$. 
@@ -252,7 +253,7 @@ Under the folder \emph{Project 4}.
 
 \section{Conclusion}
 
-\section{Refrences}
+\section{References}
 
 
 
