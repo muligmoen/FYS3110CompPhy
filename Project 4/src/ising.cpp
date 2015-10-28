@@ -8,6 +8,8 @@ Ising::Ising(const int L, const long int seed, const double Jbeta) : L(L), init_
                                             exp_Jbeta{std::exp(-Jbeta*8), std::exp(-Jbeta*16)},
                                             lat(L, L), generator(init_seed)
 { 
+  Magnetisation = lat.sum_spins();
+  Energy = lat.energy();
 }
 
 

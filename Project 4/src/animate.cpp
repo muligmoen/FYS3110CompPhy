@@ -22,7 +22,7 @@ using namespace cimg_library;
 int main() {
   const int L = 100;
   const long int seed = std::clock();
-  const double beta = 1.0/2.4;
+  const double beta = 5;
   const int wait_time = 1;
   
   Ising model(L, seed, beta);

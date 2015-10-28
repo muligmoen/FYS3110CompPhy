@@ -1,54 +1,58 @@
-
-import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
 import subprocess
+import random
 
 
-def get_output():
-  command = ['./project4']
+def get_output(command):
   res = subprocess.check_output(command,universal_newlines=True)
   return res
 
-simulation = get_output().split('\n')
+def get_magnetisation(N, L, beta):
+  command = ['./project4', '-P', 'M', str(N), str(L), str(beta)]
+  out = get_output(command).split('\n')[0]
+  
+  str_M = out.split()
+  spins = L*L
+  if (float(str_M[-1]) > 0):
+    polarity = 1
+  else:
+    polarity = -1
+  pol_spin = polarity/spins
+  M = [pol_spin*float(x) for x in str_M]
+  return M
 
-Lx = int(simulation[1].split()[0])
-Ly = int(simulation[2].split()[0])
-beta = float(simulation[3].split()[0])
-
-
-def get_state(N):
-  """N is the first line of the state input
-  """
-  state = np.empty((Ly, Lx), dtype=np.int8)
-  for i in range(Ly):
-    string = simulation[N+i].split()
-    for j in range(Lx):
-      state[i,j] = int(string[j])
-  return state
-
-istate = get_state(5) # initial state
-
-#This updates the state
-def update(data):
-  mat.set_data(data)
-  return mat
-
-#This feeds update()
-def data_gen():
-  Nstart = 5
-  Nstep = Ly + 1
-  N = Nstart + Nstep # The initial is already plotted
-  while N + Nstep < len(simulation):
-    yield get_state(N)
-    N += Nstep
+def get_energy(N, L, beta):
+  command = ['./project4', '-P', 'E', str(N), str(L), str(beta)]
+  out = get_output(command).split('\n')[0]
+  
+  str_E = out.split()
+  spins = L*L
+  inv_spins = 1.0/spins;
+  E = [inv_spins*float(x) for x in str_E]
+  return E
 
 
-fig, ax = plt.subplots()
-mat = ax.matshow(istate, cmap='coolwarm')
-ax.axis('off')
-ax.set_title(r'Ising 2D-lattice, $\beta = {}, L = {}\times {}$'.format(beta, Lx,Ly))
+N = 20
+L = 2
+beta = 0.001
 
-ani = animation.FuncAnimation(fig, update, data_gen, interval=500,
-                              save_count=50,repeat=False)
+
+plt.subplot(2,1,1)
+plt.ylim([-0.2,1.05])
+plt.ylabel('Net magnetisation per spin')
+plt.xlabel('Number of cycles')
+
+for i in range(10):
+  M = get_magnetisation(N, L, beta)
+  plt.plot(M,linewidth=2)
+
+
+plt.subplot(2,1,2)
+plt.ylabel('Energy per spin')
+plt.xlabel('Number of cycles')
+plt.ylim([-4.1,4.1])
+
+for i in range(10):
+  E = get_energy(N, L, beta)
+  plt.plot(E, linewidth=2)
 plt.show()

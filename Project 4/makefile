@@ -24,14 +24,14 @@ LDLIBS =  -fopenmp
 
 # build executable
 TARGET = project4
-CPP_FILES = main.cpp lattice.cpp metropolis.cpp ising.cpp
+CPP_FILES = main.cpp lattice.cpp ising.cpp
 
 SRCS = $(addprefix src/,$(notdir $(CPP_FILES)))
 OBJS = $(patsubst src/%.cpp,obj/%.o,$(SRCS))
 
 
 TEST_TARGET = testit
-TEST_FILES = tests.cpp catch.cpp lattice.cpp metropolis.cpp
+TEST_FILES = tests.cpp catch.cpp lattice.cpp
 TEST_SRCS = $(addprefix src/,$(notdir $(TEST_FILES)))
 TEST_OBJS = $(patsubst src/%.cpp,obj/%.o,$(TEST_SRCS))
 
