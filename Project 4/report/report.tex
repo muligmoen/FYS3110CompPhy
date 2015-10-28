@@ -87,7 +87,7 @@ The energy of a spin system in the Ising model
 E = -J\sum_{\expval{kl}}^N s_k s_l
 \end{gather}
 With $s_i = \pm 1$, N number of spins, J coupling constant, summed over 
-the closest neighbours only. This leads to a boundary problem, which 
+the closest neighbors only. This leads to a boundary problem, which 
 can be solved in multiple ways. In our model we are 
 using periodic boundary conditions,
 \begin{gather}
@@ -111,7 +111,7 @@ Z = \sum_i \exp(-\beta E_i)
 
 \subsubsection{Magnetisation}
 
-The net magnetisation is defined by
+The net magnetization is defined by
 \begin{gather}
 \expval{\magM} = \sum_k s_k
 \end{gather}
@@ -188,7 +188,7 @@ of the energy.
 \subsection{The metropolis algorithm}
 
 The probability of transition from i to j 
-is modelled by the Boltzmann coefficient
+is modeled by the Boltzmann coefficient
 \begin{gather}
 w_j = \exp(-\beta (E_i - E_j))
 \end{gather}
@@ -225,8 +225,26 @@ exponential function in \eqref{eq:transition} can be precomputed.
 \Delta E \in \{-16,-8,0,8,16\}
 \end{gather}
 
+This can be summarized in the following algorithm:
+
+\textcolor{red}{KSK: Need to fix some indents in algorithm}
+
+\begin{algorithm}
+ 1) Pick a random atom, $s_0$ by drawing two random integers, $x$ and $y$ in the lattice domain.
+ 
+ 2) Suggest a spin-flip and compute possible change in energy $\Delta E$.
+\begin{align*} 
+\Delta E = -4s_0(s_1+s_2+s_3+s_4), \quad \Delta E \in \{-16,-8,0,8,16 \} 
+\end{align*} 
 
 
+ 3) \textsc{If} $\Delta E \leq 0 \quad \to$ Accept spin-flip. \\
+\textsc{Else} Draw random number, $r \in [0,1]$ \\
+\textsc{	If} $r \leq exp(-\Delta E \beta ) \quad \to$ Accept spin-flip. \\
+\textsc{Else} Reject flip. 
+ 
+
+\end{algorithm}
 
 \subsubsection{Choice of random number generator}
 The pseudo random number generator used for the simulations covered in 
@@ -240,7 +258,7 @@ The instatation chosen gives $w=32$ and $n=624$.
 \subsection{Test environment}
 
 The testing framework is \href{https://github.com/philsquared/Catch}{Catch}.
-The testcases should be self-explanatory.
+The test cases should be self-explanatory.
 
 
 \section{Results}
