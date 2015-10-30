@@ -5,16 +5,20 @@
 #include <functional>
 
 Ising::Ising(const int L, const long int seed, const double Jbeta) : L(L), init_seed(seed),
-                                            exp_Jbeta{std::exp(-Jbeta*8), std::exp(-Jbeta*16)},
                                             lat(L, L), generator(init_seed)
 { 
+  set_beta(Jbeta);
   Magnetisation = lat.sum_spins();
   Energy = lat.energy();
 }
 
-
 Ising::~Ising() { }
 
+void Ising::set_beta(const double Jbeta)
+{
+  exp_Jbeta[0] = std::exp(-Jbeta*4);
+  exp_Jbeta[1] = std::exp(-Jbeta*8);
+}
 
 void Ising::set_print_format(std::string (*print_func)(lat_t))
 {
@@ -37,7 +41,7 @@ int Ising::try_flip()
   } else {
     
     const double comparator = rand_uniform();
-    const double exp_bet = (energy_diff==8) ? exp_Jbeta[0] : exp_Jbeta[1];
+    const double exp_bet = (energy_diff==4) ? exp_Jbeta[0] : exp_Jbeta[1];
     
     if (comparator < exp_bet) {
       flip(x,y,S0, energy_diff);
@@ -62,6 +66,14 @@ void Ising::flip(const int x, const int y, const int S, const int dE)
   Magnetisation += dS;
   Energy += dE;
 }
+
+void Ising::flip(const int x, const int y)
+{
+  const double dE = lat.dE(x,y);
+  const int S = lat(x,y);
+  flip(x,y, S, dE);
+}
+
 
 
 double Ising::rand_uniform()

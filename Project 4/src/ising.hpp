@@ -37,8 +37,8 @@ private:
   //! Initial seed chosen for the system
   const long int init_seed;
   
-  //! Pre-calculating exp(-J*beta*dE)
-  const double exp_Jbeta[2];
+  //! Pre-calculation of exp(-J*beta*dE)
+  double exp_Jbeta[2];
   
   //! The lattice system
   Lattice lat;
@@ -68,6 +68,9 @@ public:
   //! Returns the energy
   int get_energy() const;
   
+  //! changing beta leads to exp_Jbeta changing
+  void set_beta(const double Jbeta);
+  
   //! Recomputes the energy and returns it
   int recompute_energy() const;
   
@@ -91,6 +94,9 @@ public:
   
   //! Flips the spin at point (x,y) and updates the energy and magnetisation
   void flip(const int x, const int y, const int dS, const int dE);
+  
+  //! Flips the spin at point (x,y) and updates E and M by calling dE and dS itself
+  void flip(const int x, const int y);
   
   //! Tries a flip and flips if the conditions are reached
   int try_flip();

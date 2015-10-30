@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     const int N = std::atoi(argv[3]);
     const int L = std::atoi(argv[4]);
     const double beta = std::atof(argv[5]);
-    const double seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+    const long int seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
     Ising model(L, seed, beta);
     model.init_rand();
     

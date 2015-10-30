@@ -86,8 +86,15 @@ The energy of a spin system in the Ising model
 \begin{gather}
 E = -J\sum_{\expval{kl}}^N s_k s_l
 \end{gather}
+Since only pairwise interactions are counted, this can be rewritten to
+\begin{gather}
+E = -J\sum_{k\expval{l}} s_k s_l = -J \sum_{k} s_k s_{k+1}
+\end{gather}
+
+
+
 With $s_i = \pm 1$, N number of spins, J coupling constant, summed over 
-the closest neighbors only. This leads to a boundary problem, which 
+the closest neighbours only. This leads to a boundary problem, which 
 can be solved in multiple ways. In our model we are 
 using periodic boundary conditions,
 \begin{gather}
@@ -109,42 +116,93 @@ The partition function
 Z = \sum_i \exp(-\beta E_i)
 \end{gather}
 
-\subsubsection{Magnetisation}
+\subsubsection{Energy}
 
-The net magnetization is defined by
 \begin{gather}
-\expval{\magM} = \sum_k s_k
+\expval{E} = -\frac{\partial Z}{\partial \beta}
+\end{gather}
+
+
+\subsubsection{Magnetisation}
+From partition function
+\begin{gather}
+\expval{\magM} = \frac{p(\magM_i)}{Z}
+\end{gather}
+
+The net magnetisation is defined by
+\begin{gather}
+\magM = \sum_k s_k
 \end{gather}
 There should be a critical temperature where this one flips from 
 zero to some value for ferromagnets (positive J)
 
 
 \subsection{Simple system}
-For the simple case of only two spins in each dimension($L=2$) the energies are:
-\begin{align*}
-E_1 = -J\sum_{<1l>}^{N}s_1 s_l = -J[2(s_1 s_2)+2(s_1 s_3)] \\
-E_2 = -J\sum_{<2l>}^{N}s_2 s_l = -J[2(s_2 s_1)+2(s_2 s_4)] \\
-E_3 = -J\sum_{<3l>}^{N}s_3 s_l = -J[2(s_3 s_1)+2(s_3 s_4)] \\
-E_4 = -J\sum_{<4l>}^{N}s_4 s_l = -J[2(s_4 s_2)+2(s_4 s_3)] 
-\end{align*}
-And the total energy for a state 
+For the simple case of only two spins in each dimension($L=2$)
+the energies are summed by
+\begin{gather}
+d
+\end{gather}
+
+
+All the energies are
 \begin{equation}
-E = -4J(s_1s_2 + s_1s_3 + s_1s_4 + s_2s_3 + s_2s_4 + s_3s_4)
+E = -2J(s_1s_2 + s_1s_3 + s_2s_4 + s_3s_4)
 \end{equation}
-Which seems very symmetric. Listing up all the different energies,
-with degeneracy
+This has symmetries with regards to which spin is up.
+Listing up all the different spin configurations, their degeneracy 
+and the energies,
+\textcolor{red}{MU: I will fix this}
 \begin{gather*}
- E = 
+States = 
 \begin{cases}
--24J,\,\,n_{up} = 0,\quad d = 1\\
--8J,\quad n_{up} = 1,\quad d = 4\\
-\phantom{-}4J, \quad n_{up} = 2, \quad d = 6\\
--8J,\quad n_{up} = 3, \quad d= 4\\
--24J,\,\,\,n_{up} = 4, \quad d = 1
+n_{up} = 0, \quad d=1, \quad E = -8J\\
+n_{up} = 1, \quad d=4, \quad E = 0\\
+n_{up} = 2, \quad d=6, \quad 
+\begin{cases} 
+\text{diag} \quad d = 2, \quad E = 8J\\
+\text{non-diag} \quad d = 4, \quad E = 0
+\end{cases}\\
+n_{up} = 3, \quad d=4, \quad E = 0\\
+n_{up} = 4, \quad d=1, \quad E = -8J
 \end{cases}
 \end{gather*}
+The energies with their degeneracy is then
+\begin{gather}
+E = 
+\begin{cases}
+-8J, \quad d = 2\\
+\phantom{-}0, \quad\quad d = 12\\
+\phantom{-}8J, \quad d = 2
+\end{cases}
+\end{gather}
+And the (absolute) magnetisation is
+\begin{gather}
+\abs{\magM} = 
+\begin{cases}
+4, \quad d = 2,\quad E = -8J\\
+2, \quad d = 8, \quad E = 0\\
+0, \quad
+\begin{cases}
+d = 2, \quad E = 8J\\
+d = 4, \quad E = 0
+\end{cases}
+\end{cases}
+\end{gather}
+
 
 Now to find the partition function and calculate all the properties,
+
+\textcolor{red}{MU: I'm fixing this}
+\begin{gather}
+Z = \sum_i d(i) e^{-E_i\beta} = 2e^{+16J}+12e^{0}+2e^{-16J}
+ = 12 + 4\cosh(16J\beta)
+\end{gather}
+\begin{gather}
+\expval{E} = 
+\end{gather}
+
+
 
 \subsection{Analytical solutions}
 
@@ -157,7 +215,7 @@ Solutions for the Ising model in one dimension for a very large number of partic
 \frac{U}{J} = -N \tanh \left( \frac{J}{k_B T} \right) = -N \frac{e^{J/k_B T}-e^{-J/k_B T} }{e^{J/k_B T}+ e^{-J/k_B T} } =  \begin{cases} N, \quad k_B T \to 0 \\ 0, \quad  k_B T \to \infty \end{cases}
 \end{equation}
 
-The specific heat per particle and the magnetization are given by 
+The specific heat per particle and the magnetisation are given by 
 
 \begin{equation}
 C(T) = \frac{1}{N} \frac{dU}{dT} = \frac{(J/k_B T)^2}{cosh^2 (J/k_B T)}
@@ -209,20 +267,20 @@ a case with one spin $s_0$ surrounded by $s_1,s_2,s_3, s_4$.
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{pics/full_lattice.png}
-\caption{ Illustration of $s_0$ and its "nearest neighbors".}
+\caption{ Illustration of $s_0$ and its "nearest neighbours".}
 \label{fig:spin_neighbours}
 \end{figure}
 
 This gives a flip of spin $s_0$ results in a n
 energy-difference of the lattice which is
- -4 times the energy of $s_0$.
+ -2 times the energy of $s_0$.
 \begin{gather}
-\Delta E = -4s_0(s_1 + s_2 + s_3 + s_4)
+\Delta E = -2s_0(s_1 + s_2 + s_3 + s_4)
 \end{gather}
 It is also clear that this is quantized, which means that the 
 exponential function in \eqref{eq:transition} can be precomputed.
 \begin{gather}
-\Delta E \in \{-16,-8,0,8,16\}
+\Delta E \in \{-8,-4,0,4,8\}
 \end{gather}
 
 This can be summarized in the following algorithm:
@@ -234,7 +292,7 @@ This can be summarized in the following algorithm:
  
  2) Suggest a spin-flip and compute possible change in energy $\Delta E$.
 \begin{align*} 
-\Delta E = -4s_0(s_1+s_2+s_3+s_4), \quad \Delta E \in \{-16,-8,0,8,16 \} 
+\Delta E = -2s_0(s_1+s_2+s_3+s_4), \quad \Delta E \in \{-8,-4,0,4,8 \} 
 \end{align*} 
 
 

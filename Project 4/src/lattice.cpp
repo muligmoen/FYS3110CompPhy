@@ -161,10 +161,10 @@ int Lattice::energy() const
   int sum_E = 0;
   for (int y = 0; y<Ly; y++) {
     for (int x = 0; x<Lx; x++) {
-      sum_E += this->energy(x,y);
+      sum_E += this->operator()(x,y)*(this->operator()(x+1,y) + this->operator()(x,y+1));
     }
   }
-  return sum_E;
+  return -sum_E;
 }
 
 int Lattice::energy(const int x, const int y) const
@@ -181,6 +181,6 @@ int Lattice::energy(const int x, const int y) const
 
 int Lattice::dE(const int x, const int y) const
 {
-  return -4*this->energy(x, y);
+  return -2*this->energy(x, y);
 }
 
