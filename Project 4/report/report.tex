@@ -136,25 +136,34 @@ The net magnetisation is defined by
 There should be a critical temperature where this one flips from 
 zero to some value for ferromagnets (positive J)
 
+\subsubsection{Spesific heat}
+\begin{gather}
+C_v = -\frac{\partial \expval{E}}{\partial \beta}
+ = \frac{\partial^2 \ln Z}{\partial \beta^2}
+\end{gather}
+
+\subsubsection{Susceptibility}
+\begin{gather}
+\chi = \frac{\partial\expval{\magM}}{\partial \beta}
+\end{gather}
+
+
 
 \subsection{Simple system}
 For the simple case of only two spins in each dimension($L=2$)
 the energies are summed by
 \begin{gather}
-d
+E = -J\sum_{x,y}^{L} s_x (s_{x+1,y} + s_{x,y+1})
 \end{gather}
-
-
-All the energies are
+The energy is then a function of the spins,
 \begin{equation}
 E = -2J(s_1s_2 + s_1s_3 + s_2s_4 + s_3s_4)
 \end{equation}
 This has symmetries with regards to which spin is up.
 Listing up all the different spin configurations, their degeneracy 
 and the energies,
-\textcolor{red}{MU: I will fix this}
 \begin{gather*}
-States = 
+\text{Spin configuration} = 
 \begin{cases}
 n_{up} = 0, \quad d=1, \quad E = -8J\\
 n_{up} = 1, \quad d=4, \quad E = 0\\
@@ -189,18 +198,28 @@ d = 4, \quad E = 0
 \end{cases}
 \end{cases}
 \end{gather}
-
-
-Now to find the partition function and calculate all the properties,
-
-\textcolor{red}{MU: I'm fixing this}
+The partition function
 \begin{gather}
-Z = \sum_i d(i) e^{-E_i\beta} = 2e^{+16J}+12e^{0}+2e^{-16J}
- = 12 + 4\cosh(16J\beta)
+Z = \sum_i d(i) e^{-E_i\beta} = 2e^{+8J\beta}+12e^{0}+2e^{-8J\beta}
+ = 12 + 4\cosh(8J\beta)
 \end{gather}
-\begin{gather}
-\expval{E} = 
-\end{gather}
+% This expression is expandened to the low energy case and the 
+% high temperature case.
+% \begin{gather}
+% \expval{E}_{\beta\to\infty} = -8J\\
+% \expval{E}_{\beta\to0} = \frac{64}{3}J^2\beta
+% \end{gather}
+% \begin{gather}
+% C_{v,{\beta\to\infty}} = 0\\
+% C_{v,\beta\to0} = \frac{128}{3}J^2
+% \end{gather}
+% Magnetism
+% \begin{gather}
+% \expval{\abs{\magM}} = \frac{4\cdot2e^{8J\beta} + 2\cdot 8e^{0} + 
+% 0\cdot (2e^{-8J\beta} + 4e^{0})}{Z}\\
+% \expval{\abs{\magM}}_{\beta\to\infty} = 4
+% \end{gather}
+
 
 
 

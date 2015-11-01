@@ -26,7 +26,8 @@ using namespace cimg_library;
 //! Main program of animate
 int main(int argc, char **argv) {
   int L = 100;
-  double beta = 2;
+  double beta = 1/2.4;
+  
   if ((argc > 1) && (argv[1][0] == 'h')){
     std::cout << "This program plots the spins in the Ising model in two dimensions\n"
               << "The default settings are L = " << L << " and beta = " << beta << "\n"

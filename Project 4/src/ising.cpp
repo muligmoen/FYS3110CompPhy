@@ -185,7 +185,7 @@ void find_statistics(const int Nflips, const int Dim, const double T,
     if (ii%sampling_rate==0){
       N++;
       const int accept = model.try_flip();
-      if (!(accept == FlipCodes::NOT_FLIPPED)) accept_sum ++;
+      if (!(accept == FlipCodes::NOT_FLIPPED)) accept_sum++;
       
       const int M_ = model.get_magnetisation();
       const int E_ = model.get_energy();
@@ -203,16 +203,13 @@ void find_statistics(const int Nflips, const int Dim, const double T,
   
   const int Nspins = Dim*Dim;
   
-  const int norm = Nspins*N;
   
-  E = (double)Esum/norm;
-  M = std::abs((double)Msum/norm);
+  E = (double)Esum/(Nspins*N);
+  M = std::abs((double)Msum/(Nspins*N));
   
-  const double Esq = (double)Esum_sq*(double)Esum_sq/(norm*norm);
-  const double Msq = (double)Msum_sq*(double)Msum_sq/(norm*norm);
-  
+  const double Esq = (double)Esum_sq/(Nspins*Nspins*N);
+  const double Msq = (double)Msum_sq/(Nspins*Nspins*N);
   
   Cv = (Esq - E*E)*Jbeta*Jbeta/N;
-  chi = (Msq - M*M)*Jbeta/N;
-  
+  chi = (Msq - M*M)*Jbeta*N;
 }
