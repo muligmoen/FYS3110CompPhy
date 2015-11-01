@@ -288,30 +288,59 @@ This can be summarized in the following algorithm:
 \textcolor{red}{KSK: Need to fix some indents in algorithm}
 
 \begin{algorithm}
- 1) Pick a random atom, $s_0$ by drawing two random integers, $x$ and $y$ in the lattice domain.
+ 1) Choose start configuration. Common choices of the Ising model are random($T= \infty$) and ordered($T= 0$). 
+
+ 2) Pick a random particle, $s_0$ by drawing two random integers, $x$ and $y$ in the lattice domain.
  
- 2) Suggest a spin-flip and compute possible change in energy $\Delta E$.
+ 3) Suggest a spin-flip and compute possible change in energy $\Delta E$.
 \begin{align*} 
 \Delta E = -2s_0(s_1+s_2+s_3+s_4), \quad \Delta E \in \{-8,-4,0,4,8 \} 
 \end{align*} 
 
-
- 3) \textsc{If} $\Delta E \leq 0 \quad \to$ Accept spin-flip. \\
+ 4) \textsc{If} $\Delta E \leq 0 \quad \to$ Accept spin-flip. \\
 \textsc{Else} Draw random number, $r \in [0,1]$ \\
 \textsc{	If} $r \leq exp(-\Delta E \beta ) \quad \to$ Accept spin-flip. \\
-\textsc{Else} Reject flip. 
- 
+\textsc{Else} $\quad \to$ Reject flip. 
+
+5) Collect data of interest. 
+
+6) Repeat step 2) - 5). 
 
 \end{algorithm}
 
 \subsubsection{Choice of random number generator}
 The pseudo random number generator used for the simulations covered in 
 this report is the Mersenne Twister engine
-instantated with the parameters of 
+instantiated with the parameters of 
 \emph{Mersene Twister 19937 generator} seeded with the time.
 This is available in the \texttt{<random>} header of the standard
 library in \emph{C++} and has a period of the \emph{mersenne number}, $2^{(n-1)w}-1$.
 The instatation chosen gives $w=32$ and $n=624$.	
+
+\subsection{Computing thermodynamic properties}
+The different thermodynamic properties of interest were computed according to the following formulas:
+
+Magnetization:
+\begin{equation}
+<\magM> = \displaystyle\sum_{i} s_i
+\end{equation}
+
+Energy:
+\begin{equation}
+<E> =-J \sum_{i} s_i s_{i+1}
+\end{equation}
+
+Specific heat:
+\begin{equation}
+c_v = \frac{\beta^2}{L^2}(<E^2> - <E>^2)
+\end{equation}
+
+Magnetic susceptibility:
+\begin{equation}
+\chi = \beta^2 L^2 (<\magM^2> - <\magM>^2)
+\end{equation}
+
+All these quantities were computed as averages over the Monte carlo cycles after thermalization. 
 
 \subsection{Test environment}
 
@@ -320,6 +349,8 @@ The test cases should be self-explanatory.
 
 
 \section{Results}
+
+\subsection{Numerical vs. analytical results for $2\cross2$-case}
 
 \subsection{Equilibration}
 
