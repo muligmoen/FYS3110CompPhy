@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <cstring>
 #include <cstdlib>
 #include <chrono>
@@ -6,29 +7,64 @@
 #include "lattice.hpp"
 #include "ising.hpp"
 
-int main(int argc, char **argv)
+//! Makes uniformly distributed points from T0 to T1 inclusive
+void linspace(const double T0, const double T1, const int N, double* T);
+
+void print_to_file(const double *T, const double *E, const double* Cv, const double* M, const double* chi, const double* ar,
+                   const int N, const char* filename = "test.txt");
+
+int main()
 {
+  const int dim = 20;
+  const int Ntemps = 20;
+  const int N = 100000;
+  const double T0 = 1;
+  const double T1 = 5;
   
-  if ((argc > 4) && (!std::strcmp(argv[1],"-P"))) { // Python called functions
-    const int N = std::atoi(argv[3]);
-    const int L = std::atoi(argv[4]);
-    const double beta = std::atof(argv[5]);
-    const long int seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-    Ising model(L, seed, beta);
-    model.init_rand();
-    
-    if (!std::strcmp(argv[2],"M")) { // Magnetisation
-      for (int ii=0; ii<N; ii++){
-        std::cout << model.get_magnetisation() << " ";
-        model.try_flip();
-      }
-    }
-    if (!std::strcmp(argv[2],"E")){ //Energy
-      for (int ii=0; ii<N; ii++){
-        std::cout << model.get_energy() << " ";
-        model.try_flip();
-      }
-    }
-    
+  double *T, *E, *Cv, *M, *chi, *ar;
+  T = new double[Ntemps];
+  E = new double[Ntemps];
+  Cv = new double[Ntemps];
+  M = new double[Ntemps];
+  chi = new double[Ntemps];
+  ar = new double[Ntemps];
+  
+  linspace(T0, T1, Ntemps, T);
+  
+  const auto global_seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+
+  for (int ii = 0; ii<Ntemps; ii++){
+    const auto seed = global_seed + ii;
+    find_statistics(N, dim, T[ii], E[ii], Cv[ii], M[ii], chi[ii], seed, ar[ii]);
+  }
+  
+  print_to_file(T, E, Cv, M, chi, ar, Ntemps);
+  
+  delete[] T;
+  delete[] E;
+  delete[] Cv;
+  delete[] M;
+  delete[] chi;
+  delete[] ar;
+  
+}
+
+void linspace(const double T0, const double T1, const int N, double* T)
+{
+  const double deltaT = (T1 - T0)/(N-1);
+  for (int ii=0; ii<N; ii++){
+    T[ii] = T0 + deltaT*ii;
   }
 }
+
+void print_to_file(const double *T, const double* E, const double* Cv, const double* M, const double* chi, const double* ar,
+                   const int N, const char* filename)
+{
+  std::ofstream outf(filename);
+  outf << N << " N" << "\n\n\n\n\n\n\n\n\n";
+  outf << "T E M Cv chi acceptance_rate\n";
+  for (int ii=0; ii<N; ii++){
+    outf << T[ii] << " " << E[ii] << " " << M[ii] << " " << Cv[ii] << " " << chi[ii] << " " << ar[ii] << "\n";
+  }
+}
+

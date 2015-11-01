@@ -42,7 +42,7 @@ int Ising::try_flip()
     
     const double comparator = rand_uniform();
     const double exp_bet = (energy_diff==4) ? exp_Jbeta[0] : exp_Jbeta[1];
-    
+
     if (comparator < exp_bet) {
       flip(x,y,S0, energy_diff);
       return FlipCodes::RAND_FLIPPED;
@@ -151,4 +151,68 @@ int Ising::recompute_magnetisation() const
 lat_t* Ising::buffer()
 {
   return lat.buffer();
+}
+
+
+void find_statistics(const int Nflips, const int Dim, const double T, 
+                     double& E, double& Cv, double& M, double& chi, 
+                     const long int seed, double& acceptance_rate)
+{
+  const double Jbeta = 1/T;
+  Ising model(Dim, seed, Jbeta);
+  model.init_rand();
+  
+  const int skip_steps = Nflips/10;
+  
+  const int Nremaining = Nflips - skip_steps;
+  
+  const int sampling_rate = Nremaining/100;
+  
+  model.try_flip(skip_steps);
+  
+  long int Esum = 0;
+  long int Esum_sq = 0;
+  int Msum = 0;
+  int Msum_sq = 0;
+  
+  int accept_sum = 0;
+  int N = 0;
+  
+  
+  for (int ii=0; ii<Nremaining; ii++){
+    model.try_flip();
+    
+    if (ii%sampling_rate==0){
+      N++;
+      const int accept = model.try_flip();
+      if (!(accept == FlipCodes::NOT_FLIPPED)) accept_sum ++;
+      
+      const int M_ = model.get_magnetisation();
+      const int E_ = model.get_energy();
+      
+      Esum += E_;
+      Msum += M_;
+      
+      Esum_sq += E_*E_;
+      Msum_sq += M_*M_;
+    }
+    
+  }
+  
+  acceptance_rate = (double)accept_sum/N;
+  
+  const int Nspins = Dim*Dim;
+  
+  const int norm = Nspins*N;
+  
+  E = (double)Esum/norm;
+  M = std::abs((double)Msum/norm);
+  
+  const double Esq = (double)Esum_sq*(double)Esum_sq/(norm*norm);
+  const double Msq = (double)Msum_sq*(double)Msum_sq/(norm*norm);
+  
+  
+  Cv = (Esq - E*E)*Jbeta*Jbeta/N;
+  chi = (Msq - M*M)*Jbeta/N;
+  
 }

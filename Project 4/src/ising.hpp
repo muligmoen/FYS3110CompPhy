@@ -113,8 +113,18 @@ public:
 };
 
 
-
-
+//! Finds the statistical quantities from the Ising model
+/*!
+ * This function requires a unique seed to generate unique results.
+ * 10 % of Nflips is used to thermalize the system, and then roughly 100 
+ * mesurements are taken for the rest of the interval.
+ * 
+ * The variables E, Cv, M and chi are per spin. acceptance_rate is 
+ * accepted rate for the states which are sampled
+ */
+void find_statistics(const int Nflips, const int Dim, const double T, 
+                     double& E, double& Cv, double& M, double& chi, 
+                     const long seed, double& acceptance_rate);
 
 
 
