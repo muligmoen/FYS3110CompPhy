@@ -56,6 +56,9 @@ public:
   //! Constructor which sets up the lattice with dimensions LxL
   Ising(const int L, const long int seed, const double Jbeta);
   
+  //! Constructor for spesific method. Method should be 'r' for random and 'u' for up
+  Ising(const int L, const long int seed, const double Jbeta, const char method);
+  
   //! Destructor
   ~Ising();
   
@@ -65,20 +68,21 @@ public:
   //! Returning the seed that was used to init the system
   long int get_init_seed() const;
   
-  //! Returns the energy
-  int get_energy() const;
-  
   //! changing beta leads to exp_Jbeta changing
   void set_beta(const double Jbeta);
   
+  //! Returns the energy
+  int get_energy() const;
+  
   //! Recomputes the energy and returns it
-  int recompute_energy() const;
+  int recompute_energy();
   
   //! Returns the magnetisation
   int get_magnetisation() const;
   
   //! Recomputes the magnetisation and returns it
-  int recompute_magnetisation() const;
+  int recompute_magnetisation();
+  
   
   //! Sets the spin system to random state
   void init_rand();
@@ -107,26 +111,25 @@ public:
   //! Returns a pointer to the lattice elements
   lat_t* buffer();
   
+  //! Does N flips to thermalise the system. N should be the correlation time
+  void thermalise(const int N);
+  
   //! Prints out the lattice using the operator<<() of Lattice
   friend std::ostream& operator<< (std::ostream &out, const Ising &ising);
   
-};
-
-
-//! Finds the statistical quantities from the Ising model
-/*!
- * This function requires a unique seed to generate unique results.
- * 10 % of Nflips is used to thermalize the system, and then roughly 100 
- * mesurements are taken for the rest of the interval.
- * 
- * The variables E, Cv, M and chi are per spin. acceptance_rate is 
- * accepted rate for the states which are sampled
- */
-void find_statistics(const int Nflips, const int Dim, const double T, 
+  //! Finds the statistical quantities from the Ising model
+  /*!
+   * This function samples the model every tau times for Measurements.
+   * tau should be the thermalisation time
+   * 
+   * The variables E, Cv, M and chi are modified to give the average per spin 
+   * over these measurements. The acceptance_rate is the number of accepted
+   * spins divided by M
+   */
+  void find_statistics(const int tau, const int Measurements,
                      double& E, double& Cv, double& M, double& chi, 
-                     const long seed, double& acceptance_rate);
-
-
+                     double& acceptance_rate);
+};
 
 
 

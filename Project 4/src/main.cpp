@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <cstring>
 #include <cstdlib>
 #include <chrono>
@@ -15,16 +16,77 @@ void linspace(const double T0, const double T1, const int N, double* T);
 void print_to_file(const double *T, const double *E, const double* Cv, const double* M, const double* chi, const double* ar,
                    const int N, const char* filename = "test.txt");
 
+void print_to_file(const int N, const int *Eo, const int *Mo, const int *Er, const int *Mr,
+                   const char* filename="test.txt");
 
 
-int main(int argc, char **argv)
+int main(const int argc, const char **argv)
 {
-  //Problem e) stud of critical temperature
+  const auto global_seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+
+  
+  //Problem b)
+  if (argc>2 && !std::strcmp(argv[1], "b")){
+    
+    const int T = 1;
+    Ising model(2, global_seed, 1/T, 'r');
+    
+    
+    const int N = std::atoi(argv[2]);
+    
+    double E, M, Cv, chi, ar;
+    
+    model.thermalise(50);
+    
+    model.find_statistics(N, 100, E, Cv, M, chi, ar);
+    
+    std::cout << E << " " << M << " " << Cv << " " << chi << std::endl;
+    
+  }
+  
+  //Problem c)
+  if (argc>1 && !std::strcmp(argv[2],"c")){
+    
+    const int T = 1;
+    const int L = 20;
+    
+    const int Ncycles = 100;
+    int *Er = new int[Ncycles];
+    int *Mr = new int[Ncycles];
+    
+    
+    int *Eo = new int[Ncycles];
+    int *Mo = new int[Ncycles];
+    
+    
+    Ising random(L, global_seed, 1/T, 'r');
+    Ising ordered(L, global_seed+1, 1/T, 'u');
+    
+    
+    for (int ii=0; ii<Ncycles; ii++){
+      Er[ii] = random.get_energy();
+      Mr[ii] = random.get_magnetisation();
+      random.try_flip();
+    }
+    
+    for (int ii=0; ii<Ncycles; ii++){
+      Eo[ii] = ordered.get_energy();
+      Mo[ii] = ordered.get_magnetisation();
+      ordered.try_flip();
+    }
+    
+    print_to_file(Ncycles, Eo, Mo, Er, Eo);
+    
+  }
+  
+  
+  //Problem e) study of critical temperature
   if (argc>2 && !std::strcmp(argv[1], "e")){
     const int dim = std::atoi(argv[2]);
     
     const int Ntemps = 15;
-    const int N = 100000000;
+    const int Ntherm = 100000;
+    const int Nmeasurements = 100;
   
 
   
@@ -39,12 +101,13 @@ int main(int argc, char **argv)
     linspace(2.0, 2.4, Ntemps, T);
 
   
-    const auto global_seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-
     #pragma omp parallel for default(shared)
     for (int ii = 0; ii<Ntemps; ii++){
       const auto seed = global_seed + ii;
-      find_statistics(N, dim, T[ii], E[ii], Cv[ii], M[ii], chi[ii], seed, ar[ii]);
+      Ising model(dim, seed, 1/T[ii], 'r');
+      model.thermalise(Ntherm);
+      
+      model.find_statistics(Ntherm, Nmeasurements, E[ii], Cv[ii], M[ii], chi[ii], ar[ii]);
     }
     
     print_to_file(T, E, Cv, M, chi, ar, Ntemps);
@@ -71,6 +134,23 @@ void linspace(const double T0, const double T1, const int N, double* T)
   }
 }
 
+std::string int_array_to_string(const int* int_array, const int size_of_array) {
+  std::ostringstream stringy;
+  for (int temp = 0; temp < size_of_array; temp++)
+    stringy << int_array[temp] << " ";
+  return stringy.str();
+}
+
+void print_to_file(const int N, const int* Eo, const int* Mo, const int* Er, const int* Mr, const char* filename)
+{
+  std::ofstream outf(filename);
+  outf << int_array_to_string(Eo, N) << "\n";
+  outf << int_array_to_string(Mo, N) << "\n";
+  outf << int_array_to_string(Er, N) << "\n";
+  outf << int_array_to_string(Mr, N) << "\n";
+}
+
+
 void print_to_file(const double *T, const double* E, const double* Cv, const double* M, const double* chi, const double* ar,
                    const int N, const char* filename)
 {
@@ -81,4 +161,5 @@ void print_to_file(const double *T, const double* E, const double* Cv, const dou
     outf << T[ii] << " " << E[ii] << " " << M[ii] << " " << Cv[ii] << " " << chi[ii] << " " << ar[ii] << "\n";
   }
 }
+
 
