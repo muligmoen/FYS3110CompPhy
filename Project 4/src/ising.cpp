@@ -12,6 +12,22 @@ Ising::Ising(const int L, const long int seed, const double Jbeta) : L(L), init_
   Energy = lat.energy();
 }
 
+Ising::Ising(const int L, const long int seed, const double Jbeta, const char method)
+                                           : L(L), init_seed(seed),
+                                             lat(L, L), generator(init_seed)
+{ 
+  set_beta(Jbeta);
+  if (method=='r'){
+    this->init_rand();
+  } else if (method=='u'){
+    this->init_up();
+  } else {
+    std::cerr << "Invalid method name, model not init" << std::endl;
+  }
+  Magnetisation = lat.sum_spins();
+  Energy = lat.energy();
+}
+
 Ising::~Ising() { }
 
 void Ising::set_beta(const double Jbeta)
@@ -138,14 +154,16 @@ std::ostream& operator<< (std::ostream &out, const Ising &ising)
   return out;
 }
 
-int Ising::recompute_energy() const
+int Ising::recompute_energy()
 {
-  return lat.energy();
+  Energy = lat.energy();
+  return Energy;
 }
 
-int Ising::recompute_magnetisation() const
+int Ising::recompute_magnetisation()
 {
-  return lat.sum_spins();
+  Magnetisation = lat.sum_spins();
+  return Magnetisation;
 }
 
 lat_t* Ising::buffer()
@@ -154,63 +172,45 @@ lat_t* Ising::buffer()
 }
 
 
-void find_statistics(const int Nflips, const int Dim, const double T, 
-                     double& E, double& Cv, double& M, double& chi, 
-                     const long int seed, double& acceptance_rate)
+void Ising::thermalise(const int N)
 {
-  const double Jbeta = 1/T;
-  Ising model(Dim, seed, Jbeta);
-  model.init_rand();
-  
-  
-  const int skip_steps = Nflips/10;
-  
-  const int Nremaining = Nflips - skip_steps;
-  
-  const int sampling_rate = Nremaining/100;
-  
-  model.try_flip(skip_steps);
-  
+  this->try_flip(N);
+}
+
+void Ising::find_statistics(const int tau, const int Measurements,
+                       double& E, double& Cv, double& M, double& chi,
+                       double& acceptance_rate)
+{
   long long int Esum = 0;
   long long int Esum_sq = 0;
   long long int Msum = 0;
   long long int Msum_sq = 0;
+  int Naccepts = 0;
   
-  int accept_sum = 0;
-  int N = 0;
-  
-  
-  for (int ii=0; ii<Nremaining; ii++){
-    model.try_flip();
+  for (int ii=0; ii<Measurements; ii++){
+    const int accept = this->try_flip();
+    if (!(accept == FlipCodes::NOT_FLIPPED)) Naccepts++;
     
-    if (ii%sampling_rate==0){
-      N++;
-      const int accept = model.try_flip();
-      if (!(accept == FlipCodes::NOT_FLIPPED)) accept_sum++;
+    const int M_ = this->Magnetisation;
+    const int E_ = this->Energy;
+    Esum += E_;
+    Msum += M_;
       
-      const int M_ = model.get_magnetisation();
-      const int E_ = model.get_energy();
-      
-      Esum += E_;
-      Msum += M_;
-      
-      Esum_sq += E_*E_;
-      Msum_sq += M_*M_;
-    }
+    Esum_sq += E_*E_;
+    Msum_sq += M_*M_;
     
+    this->thermalise(tau);
   }
-  
-  acceptance_rate = (double)accept_sum/N;
-  
-  const int Nspins = Dim*Dim;
+  acceptance_rate = (double)Naccepts/Measurements;
+  const int Nspins = L*L;
   
   
-  E = (double)Esum/(Nspins*N);
-  M = std::abs((double)Msum/(Nspins*N));
+  E = (double)Esum/(Nspins*Measurements);
+  M = std::abs((double)Msum/(Nspins*Measurements));
   
-  const double Esq = (double)Esum_sq/(Nspins*Nspins*N);
-  const double Msq = (double)Msum_sq/(Nspins*Nspins*N);
+  const double Esq = (double)Esum_sq/(Nspins*Nspins*Measurements);
+  const double Msq = (double)Msum_sq/(Nspins*Nspins*Measurements);
   
-  Cv = (Esq - E*E)*Jbeta*Jbeta/N;
-  chi = (Msq - M*M)*Jbeta*N;
+  Cv = (Esq - E*E);
+  chi = (Msq - M*M);
 }
