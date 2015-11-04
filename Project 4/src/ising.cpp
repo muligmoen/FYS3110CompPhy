@@ -162,6 +162,7 @@ void find_statistics(const int Nflips, const int Dim, const double T,
   Ising model(Dim, seed, Jbeta);
   model.init_rand();
   
+  
   const int skip_steps = Nflips/10;
   
   const int Nremaining = Nflips - skip_steps;
@@ -170,10 +171,10 @@ void find_statistics(const int Nflips, const int Dim, const double T,
   
   model.try_flip(skip_steps);
   
-  long int Esum = 0;
-  long int Esum_sq = 0;
-  int Msum = 0;
-  int Msum_sq = 0;
+  long long int Esum = 0;
+  long long int Esum_sq = 0;
+  long long int Msum = 0;
+  long long int Msum_sq = 0;
   
   int accept_sum = 0;
   int N = 0;

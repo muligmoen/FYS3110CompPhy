@@ -17,9 +17,26 @@ void print_to_file(const double *T, const double *E, const double* Cv, const dou
 
 
 
-int main(int argc, char **argv)
+int main(const int argc, const char **argv)
 {
-  //Problem e) stud of critical temperature
+  const auto global_seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+
+  //Problem b)
+  if (argc>2 && !std::strcmp(argv[1], "b")){
+    const int N = std::atoi(argv[2]);
+    const double T = 1;
+    const int dimension = 2;
+    double E, M, Cv, chi, ar;
+    
+    
+    find_statistics(N, dimension, T, E, Cv, M, chi, global_seed, ar);
+    
+    std::cout << E << " " << M << " " << Cv << " " << chi << std::endl;
+    
+  }
+  
+  
+  //Problem e) study of critical temperature
   if (argc>2 && !std::strcmp(argv[1], "e")){
     const int dim = std::atoi(argv[2]);
     
@@ -39,8 +56,6 @@ int main(int argc, char **argv)
     linspace(2.0, 2.4, Ntemps, T);
 
   
-    const auto global_seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
-
     #pragma omp parallel for default(shared)
     for (int ii = 0; ii<Ntemps; ii++){
       const auto seed = global_seed + ii;
