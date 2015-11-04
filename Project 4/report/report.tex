@@ -372,17 +372,27 @@ The test cases should be self-explanatory.
 \subsection{Numerical vs. analytical results for $2\cross2$-case}
 
 \subsection{Equilibration}
+In this section we will look into how many monte carlo cycles are needed to reach the most likely state. This will be done by looking at a $20 \cross 20-lattice$ for different dimensionless temperatures $\tilde{T}=1/\beta$, for both a ordered start configuration("cold start") and a random start configuration ("hot start"). This will be done by an "by the eye"-approach, simply plotting the magnetisation and energy as a function of monte carlo cycles and see when they have only small fluctuations around some mean value. This will become later become out starting point for gathering data. The unstable phase before equilibrium is called \emph{thermalisation}.
+
+We will also study the total number of accepted spin-flips as function of monte carlo cycles.
 
 \subsubsection{Cold start(T = 0)}
 
+[Figure of E and M vs. MC cycles to be inserted here] \\
+(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
+
+
+[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here] \\
+(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
+
 \subsubsection{Hot start(T = $\infty$ )}
 
-\begin{figure}[H]
-\centering
-\includegraphics[scale=0.10]{pics/equilibrium_different_temperatures.png}
-\caption{Equilibrium configuration for different dimensionless temperatures, $T$. Here a $30 \times 30$ lattice for $T$.  $T=1.0, 2.0, 2.2, 2.3, 3.0$. One can see the behavior of the system change close to the critical temperature where the phase transition happens. After the phase transition all magnetization is gone.} 
-\label{fig:spin_neighbours}
-\end{figure}
+[Figure of E and M vs. MC cycles to be inserted here] \\
+(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
+
+
+[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here] \\
+(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
 
 
 \begin{figure}[H]
@@ -391,6 +401,10 @@ The test cases should be self-explanatory.
 \caption{Equilibrium configuration for different dimensionless temperatures, $T$. Here a $30 \times 30$ lattice for $T$.  $T=1.0, 2.0, 2.2, 2.3, 3.0$. One can see the behavior of the system change close to the critical temperature where the phase transition happens. After the phase transition all magnetization is gone.} 
 \label{fig:spin_neighbours}
 \end{figure}
+
+\subsection{Computing the thermodynamic properties}
+
+[Figure of <E>,<M>, $C_v$ and $\chi$ vs. $\tilde{T}$ to be inserted here] \\
 
 
 \subsection{Reproduction of results}
