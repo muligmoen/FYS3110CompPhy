@@ -99,26 +99,23 @@ std::string print_t::numbers(lat_t num)
 
 std::string print_t::arrows(lat_t num)
 {
-  std::ostringstream stringy;
   if (num > 0) {
-    stringy << "▲";
+    return std::string("▲");
   } else if (num < 0) {
-    stringy << "▼";
+    return std::string("▼");
   } else {
-    stringy << "-";
+    return std::string("?");
   }
-  return stringy.str();
 }
 
 std::string print_t::crazy(lat_t num)
 {
   std::ostringstream stringy;
   if (num>0) {
-    stringy << "  ໒( • ͜ʖ • )७  ";
+    return std::string("  ໒( • ͜ʖ • )७  ");
   } else {
-    stringy << " ლ( ◕ 益 ◕ ) ლ ";
+    return std::string(" ლ( ◕ 益 ◕ ) ლ ");
   }
-  return stringy.str();
 }
 
 

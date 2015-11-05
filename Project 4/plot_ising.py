@@ -1,46 +1,128 @@
 import matplotlib.pyplot as plt
+import subprocess
+import os
+
 
 filename = 'test.txt'
+saveloc = os.path.join('report','pics')
 
-with open(filename) as f:
-  N = int(f.readline().split()[0]);
-  f.readline()
-  f.readline()
-  f.readline()
-  f.readline()
-  f.readline()
-  f.readline()
-  f.readline()
-  f.readline()
-  f.readline() # Input types
-  
-  T = [0]*N
-  E = [0]*N
-  M = [0]*N
-  Cv = [0]*N
-  chi = [0]*N
-  ar = [0]*N
-  
-  for i in range(N):
-    line = f.readline();
-    T[i], E[i], M[i], Cv[i], chi[i], ar[i] = map(float, line.split())
+def normalise(array, factor):
+  for i in range(len(array)):
+    array[i] /= factor
 
-f, ax = plt.subplots(2,2,sharex=True)
+#c) Correlation time
+if (False):
+  dim = 20
+  T = 1
+  command = ['./project4', 'c', str(T)]
+  subprocess.call(command)
+  with open(filename) as f:
+    Eo = list(map(float, f.readline().split()))
+    Mo = list(map(float, f.readline().split()))
+    ao = list(map(float, f.readline().split()))
+    Er = list(map(float, f.readline().split()))
+    Mr = list(map(float, f.readline().split()))
+    ar = list(map(float, f.readline().split()))
 
-ax[0, 0].plot(T, E, label='Energy', linewidth=2)
-ax[0, 0].set_title('$<E>$')
+  N = len(Eo)
 
-ax[0, 1].plot(T, M, label='Magnetism', linewidth=2)
-ax[0, 1].set_title(r'$<M>$')
+  spins = dim*dim
 
-ax[1, 0].plot(T, Cv, label=r'$C_v$', linewidth=2)
-ax[1, 0].set_title(r'$C_v$')
+  normalise(Eo, spins)
 
-ax[1, 1].plot(T, chi, label=r'$\chi$', linewidth=2)
-ax[1, 1].set_title(r'$\chi$')
+  if Mo[-1]< 0:
+    normalise(Mo, -spins)
+  else:
+    normalise(Mo, spins)
 
 
-#plt.legend()
-plt.show()
-  
+  normalise(Er, spins)
+  if Mr[-1]<0:
+    normalise(Mr, -spins)
+  else:
+    normalise(Mr, spins)
+    
+    
+  plt.ylim((-2.1,2.1))
+  plt.xlim((0,N))
+
+  plt.plot(Eo,label='Energy, ordered start',linewidth=2)
+  plt.plot(Er,label='Energy, random start',linewidth=2)
+
+  plt.plot(Mo,'-',label='Magnetism, ordered start',linewidth=2)
+  plt.plot(Mr,'-',label='Magnetism, random start',linewidth=2)
+
+  plt.legend()
+  plt.xlabel('Number of MC cycles')
+  plt.ylabel('Property per particle')
+  plt.title('Energy and magnetism for ordered/unordered start with lattice size 20x20')
+  filename = os.path.join(saveloc, 'cEM.png')
+  plt.savefig(filename,dpi=400,bbox_inches='tight')
+  plt.show()
+
+  plt.plot(ao,label='Ordered start',linewidth=2)
+  plt.plot(ar,label='Random start',linewidth=2)
+  plt.ylim(0, max(ao[-1],ar[-1])*1.1)
+  plt.legend()
+  plt.xlim((0,N))
+  plt.xlabel('Number of MC cycles')
+  plt.ylabel('Accumulated accepted flips')
+  plt.title('Number of acceptances for ordered/unordered start with lattice size 20x20')
+  filename = os.path.join(saveloc, 'cA.png')
+  plt.savefig(filename,dpi=400,bbox_inches='tight')
+  plt.show()
+
+
+
+#e) Critical temperature
+if (False):
+  dim = 20
+  command = ['./project4', 'e', str(dim)]
+
+  subprocess.call(command)
+
+
+  with open(filename) as f:
+    N = int(f.readline().split()[0]);
+    f.readline()
+    f.readline()
+    f.readline()
+    f.readline()
+    f.readline()
+    f.readline()
+    f.readline()
+    f.readline()
+    f.readline() # Input types
+    
+    T = [0]*N
+    E = [0]*N
+    M = [0]*N
+    Cv = [0]*N
+    chi = [0]*N
+    ar = [0]*N
+    
+    for i in range(N):
+      line = f.readline();
+      T[i], E[i], M[i], Cv[i], chi[i], ar[i] = map(float, line.split())
+
+  f, ax = plt.subplots(2,2,sharex=True)
+
+  ax[0, 0].plot(T, E, label='Energy', linewidth=2)
+  ax[0, 0].set_title('$<E>$')
+
+  ax[0, 1].plot(T, M, label='Magnetism', linewidth=2)
+  ax[0, 1].set_title(r'$<M>$')
+
+  ax[1, 0].plot(T, Cv, label=r'$C_v$', linewidth=2)
+  ax[1, 0].set_title(r'$C_v$')
+
+  ax[1, 1].plot(T, chi, label=r'$\chi$', linewidth=2)
+  ax[1, 1].set_title(r'$\chi$')
+
+
+  #plt.legend()
+  filename = os.path.join(saveloc, 'e.png')
+  plt.savefig(filename,dpi=400,bbox_inches='tight')
+  plt.show()
+    
   
