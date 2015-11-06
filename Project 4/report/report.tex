@@ -64,7 +64,7 @@ frame=l,
 \newcommand{\figurewidth}{.85\textwidth}
 
 \title{FYS3150/4150\\Computational Physics\\Project 4}
-\author{Candidate numbers ?? and ??}
+\author{Magnus Ulimoen (33) \& Krister Stræte Karlsen (63)}
 \date{\today}
 
 \begin{document}
@@ -73,35 +73,44 @@ frame=l,
 
 \begin{abstract}
 This project explores the Ising model applied to spins in two dimensions.
+The critical temperature for the Ising model is determined and some
+parmeters are calculated.
 \end{abstract}
 
 
 
 \section{Introduction}
 
+The Ising model is a simple model of a solid. A lattice with elements 
+each have an energy connected to the spin. The net amount of spin in the 
+lattice leads to an overall magnetisation. The energy in the lattice 
+is connected to a heat reservoir which causes the spins to be 
+randomly oriented.
 
 \section{Theory}
 
-The energy of a spin system in the Ising model 
+The energy of a spin system in the Ising model is given by
 \begin{gather}
 E = -J\sum_{\expval{kl}}^N s_k s_l
 \end{gather}
-Since only pairwise interactions are counted, this can be rewritten to
+Here J is the energy shared between two lattice points. $s_i$ is the spin
+connected to the lattice point. This spin has a value of $\pm 1$.
+
+The summation $\expval{kl}$ only sums over pairwise interactions.
+Another way of writing the sum is to only consider the forward 
+interaction between the lattice points,
 \begin{gather}
-E = -J\sum_{k\expval{l}} s_k s_l = -J \sum_{k} s_k s_{k+1}
+E = -J \sum_{k}^N s_k s_{k+1}
+\label{eq:Esum}
 \end{gather}
-
-
-
-With $s_i = \pm 1$, N number of spins, J coupling constant, summed over 
-the closest neighbours only. This leads to a boundary problem, which 
-can be solved in multiple ways. In our model we are 
-using periodic boundary conditions,
+This sum faces a boundary problem. In our model we are solving this 
+by using periodic boundary conditions,
 \begin{gather}
 s_k = s_{k \pm L}
 \label{eq:boundary}
 \end{gather}
 An illustration of this is visible in figure \ref{fig:spin_neighbours}.
+Here the spin $S_2$ faces $S_4$ both on the upper and lower site.
 
 \begin{figure}[H]
 \centering
@@ -110,52 +119,67 @@ An illustration of this is visible in figure \ref{fig:spin_neighbours}.
 \label{fig:spin_neighbours_simple}
 \end{figure}
 
+The magnetisation of the lattice is given by the sum of the elements,
+\begin{gather}
+\magM = \sum_i s_i
+\end{gather}
+
+
 \subsection{Statistical mechanics}
-The partition function
+In order to find how the energy and magnetisation is in the steady-state
+solution some results from statistical mechanics is employed. These 
+give expectation values in the thermodynamic limit, which is the limit 
+where the number of samplings and particles goes to infinity.
+
+The steady-state solution has a close connection to the temperature 
+of the system. If our system is connected to a heat reservoir, we can
+give the probability by the Boltzmann probability function,
+where he probability to find the system in a microstate is given by
+\begin{gather}
+p(i) = \frac{e^{-E_i\beta}}{Z}
+\end{gather}
+Where $E_i$ is the energy for the microstate, $\beta = \frac{1}{kT}$ 
+and Z is the partition function. The partition function works as the 
+normalisation factor, and is given by
 \begin{gather}
 Z = \sum_i \exp(-\beta E_i)
 \end{gather}
 
 \subsubsection{Energy}
-
+The energy of the system can be calculated from the partition function
+by the equation
 \begin{gather}
-\expval{E} = -\frac{\partial \ln Z}{\partial \beta}
+\expval{E} = -\frac{d \ln Z}{d \beta}
 \end{gather}
+One useful quantity is the heat capacity, how much energy the system 
+retains when changing the temperature. This quantity is given by
+\begin{gather}
+C_v = \frac{d\expval{E}}{dT} 
+= -\frac{\beta^2}{k}\frac{d\expval{E}}{d\beta}
+ = \frac{\beta^2}{k}\frac{d^2\ln Z}{d^2\beta}
+\end{gather}
+
 
 
 \subsubsection{Magnetisation}
-From partition function
+From the partition function the magnetisation can be found. If all the 
+states with a certain magnetisation is known, 
 \begin{gather}
-\expval{\magM} = \frac{p(\magM_i)}{Z}
+\expval{\magM} = \sum_i m_i p(m_i) = \sum_i \frac{M_i e^{-E_i\beta}}{Z}
 \end{gather}
-
-The net magnetisation is defined by
+Another important quantity is the susceptibility. This is how much 
+magnetisation is reatained when the temperature changes,
 \begin{gather}
-\magM = \sum_k s_k
-\end{gather}
-There should be a critical temperature where this one flips from 
-zero to some value for ferromagnets (positive J)
-
-\subsubsection{Spesific heat}
-\begin{gather}
-C_v = -\frac{\partial \expval{E}}{\partial \beta}
- = \frac{\partial^2 \ln Z}{\partial \beta^2}
-\end{gather}
-
-\subsubsection{Susceptibility}
-\begin{gather}
-\chi = \frac{\partial\expval{\magM}}{\partial \beta}
+\chi = \frac{d \expval{\magM}}{d T} 
+= -\frac{\beta^2}{k}\frac{d\expval{\magM}}{d\beta}
 \end{gather}
 
 
 
-\subsection{Simple system}
+\subsection{Example of a system}
 For the simple case of only two spins in each dimension($L=2$)
-the energies are summed by
-\begin{gather}
-E = -J\sum_{x,y}^{L} s_x (s_{x+1,y} + s_{x,y+1})
-\end{gather}
-The energy is then a function of the spins,
+the energies are summed by \eqref{eq:Esum}.
+The energy a function of the different spins,
 \begin{equation}
 E = -2J(s_1s_2 + s_1s_3 + s_2s_4 + s_3s_4)
 \end{equation}
@@ -198,7 +222,7 @@ d = 4, \quad E = 0
 \end{cases}
 \end{cases}
 \end{gather}
-The partition function
+The partition function for this system is 
 \begin{gather}
 Z = \sum_i d(i) e^{-E_i\beta} = 2e^{+8J\beta}+12e^{0}+2e^{-8J\beta}
  = 12 + 4\cosh(8J\beta)
@@ -222,8 +246,7 @@ Z = \sum_i d(i) e^{-E_i\beta} = 2e^{+8J\beta}+12e^{0}+2e^{-8J\beta}
 
 
 
-
-\subsection{Analytical solutions}
+\subsubsection{Analytical solutions}
 
 Energy from partition function
 \begin{gather}
