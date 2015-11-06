@@ -127,7 +127,7 @@ public:
    * spins divided by M
    */
   void find_statistics(const int tau, const int Measurements,
-                     double& E, double& Cv, double& M, double& chi, 
+                     double& E, double& sigmaE, double& M, double& sigmaM, 
                      double& acceptance_rate);
 };
 

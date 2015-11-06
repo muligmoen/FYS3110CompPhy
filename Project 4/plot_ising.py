@@ -10,6 +10,11 @@ def normalise(array, factor):
   for i in range(len(array)):
     array[i] /= factor
 
+def get_stdout(cmd):
+  p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+  return p.stdout.read()
+
+
 #c) Correlation time
 if (False):
   dim = 20
@@ -73,6 +78,27 @@ if (False):
   plt.show()
 
 
+#d) Probability for E
+if (False):
+  T = 2.4
+  M = 10000
+  cmd = ['./project4', 'd', str(T), str(M)]
+
+  Epair = get_stdout(cmd).split()
+
+  E = [int(pair.split(',')[0]) for pair in Epair]
+  p = [int(pair.split(',')[1]) for pair in Epair]
+
+  normalise(p, sum(p))
+
+  plt.xlim(E[0],E[-1])
+  plt.plot(E, p,'-o', linewidth=2)
+  plt.title('Probability for energy in a 20x20 system with T = {}'.format(T))
+  plt.xlabel('Energy')
+  plt.ylabel('p(E)')
+  filename = os.path.join(saveloc, 'dT={}.png'.format(T))
+  plt.savefig(filename, dpi=400, bbox_inches='tight')
+  plt.show()
 
 #e) Critical temperature
 if (False):

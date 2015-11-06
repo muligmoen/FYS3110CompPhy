@@ -178,7 +178,7 @@ void Ising::thermalise(const int N)
 }
 
 void Ising::find_statistics(const int tau, const int Measurements,
-                       double& E, double& Cv, double& M, double& chi,
+                       double& E, double& sigmaE, double& M, double& sigmaM,
                        double& acceptance_rate)
 {
   long long int Esum = 0;
@@ -211,6 +211,6 @@ void Ising::find_statistics(const int tau, const int Measurements,
   const double Esq = (double)Esum_sq/(Nspins*Nspins*Measurements);
   const double Msq = (double)Msum_sq/(Nspins*Nspins*Measurements);
   
-  Cv = (Esq - E*E);
-  chi = (Msq - M*M);
+  sigmaE = (Esq - E*E);
+  sigmaM = (Msq - M*M);
 }

@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cstdlib>
 #include <chrono>
+#include <map>
 
 #include <omp.h>
 
@@ -49,7 +50,7 @@ int main(const int argc, const char **argv)
   //Problem c) energy and magnetisation reaching steady state
   if (argc>2 && !std::strcmp(argv[1],"c")){
     
-    const int T = std::atoi(argv[2]);
+    const double T = std::atof(argv[2]);
     const int L = 20;
     
     const int Ncycles = 100000;
@@ -92,6 +93,32 @@ int main(const int argc, const char **argv)
     
   }
   
+  
+  //Problem d) probability for energy state
+  if (argc>3 && !std::strcmp(argv[1],"d")){
+    const double T = std::atof(argv[2]);
+    const int L = 20;
+    
+    const int M = std::atoi(argv[3]);
+    const int Ntherm = 5000;
+    
+    Ising random(L, global_seed, 1/T, 'r');
+    //Ising ordered(L, global_seed+1, 1/T, 'u');
+    
+    random.thermalise(Ntherm);
+    //ordered.thermalise(Ntherm);
+    
+    std::map<int,int> E;
+    
+    for (int ii=0; ii<M; ii++){
+      E[random.get_energy()] += 1;
+      random.thermalise(Ntherm);
+    }
+    for (auto elem : E){
+      std::cout << elem.first << "," << elem.second << " ";
+    }
+    std::cout << std::endl;
+  }
   
   //Problem e) study of critical temperature for differently sized matrices
   if (argc>2 && !std::strcmp(argv[1], "e")){
