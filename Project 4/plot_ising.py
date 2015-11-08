@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 import subprocess
 import os
 
-
 filename = 'test.txt'
 saveloc = os.path.join('report','pics')
 
@@ -13,6 +12,24 @@ def normalise(array, factor):
 def get_stdout(cmd):
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
   return p.stdout.read()
+
+def Z(beta):
+  return 12 + 4*np.cosh(8*beta)
+
+def lnZ(beta):
+  return np.log(Z(beta))
+
+def derivative(f, x, h):
+  return (f(x+h/2) - f(x-h/2))/h
+
+#b) 2x2 lattice
+
+T = 1
+cmd = ['./project4', 'b', str(T)]
+line = get_stdout(cmd)
+E, sigmaE, M, sigmaM = line.split()
+
+Eana = 3
 
 
 #c) Correlation time

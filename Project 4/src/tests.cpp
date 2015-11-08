@@ -7,7 +7,7 @@
 #include "ising.hpp"
 
 /*! \file tests.cpp
- * \brief Contains unit tests of lattice.hpp
+ * \brief Contains unit tests of lattice.hpp and ising.hpp
  */
 
 //! Testing if catch makes a TEST_CASE

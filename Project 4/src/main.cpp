@@ -24,6 +24,19 @@ void print_to_file(const int N, const int *Eo, const int *Mo, const int* ao,
 
 int main(const int argc, const char **argv)
 {
+  if (argc<2 || !std::strcmp(argv[1],"h")){
+    std::cout << "Usage of " << argv[0] << ":\n"
+              << "All the problems in the exercise set is solved by the alphabetical "
+              << "numbering given in the project problem set.\n"
+              << "input : output" << std::endl;
+    std::cout << argv[0] << " b <T> : <E> <sigmaE> <M> <sigmaM>\n"
+              << argv[0] << " c <T> : file 'test.txt'\n"
+              << argv[0] << " d <T> <Nmeasurements> : pairs of E and the"
+              << "number of occurences\n"
+              << argv[0] << " e <dim> : file 'test,txt'" << std::endl;
+              
+  }
+  
   const auto global_seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
 
   
@@ -31,19 +44,19 @@ int main(const int argc, const char **argv)
   //Problem b)
   if (argc>2 && !std::strcmp(argv[1], "b")){
     
-    const int T = 1;
+    const double T = std::atoi(argv[2]);
     Ising model(2, global_seed, 1/T, 'r');
     
     
     const int N = std::atoi(argv[2]);
     
-    double E, M, Cv, chi, ar;
+    double E, M, sigmaE, sigmaM, ar;
     
     model.thermalise(50);
     
-    model.find_statistics(N, 100, E, Cv, M, chi, ar);
+    model.find_statistics(N, 100, E, sigmaE, M, sigmaM, ar);
     
-    std::cout << E << " " << M << " " << Cv << " " << chi << std::endl;
+    std::cout << E << " " << M << " " << sigmaE << " " << sigmaM << std::endl;
     
   }
   

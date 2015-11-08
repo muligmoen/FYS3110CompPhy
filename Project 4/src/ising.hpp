@@ -122,9 +122,11 @@ public:
    * This function samples the model every tau times for Measurements.
    * tau should be the thermalisation time
    * 
-   * The variables E, Cv, M and chi are modified to give the average per spin 
+   * The variables E, sigmaE, M and sigmaM are modified to give the average per spin 
    * over these measurements. The acceptance_rate is the number of accepted
    * spins divided by M
+   * 
+   * sigmaE = < E^2 > - < E >^2
    */
   void find_statistics(const int tau, const int Measurements,
                      double& E, double& sigmaE, double& M, double& sigmaM, 

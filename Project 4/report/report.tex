@@ -74,7 +74,7 @@ frame=l,
 \begin{abstract}
 This project explores the Ising model applied to spins in two dimensions.
 The critical temperature for the Ising model is determined and some
-parmeters are calculated.
+parameters are calculated.
 \end{abstract}
 
 
@@ -82,10 +82,19 @@ parmeters are calculated.
 \section{Introduction}
 
 The Ising model is a simple model of a solid. A lattice with elements 
-each have an energy connected to the spin. The net amount of spin in the 
-lattice leads to an overall magnetisation. The energy in the lattice 
-is connected to a heat reservoir which causes the spins to be 
-randomly oriented.
+each have a spin. This interaction between the different spin states
+give an energy. The net amount of spin in the 
+lattice leads to an overall magnetisation. 
+
+Which energy the lattice 
+is permitted to have is controlled by a large heat reservoir. If 
+the temperature is large, the spins tends to be randomly aligned, 
+and there is no net magnetisation. The highest temperature which 
+allows a magnetisation is called the Curie temperature, and is 
+connected to a phase transition.
+
+The programs belonging to this report is available at 
+\url{https://github.com/mulimoen/FYS3150CompPhy} under Project 4.
 
 \section{Theory}
 
@@ -109,19 +118,20 @@ by using periodic boundary conditions,
 s_k = s_{k \pm L}
 \label{eq:boundary}
 \end{gather}
-An illustration of this is visible in figure \ref{fig:spin_neighbours}.
+An illustration of this is visible in figure \ref{fig:spin_neighbours_full}.
 Here the spin $S_2$ faces $S_4$ both on the upper and lower site.
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.15]{pics/simple_lattice.png}
 \caption{ Illustration of the simple, ''$L=2$''-lattice and a graphical interpretation the periodic boundary conditions.}
-\label{fig:spin_neighbours_simple}
+\label{fig:spin_neighbours_full}
 \end{figure}
 
 The magnetisation of the lattice is given by the sum of the elements,
 \begin{gather}
 \magM = \sum_i s_i
+\label{eq:Msum}
 \end{gather}
 
 
@@ -257,7 +267,10 @@ Magnetisation
 \textcolor{red}{KSK: Maybe make this section consistent with the notation of $\beta = 1/ k_B T$ ? And add reference for 2D. solution}
 
 \subsubsection{1-D Ising model}
-Solutions for the Ising model in one dimension for a very large number of particles are known(Plischke and Bergersen, 1994). 
+Solutions for the Ising model in one dimension in the 
+thermodynamic are known (Plischke and Bergersen, 1994). 
+
+\textcolor{red}{MU: Where are the references to this?}
 
 \begin{equation}
 \frac{U}{J} = -N \tanh \left( \frac{J}{k_B T} \right) = -N \frac{e^{J/k_B T}-e^{-J/k_B T} }{e^{J/k_B T}+ e^{-J/k_B T} } =  \begin{cases} N, \quad k_B T \to 0 \\ 0, \quad  k_B T \to \infty \end{cases}
@@ -274,7 +287,6 @@ C(T) = \frac{1}{N} \frac{dU}{dT} = \frac{(J/k_B T)^2}{cosh^2 (J/k_B T)}
 
 \subsubsection{2-D Ising model}
 There are known analytical solution to the two dimensional model as well, 
-
 \begin{equation}
 \magM (T) = \begin{cases} 0, \quad T > T_C \\ \frac{(1+z^2)^{1/4} (1-6z^2 + z^4 )^{1/8} }{(1-z^2)^{1/2}}, \quad T < T_C \end{cases}
 \end{equation}
@@ -284,17 +296,23 @@ k T_C/J = \frac{2}{\ln(1+ \sqrt{2}) } \approx 2.269
 
 here $T_C$ is the \emph{Curie temperature} and $z = e^{-2J/k_B T}$. 
 
-\section{Implementation}
+\section{Implementation/Numerical}
+
+The numerical model of the Ising model has been programmed in C++ and is 
+available in the repository given 
 
 A lattice class with periodic boundary conditions, so access of an
 element follows \eqref{eq:boundary}. The energy of an element in the 
 lattice and the total energy is easily calculated from the definition
 of the energy. 
 
+The documentation for the program is included with the program, and 
+running ''make docs'' will generate a new copy.
+
 \subsection{The metropolis algorithm}
 
 The probability of transition from i to j 
-is modeled by the Boltzmann coefficient
+is modelled by the Boltzmann coefficient
 \begin{gather}
 w_j = \exp(-\beta (E_i - E_j))
 \end{gather}
@@ -307,15 +325,16 @@ p = \begin{cases}
 \label{eq:transition}
 \end{gather}
 This probability is compared with a random number generated from 
-the computer.
-
-For our lattices the factor $\Delta E$ is rather simple. Considering 
-a case with one spin $s_0$ surrounded by $s_1,s_2,s_3, s_4$. 
+the computer. To avoid computing this exponential for each new state,
+the total transition is modelled by flipping a single spin. The energy 
+difference between the two microstates is computed by considering 
+a a spin $S_0$ surrounded by $S_1,S_2,S_3, S_4$, as in figure 
+\ref{fig:spin_neighbours}.
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.2]{pics/full_lattice.png}
-\caption{ Illustration of $s_0$ and its "nearest neighbours".}
+\caption{ Illustration of $S_0$ and its "nearest neighbours".}
 \label{fig:spin_neighbours}
 \end{figure}
 
@@ -327,68 +346,61 @@ energy-difference of the lattice which is
 \end{gather}
 It is also clear that this is quantized, which means that the 
 exponential function in \eqref{eq:transition} can be precomputed.
-\begin{gather}
-\Delta E \in \{-8,-4,0,4,8\}
-\end{gather}
+
 
 This can be summarized in the following algorithm:
-
-\textcolor{red}{KSK: Need to fix some indents in algorithm}
-
 \begin{algorithm}
- 1) Choose start configuration. Common choices of the Ising model are random($T= \infty$) and ordered($T= 0$). 
-
- 2) Pick a random particle, $s_0$ by drawing two random integers, $x$ and $y$ in the lattice domain.
- 
- 3) Suggest a spin-flip and compute possible change in energy $\Delta E$.
+\begin{enumerate}[label=\arabic*)]
+\item Choose start configuration. Common choices of the Ising model 
+are random ($T= \infty$) and ordered ($T= 0$). 
+\item Pick a random particle, $s_0$ by drawing two random integers,
+$x$ and $y$ in the lattice domain.
+\item Suggest a spin-flip and compute possible change in 
+energy $\Delta E$.
 \begin{align*} 
 \Delta E = -2s_0(s_1+s_2+s_3+s_4), \quad \Delta E \in \{-8,-4,0,4,8 \} 
 \end{align*} 
-
- 4) \textsc{If} $\Delta E \leq 0 \quad \to$ Accept spin-flip. \\
+\item \textsc{If} $\Delta E \leq 0 \quad \to$ Accept spin-flip. \\
 \textsc{Else} Draw random number, $r \in [0,1]$ \\
 \textsc{	If} $r \leq exp(-\Delta E \beta ) \quad \to$ Accept spin-flip. \\
 \textsc{Else} $\quad \to$ Reject flip. 
 
-5) Collect data of interest. 
+\item Repeat step 2) - 4) long enough for the system to be 
+uncorrelated.
 
-6) Repeat step 2) - 5). 
+\item Collect data of interest. 
 
+\item Repeat step 2) - 6). 
+\end{enumerate}
 \end{algorithm}
 
 \subsubsection{Choice of random number generator}
-The pseudo random number generator used for the simulations covered in 
+The pseudo random number generator used for the simulations in 
 this report is the Mersenne Twister engine
 instantiated with the parameters of 
-\emph{Mersene Twister 19937 generator} seeded with the time.
+\emph{Mersenne Twister 19937 generator} seeded with the time.
 This is available in the \texttt{<random>} header of the standard
-library in \emph{C++} and has a period of the \emph{mersenne number}, $2^{(n-1)w}-1$.
-The instatation chosen gives $w=32$ and $n=624$.	
+library in C++ and has a period of the \emph{Mersenne number},
+$2^{(n-1)w}-1$.
+The instantiation chosen gives $w=32$ and $n=624$, and a period which is 
+far larger than the minimum requirement.
 
 \subsection{Computing thermodynamic properties}
-The different thermodynamic properties of interest were computed according to the following formulas:
-
-Magnetization:
-\begin{equation}
-<\magM> = \displaystyle\sum_{i} s_i
-\end{equation}
-
-Energy:
-\begin{equation}
-<E> =-J \sum_{i} s_i s_{i+1}
-\end{equation}
+The different thermodynamic properties of interest were computed 
+according to the formulas \eqref{eq:Esum}, \eqref{eq:Msum} and
 
 Specific heat:
 \begin{equation}
-c_v = \frac{\beta^2}{L^2}(<E^2> - <E>^2)
+c_v = \frac{\beta^2}{L^2}\left(\expval{E^2} - \expval{E}^2\right)
 \end{equation}
 
 Magnetic susceptibility:
 \begin{equation}
-\chi = \beta^2 L^2 (<\magM^2> - <\magM>^2)
+\chi = \beta^2 L^2 \left(\expval{\magM^2} - \expval{\magM}^2\right)
 \end{equation}
 
-All these quantities were computed as averages over the Monte carlo cycles after thermalization. 
+All these quantities were computed per particle and divided by the number 
+of samplings.
 
 \subsection{Test environment}
 
@@ -398,48 +410,58 @@ The test cases should be self-explanatory.
 
 \section{Results}
 
-\subsection{Numerical vs. analytical results for $2\cross2$-case}
+\subsection{Numerical vs. analytical results for 2x2-case}
 
 \subsection{Equilibration}
-In this section we will look into how many monte carlo cycles are needed to reach the most likely state. This will be done by looking at a $20 \cross 20-lattice$ for different dimensionless temperatures $\tilde{T}=1/\beta$, for both a ordered start configuration("cold start") and a random start configuration ("hot start"). This will be done by an "by the eye"-approach, simply plotting the magnetisation and energy as a function of monte carlo cycles and see when they have only small fluctuations around some mean value. This will become later become out starting point for gathering data. The unstable phase before equilibrium is called \emph{thermalisation}.
+In this section we will look into how many Monte Carlo cycles are needed to reach the most likely state. This will be done by looking at a $20 \cross 20-lattice$ for different dimensionless temperatures $\tilde{T}=1/\beta$, for both a ordered start configuration("cold start") and a random start configuration ("hot start"). This will be done by an "by the eye"-approach, simply plotting the magnetisation and energy as a function of monte carlo cycles and see when they have only small fluctuations around some mean value. This will become later become out starting point for gathering data. The unstable phase before equilibrium is called \emph{thermalisation}.
 
 We will also study the total number of accepted spin-flips as function of monte carlo cycles.
 
-\subsubsection{Cold start(T = 0)}
+\subsubsection{Cold start (T = 0)}
 
-[Figure of E and M vs. MC cycles to be inserted here] \\
+[Figure of E and M vs. MC cycles to be inserted here]
+
 (For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
 
 
-[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here] \\
+[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here] 
+
 (For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
 
-\subsubsection{Hot start(T = $\infty$ )}
+\subsubsection{Hot start (T = \texorpdfstring{$\infty$}{infinity})}
 
-[Figure of E and M vs. MC cycles to be inserted here] \\
+[Figure of E and M vs. MC cycles to be inserted here] 
+
 (For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
 
 
-[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here] \\
+[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here]
+
 (For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
 
 
 \begin{figure}[H]
 \centering
 \includegraphics[scale=0.10]{pics/equilibrium_different_temperatures.png}
-\caption{Equilibrium configuration for different dimensionless temperatures, $T$. Here a $30 \times 30$ lattice for $T$.  $T=1.0, 2.0, 2.2, 2.3, 3.0$. One can see the behavior of the system change close to the critical temperature where the phase transition happens. After the phase transition all magnetization is gone.} 
-\label{fig:spin_neighbours}
+\caption{Equilibrium configuration for different dimensionless 
+temperatures, $T$. Here a $30 \times 30$ lattice for $T$.
+$T\in\{1.0, 2.0, 2.2, 2.3, 3.0\}$. One can see the behaviour of 
+the system change close to the critical temperature where the phase 
+transition happens. After the phase transition all magnetization is gone.} 
+\label{fig:equilibrium_T}
 \end{figure}
 
 \subsection{Computing the thermodynamic properties}
 
-[Figure of <E>,<M>, $C_v$ and $\chi$ vs. $\tilde{T}$ to be inserted here] \\
+[Figure of <E>,<M>, $C_v$ and $\chi$ vs. $\tilde{T}$ to be inserted here] 
 
 
 \subsection{Reproduction of results}
 
-To see benchmark calculations along with programs used see:\\
-\url{https://github.com/mulimoen/FYS3150CompPhy/}\\
+To see benchmark calculations along with programs used see:
+
+\url{https://github.com/mulimoen/FYS3150CompPhy/}
+
 Under the folder \emph{Project 4}.
 
 \section{Conclusion}
