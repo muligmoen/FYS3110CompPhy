@@ -35,7 +35,7 @@ Eana = 3
 #c) Correlation time
 if (False):
   dim = 20
-  T = 1
+  T = 2.4
   command = ['./project4', 'c', str(T)]
   subprocess.call(command)
   with open(filename) as f:
@@ -74,23 +74,23 @@ if (False):
   plt.plot(Mo,'-',label='Magnetism, ordered start',linewidth=2)
   plt.plot(Mr,'-',label='Magnetism, random start',linewidth=2)
 
-  plt.legend()
+  plt.legend(loc='center right')
   plt.xlabel('Number of MC cycles')
   plt.ylabel('Property per particle')
   plt.title('Energy and magnetism for ordered/unordered start with lattice size 20x20')
-  filename = os.path.join(saveloc, 'cEM.png')
+  filename = os.path.join(saveloc, 'cEM{}.png'.format(T))
   plt.savefig(filename,dpi=400,bbox_inches='tight')
   plt.show()
 
   plt.plot(ao,label='Ordered start',linewidth=2)
   plt.plot(ar,label='Random start',linewidth=2)
   plt.ylim(0, max(ao[-1],ar[-1])*1.1)
-  plt.legend()
+  plt.legend(loc='center right')
   plt.xlim((0,N))
   plt.xlabel('Number of MC cycles')
   plt.ylabel('Accumulated accepted flips')
   plt.title('Number of acceptances for ordered/unordered start with lattice size 20x20')
-  filename = os.path.join(saveloc, 'cA.png')
+  filename = os.path.join(saveloc, 'cA{}.png'.format(T))
   plt.savefig(filename,dpi=400,bbox_inches='tight')
   plt.show()
 

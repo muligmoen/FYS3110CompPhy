@@ -411,31 +411,54 @@ The test cases should be self-explanatory.
 \subsection{Numerical vs. analytical results for 2x2-case}
 
 \subsection{Equilibration}
-In this section we will look into how many Monte Carlo cycles are needed to reach the most likely state. This will be done by looking at a $20 \cross 20-lattice$ for different dimensionless temperatures $\tilde{T}=1/\beta$, for both a ordered start configuration("cold start") and a random start configuration ("hot start"). This will be done by an "by the eye"-approach, simply plotting the magnetisation and energy as a function of monte carlo cycles and see when they have only small fluctuations around some mean value. This will become later become out starting point for gathering data. The unstable phase before equilibrium is called \emph{thermalisation}.
+In this section we will look into how many Monte Carlo cycles are needed 
+to reach the most likely state. This will be done by looking at a 
+$20 \cross 20$-lattice for different dimensionless temperatures 
+$\tilde{T}=1/\beta$, for both a ordered start configuration ("cold start") 
+and a random start configuration ("hot start"). 
+This will be done by an "by the eye"-approach, simply plotting the 
+magnetisation and energy as a function of monte carlo cycles and see 
+when they have only small fluctuations around some mean value. This will 
+become later become out starting point for gathering data. The unstable 
+phase before equilibrium is called \emph{thermalisation}.
 
-We will also study the total number of accepted spin-flips as function of monte carlo cycles.
+We will also study the total number of accepted spin-flips as function of 
+Monte Carlo cycles.
 
 \subsubsection{Cold start (T = 0)}
 
-[Figure of E and M vs. MC cycles to be inserted here]
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/cEM1.png}
+\caption{Energy and magnetisation as a function of Monte Carlo cycles
+for a temperature of 1}
+\label{fig:EM_low_T}
+\end{figure}
 
-(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/cA1.png}
+\caption{Acumulated acceptance 
+for a temperature of 1}
+\label{fig:ca_low_T}
+\end{figure}
 
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{{pics/cEM2.4}.png}
+\caption{Energy and magnetisation as a function of Monte Carlo cycles
+for a temperature of 2.4}
+\label{fig:EM_high_T}
+\end{figure}
 
-[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here] 
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{{pics/cA2.4}.png}
+\caption{Acumulated acceptance 
+for a temperature of 2.4}
+\label{fig:ca_high_T}
+\end{figure}
 
-(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
-
-\subsubsection{Hot start (T = \texorpdfstring{$\infty$}{infinity})}
-
-[Figure of E and M vs. MC cycles to be inserted here] 
-
-(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
-
-
-[Figure of total number of accepted spin-flips vs. MC cycles to be inserted here]
-
-(For both $\tilde{T}=1$ and $\tilde{T}=2.4$.)
 
 
 \begin{figure}[H]
