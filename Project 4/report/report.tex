@@ -268,9 +268,7 @@ Magnetisation
 
 \subsubsection{1-D Ising model}
 Solutions for the Ising model in one dimension in the 
-thermodynamic are known (Plischke and Bergersen, 1994). 
-
-\textcolor{red}{MU: Where are the references to this?}
+thermodynamic limit are known (Plischke and Bergersen, 1994). 
 
 \begin{equation}
 \frac{U}{J} = -N \tanh \left( \frac{J}{k_B T} \right) = -N \frac{e^{J/k_B T}-e^{-J/k_B T} }{e^{J/k_B T}+ e^{-J/k_B T} } =  \begin{cases} N, \quad k_B T \to 0 \\ 0, \quad  k_B T \to \infty \end{cases}
@@ -286,7 +284,7 @@ C(T) = \frac{1}{N} \frac{dU}{dT} = \frac{(J/k_B T)^2}{cosh^2 (J/k_B T)}
 \end{equation}
 
 \subsubsection{2-D Ising model}
-There are known analytical solution to the two dimensional model as well, 
+There are known analytical solution to the two dimensional model as well (Huang ,1987),
 \begin{equation}
 \magM (T) = \begin{cases} 0, \quad T > T_C \\ \frac{(1+z^2)^{1/4} (1-6z^2 + z^4 )^{1/8} }{(1-z^2)^{1/2}}, \quad T < T_C \end{cases}
 \end{equation}
@@ -294,7 +292,7 @@ There are known analytical solution to the two dimensional model as well,
 k T_C/J = \frac{2}{\ln(1+ \sqrt{2}) } \approx 2.269
 \end{equation}
 
-here $T_C$ is the \emph{Curie temperature} and $z = e^{-2J/k_B T}$. 
+here $T_C$ is the \emph{Curie temperature} and $z = e^{-2J/k_B T}$. This result was originally derived by Lars Onsager.
 
 \section{Implementation/Numerical}
 
@@ -467,6 +465,9 @@ Under the folder \emph{Project 4}.
 \section{Conclusion}
 
 \section{References}
+Huang, K. 1987, \emph{Statistical mechanics}, Wiley, New York. 
+
+Plischke, M. and Bergersen, B. 1994, \emph{Equilibrium statistical physics}, World Scientific Pub. Co., Singapore.
 
 
 
