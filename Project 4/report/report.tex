@@ -425,7 +425,7 @@ phase before equilibrium is called \emph{thermalisation}.
 We will also study the total number of accepted spin-flips as function of 
 Monte Carlo cycles.
 
-\subsubsection{Cold start (T = 0)}
+\subsubsection{Cold start and hot start}
 
 \begin{figure}
 \centering
@@ -474,16 +474,40 @@ transition happens. After the phase transition all magnetization is gone.}
 
 \subsection{Computing the thermodynamic properties}
 
-[Figure of <E>,<M>, $C_v$ and $\chi$ vs. $\tilde{T}$ to be inserted here] 
+The probabilities of the different energies are in figure 
+\ref{fig:dT1} and \ref{fig:dT2.4}.
 
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/dT=1.png}
+\caption{Probabilities for the different energies for T = 1}
+\label{fig:dT1}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/{dT=2.4}.png}
+\caption{Probabilities for the different energies for T = 2.4}
+\label{fig:dT2.4}
+\end{figure}
+
+The properties for the different 
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/e20.png}
+\caption{Different properties around the critical temperature for 
+a 20x20-lattice}
+\label{fig:e20}
+\end{figure}
 
 \subsection{Reproduction of results}
 
-To see benchmark calculations along with programs used see:
+Benchmark calculations along with the programs used are available at
 
 \url{https://github.com/mulimoen/FYS3150CompPhy/}
 
-Under the folder \emph{Project 4}.
+under the folder \emph{Project 4}.g
 
 \section{Conclusion}
 

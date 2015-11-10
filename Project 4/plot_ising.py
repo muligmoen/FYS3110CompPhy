@@ -118,7 +118,7 @@ if (False):
   plt.show()
 
 #e) Critical temperature
-if (False):
+if (True):
   dim = 20
   command = ['./project4', 'e', str(dim)]
 
@@ -162,9 +162,13 @@ if (False):
   ax[1, 1].plot(T, chi, label=r'$\chi$', linewidth=2)
   ax[1, 1].set_title(r'$\chi$')
 
+  for tick in ax[1,0].get_xticklabels():
+    tick.set_rotation(45)
+    
+  for tick in ax[1,1].get_xticklabels():
+    tick.set_rotation(45)
 
-  #plt.legend()
-  filename = os.path.join(saveloc, 'e.png')
+  filename = os.path.join(saveloc, 'e{}.png'.format(dim))
   plt.savefig(filename,dpi=400,bbox_inches='tight')
   plt.show()
     
