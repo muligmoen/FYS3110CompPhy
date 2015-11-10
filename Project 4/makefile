@@ -42,8 +42,10 @@ ANIMATE_OBJS = $(patsubst src/%.cpp,obj/%.o,$(ANIMATE_SRCS))
 ANIMATE_LIBS = -lX11 -lpthread
 
 
-all: $(TARGET) $(TEST_TARGET)
+default: $(TARGET) $(TEST_TARGET)
 	./testit # lazy auto-testing
+
+all: $(TARGET) $(TEST_TARGET) $(ANIMATE_TARGET) docs
 
 
 $(TARGET): $(OBJS)

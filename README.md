@@ -21,7 +21,7 @@ This projects computes the correlation energy between electrons in the helium at
 taking as ansatz two electrons in the hydrogen 1s orbitals.
 
 ## Project 4
-This project computes the magnetism and energy in the two dimensional Ising model.
+This project computes the magnetism and energy in the two dimensional Ising model and finds the critical temperature.
 
 ## Course information
 Course descriptions can be found at http://www.uio.no/studier/emner/matnat/fys/FYS3150/
