@@ -186,6 +186,10 @@ if (False):
   plt.show()
 
 #e) Critical temperature
+<<<<<<< HEAD
+=======
+
+>>>>>>> e427841bb26afac4f8a48b647ea1046e3845b46c
 for dim in [20, 40, 60, 80, 100]:
   command = ['./project4', 'e', str(dim)]
 
@@ -237,5 +241,8 @@ for dim in [20, 40, 60, 80, 100]:
   pic_filename = os.path.join(saveloc, 'e{}.png'.format(dim))
   plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
+<<<<<<< HEAD
 
+=======
+>>>>>>> e427841bb26afac4f8a48b647ea1046e3845b46c
   

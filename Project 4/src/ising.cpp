@@ -202,7 +202,7 @@ void Ising::find_statistics(const int tau, const int Measurements,
     this->thermalise(tau);
   }
   acceptance_rate = (double)Naccepts/Measurements;
-  const int Nspins = L*L;
+  const double Nspins = L*L;
   
   
   E = Esum/(Nspins*Measurements);
