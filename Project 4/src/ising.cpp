@@ -214,3 +214,13 @@ void Ising::find_statistics(const int tau, const int Measurements,
   sigmaE = (Esq - E*E);
   sigmaM = (Msq - M*M);
 }
+
+double cv(const double beta, const int Nspins, const double sigmaE)
+{
+  return beta*beta*Nspins*sigmaE;
+}
+
+double chi(const double beta, const int Nspins, const double sigmaM)
+{
+  return beta*sigmaM/Nspins;  
+}

@@ -126,15 +126,19 @@ public:
    * over these measurements. The acceptance_rate is the number of accepted
    * spins divided by M
    * 
-   * sigmaE = < E^2 > - < E >^2
+   * sigmaE =  < E^2 > - < E >^2
+   * sigmaM = < M^2 > - < M >^2 
    */
   void find_statistics(const int tau, const int Measurements,
                      double& E, double& sigmaE, double& M, double& sigmaM, 
                      double& acceptance_rate);
 };
 
+//! Returns heat capcity from sigmaE = < E^2 > - < E >^2
+double cv(const double beta, const int Nspins, const double sigmaE);
 
-
+//! Returns magnetic susceptibility from sigmaM = < M^2 > - < M >^2
+double chi(const double beta, const int Nspins, const double sigmaM);
 
 
 #endif
