@@ -251,22 +251,21 @@ Z = \sum_i d(i) e^{-E_i\beta} = 2e^{+8J\beta}+12e^{0}+2e^{-8J\beta}
 
 
 \subsubsection{Analytical solutions}
-
-Energy from partition function
+Using the partition function we obtain an expression for the energy;
 \begin{gather}
 \expval{E} = \frac{-32J\sinh(8J\beta)}{4\cosh(8J\beta)+12}
 \end{gather}
-Magnetisation
+magnetisation;
 \begin{gather}
 \expval{\abs{M}} = \frac{\abs{M_i}e^{-E_i\beta}}{Z}
 = \frac{4e^{8J\beta} + 2}{12+4\cosh(8J\beta))}
 \end{gather}
-Heat capacity
+heat capacity;
 \begin{gather}
 C_v = -\frac{\beta^2}{k}\left(\frac{-256J^2\cosh(8J\beta)}{4\cosh(8J\beta) + 12}
  + \frac{1024J^2\sinh(8J\beta)^2}{(12+4\cosh(8J\beta))^2}\right)
 \end{gather}
-Magnetic susceptibility
+and magnetic susceptibility;
 \begin{gather}
 \chi = -\frac{\beta^2}{k}\left(- \frac{32 J \left(4 e^{8 J \beta} + 2\right) \sinh{\left (8 J \beta \right )}}{
 \left(4 \cosh{\left (8 J \beta \right )} + 12\right)^{2}} 
@@ -425,6 +424,43 @@ The test cases should be self-explanatory.
 
 \subsection{Numerical vs. analytical results for 2x2-case}
 
+In figure \ref{fig:aE}, \ref{fig:aM}, \ref{fig:acv} and \ref{fig:achi}
+the analytical expressions for the 2x2-case is compared to the numerical.
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/pics4report/aE.png}
+\caption{Analytical and numerical result for the energy 
+of a 2x2 Ising model}
+\label{fig:aE}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/pics4report/aM.png}
+\caption{Analytical and numerical result for the magnetisation 
+of a 2x2 Ising model}
+\label{fig:aM}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/pics4report/acv.png}
+\caption{Analytical and numerical result for the heat capacity 
+of a 2x2 Ising model}
+\label{fig:acv}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/pics4report/achi.png}
+\caption{Analytical and numerical result for the magnetic susceptibility
+of a 2x2 Ising model}
+\label{fig:achi}
+\end{figure}
+
+
+
 \subsection{Equilibration}
 In this section we will look into how many Monte Carlo cycles are needed 
 to reach the most likely state. This will be done by looking at a 
@@ -439,6 +475,8 @@ phase before equilibrium is called \emph{thermalisation}.
 
 We will also study the total number of accepted spin-flips as function of 
 Monte Carlo cycles.
+
+
 
 \subsubsection{Cold start and hot start}
 

@@ -4,6 +4,12 @@ import os
 from math import exp, cosh, sinh
 import numpy as np
 
+"""
+This program is used to recreate the figures from the report. Simply write True instead
+of False in the if-loops to create the figures associated with that exercise
+"""
+
+
 filename = 'test.txt'
 saveloc = os.path.join('report','pics')
 
@@ -35,8 +41,8 @@ def chi(beta, Z):
 
 
 #a) + b) 2x2 lattice
-if (False):
-  N = 20
+if (True):
+  N = 50
   Ts = np.linspace(1, 5, N)
   E_measured = [0]*N
   sigmaE = [0]*N
@@ -79,14 +85,16 @@ if (False):
   plt.plot(Ts, sigmaE, linewidth=2, label='$C_v$ analytically solved')
   plt.xlabel('Temperature')
   plt.ylabel('$C_v$ per particle')
+  plt.legend(loc='lower right')
   pic_filename = os.path.join(saveloc, 'acv.png')
   plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
 
-  plt.plot(Ts, Chi)
-  plt.plot(Ts, sigmaM)
+  plt.plot(Ts, Chi,linewidth=2,label='$\chi$ measured from Ising model')
+  plt.plot(Ts, sigmaM,linewidth=2,label='$\chi$ analytically solved')
   plt.xlabel('Temperature')
   plt.ylabel('$\chi$ per particle')
+  plt.legend(loc='upper right')
   pic_filename = os.path.join(saveloc, 'achi.png')
   plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
