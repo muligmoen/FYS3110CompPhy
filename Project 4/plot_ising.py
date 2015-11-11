@@ -118,8 +118,7 @@ if (False):
   plt.show()
 
 #e) Critical temperature
-if (True):
-  dim = 20
+for dim in [20, 40, 60, 80]:
   command = ['./project4', 'e', str(dim)]
 
   subprocess.call(command)
