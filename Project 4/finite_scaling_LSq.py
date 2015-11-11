@@ -10,5 +10,7 @@ a, c = np.linalg.lstsq(A, y)[0]			# solving the system, obtaining the slope
 plt.plot(x, y, 'o', label='$T_c (L)$', markersize=10)
 plt.plot(x, a*x + c, 'r', label='Best fit')
 plt.title('Fitting line through $T_c(L)$ to obtain the slope $a=$ {}'.format(a))
+plt.xlabel('L')
+plt.ylabel('$T_c (L)$')
 plt.legend()
 plt.show()
