@@ -238,4 +238,5 @@ for dim in [20, 40, 60, 80, 100]:
   pic_filename = os.path.join(saveloc, 'e{}.png'.format(dim))
   plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
+
   

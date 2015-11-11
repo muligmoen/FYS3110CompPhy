@@ -140,7 +140,7 @@ int main(const int argc, const char **argv)
   if (argc>2 && !std::strcmp(argv[1], "e")){
     const int dim = std::atoi(argv[2]);
     
-    const int Ntemps = 5;
+    const int Ntemps = 15;
     
     
     const int Ntherm = 50*dim*dim; // every particle gets 50 tries to flip
