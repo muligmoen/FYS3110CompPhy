@@ -78,8 +78,8 @@ if (False):
   plt.xlabel('Number of MC cycles')
   plt.ylabel('Property per particle')
   plt.title('Energy and magnetism for ordered/unordered start with lattice size 20x20')
-  filename = os.path.join(saveloc, 'cEM{}.png'.format(T))
-  plt.savefig(filename,dpi=400,bbox_inches='tight')
+  pic_filename = os.path.join(saveloc, 'cEM{}.png'.format(T))
+  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
 
   plt.plot(ao,label='Ordered start',linewidth=2)
@@ -90,8 +90,8 @@ if (False):
   plt.xlabel('Number of MC cycles')
   plt.ylabel('Accumulated accepted flips')
   plt.title('Number of acceptances for ordered/unordered start with lattice size 20x20')
-  filename = os.path.join(saveloc, 'cA{}.png'.format(T))
-  plt.savefig(filename,dpi=400,bbox_inches='tight')
+  pic_filename = os.path.join(saveloc, 'cA{}.png'.format(T))
+  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
 
 
@@ -113,17 +113,15 @@ if (False):
   plt.title('Probability for energy in a 20x20 system with T = {}'.format(T))
   plt.xlabel('Energy')
   plt.ylabel('p(E)')
-  filename = os.path.join(saveloc, 'dT={}.png'.format(T))
-  plt.savefig(filename, dpi=400, bbox_inches='tight')
+  pic_filename = os.path.join(saveloc, 'dT={}.png'.format(T))
+  plt.savefig(pic_filename, dpi=400, bbox_inches='tight')
   plt.show()
 
 #e) Critical temperature
-if (True):
-  dim = 20
+for dim in [20, 40, 60, 80, 100]:
   command = ['./project4', 'e', str(dim)]
 
   subprocess.call(command)
-
 
   with open(filename) as f:
     N = int(f.readline().split()[0]);
@@ -168,8 +166,8 @@ if (True):
   for tick in ax[1,1].get_xticklabels():
     tick.set_rotation(45)
 
-  filename = os.path.join(saveloc, 'e{}.png'.format(dim))
-  plt.savefig(filename,dpi=400,bbox_inches='tight')
+  pic_filename = os.path.join(saveloc, 'e{}.png'.format(dim))
+  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
     
   
