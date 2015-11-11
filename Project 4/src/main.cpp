@@ -143,8 +143,8 @@ int main(const int argc, const char **argv)
     const int Ntemps = 5;
     
     
-    const int Ntherm = 10*dim*dim; // every particle gets 100 tries to flip
-    const int Nmeasurements = 100;
+    const int Ntherm = 50*dim*dim; // every particle gets 50 tries to flip
+    const int Nmeasurements = 100; // 100 measurments for each average
   
 
   
