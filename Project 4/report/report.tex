@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english]{article}
+\documentclass[11pt,a4paper,english,draft]{article}
 \usepackage[english]{babel} % Using babel for hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -73,8 +73,9 @@ frame=l,
 
 \begin{abstract}
 This project explores the Ising model applied to spins in two dimensions.
-The critical temperature for the Ising model is determined and some
-parameters are calculated.
+The critical temperature for the Ising model is determined along with 
+the magnetisation, energy, heat capacity and magnetic susceptibility
+as a function of temperature.
 \end{abstract}
 
 
@@ -102,8 +103,9 @@ The energy of a spin system in the Ising model is given by
 \begin{gather}
 E = -J\sum_{\expval{kl}}^N s_k s_l
 \end{gather}
-Here J is the energy shared between two lattice points. $s_i$ is the spin
-connected to the lattice point. This spin has a value of $\pm 1$.
+Here J is the energy shared between two lattice points. The elements 
+$s_i = \pm 1$ gives the spin associated with 
+the lattice point.
 
 The summation $\expval{kl}$ only sums over pairwise interactions.
 Another way of writing the sum is to only consider the forward 
@@ -128,7 +130,7 @@ Here the spin $S_2$ faces $S_4$ both on the upper and lower site.
 \label{fig:spin_neighbours_full}
 \end{figure}
 
-The magnetisation of the lattice is given by the sum of the elements,
+The magnetisation of the lattice is given by the sum of the spins,
 \begin{gather}
 \magM = \sum_i s_i
 \label{eq:Msum}
@@ -168,6 +170,12 @@ C_v = \frac{d\expval{E}}{dT}
 = -\frac{\beta^2}{k}\frac{d\expval{E}}{d\beta}
  = \frac{\beta^2}{k}\frac{d^2\ln Z}{d^2\beta}
 \end{gather}
+Another way to write this
+\begin{gather}
+C_v = N\beta^2 \left(\expval{E^2} -\expval{E}^2\right)
+\end{gather}
+with $\expval{E}$ given per particle.
+
 
 
 
@@ -184,6 +192,9 @@ magnetisation is reatained when the temperature changes,
 = -\frac{\beta^2}{k}\frac{d\expval{\magM}}{d\beta}
 \end{gather}
 
+\begin{gather}
+\chi = N\beta^2 \left(\expval{M^2} - \expval{M}^2\right)
+\end{gather}
 
 
 \subsection{Example of a system}
@@ -237,23 +248,6 @@ The partition function for this system is
 Z = \sum_i d(i) e^{-E_i\beta} = 2e^{+8J\beta}+12e^{0}+2e^{-8J\beta}
  = 12 + 4\cosh(8J\beta)
 \end{gather}
-% This expression is expandened to the low energy case and the 
-% high temperature case.
-% \begin{gather}
-% \expval{E}_{\beta\to\infty} = -8J\\
-% \expval{E}_{\beta\to0} = \frac{64}{3}J^2\beta
-% \end{gather}
-% \begin{gather}
-% C_{v,{\beta\to\infty}} = 0\\
-% C_{v,\beta\to0} = \frac{128}{3}J^2
-% \end{gather}
-% Magnetism
-% \begin{gather}
-% \expval{\abs{\magM}} = \frac{4\cdot2e^{8J\beta} + 2\cdot 8e^{0} + 
-% 0\cdot (2e^{-8J\beta} + 4e^{0})}{Z}\\
-% \expval{\abs{\magM}}_{\beta\to\infty} = 4
-% \end{gather}
-
 
 
 \subsubsection{Analytical solutions}
@@ -263,10 +257,28 @@ Energy from partition function
 \expval{E} = \frac{-32J\sinh(8J\beta)}{4\cosh(8J\beta)+12}
 \end{gather}
 Magnetisation
+\begin{gather}
+\expval{\abs{M}} = \frac{\abs{M_i}e^{-E_i\beta}}{Z}
+= \frac{4e^{8J\beta} + 2}{12+4\cosh(8J\beta))}
+\end{gather}
+Heat capacity
+\begin{gather}
+C_v = -\frac{\beta^2}{k}\left(\frac{-256J^2\cosh(8J\beta)}{4\cosh(8J\beta) + 12}
+ + \frac{1024J^2\sinh(8J\beta)^2}{(12+4\cosh(8J\beta))^2}\right)
+\end{gather}
+Magnetic susceptibility
+\begin{gather}
+\chi = -\frac{\beta^2}{k}\left(- \frac{32 J \left(4 e^{8 J \beta} + 2\right) \sinh{\left (8 J \beta \right )}}{
+\left(4 \cosh{\left (8 J \beta \right )} + 12\right)^{2}} 
++ \frac{32 J e^{8 J \beta}}{4 \cosh(8 J \beta) + 12}\right)
+\end{gather}
+
+
+
 
 \textcolor{red}{KSK: Maybe make this section consistent with the notation of $\beta = 1/ k_B T$ ? And add reference for 2D. solution}
 
-\subsubsection{1-D Ising model}
+\subsection{1-D Ising model}
 Solutions for the Ising model in one dimension in the 
 thermodynamic limit are known (Plischke and Bergersen, 1994). 
 
@@ -283,7 +295,7 @@ C(T) = \frac{1}{N} \frac{dU}{dT} = \frac{(J/k_B T)^2}{cosh^2 (J/k_B T)}
 \magM(T) = \frac{N e^{J / k_B T} sinh(B/k_B T) }{ \sqrt{ e^{2J/k_B T} sinh^2 (B/k_B T) + e^{-2J/ k_B T}  } }
 \end{equation}
 
-\subsubsection{2-D Ising model}
+\subsection{2-D Ising model}
 There are known analytical solution to the two dimensional model as well (Huang ,1987),
 \begin{equation}
 \magM (T) = \begin{cases} 0, \quad T > T_C \\ \frac{(1+z^2)^{1/4} (1-6z^2 + z^4 )^{1/8} }{(1-z^2)^{1/2}}, \quad T < T_C \end{cases}
@@ -501,13 +513,46 @@ a 20x20-lattice}
 \label{fig:e20}
 \end{figure}
 
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/e40.png}
+\caption{Different properties around the critical temperature for 
+a 40x40-lattice}
+\label{fig:e40}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/e60.png}
+\caption{Different properties around the critical temperature for 
+a 60x60-lattice}
+\label{fig:e60}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/e80.png}
+\caption{Different properties around the critical temperature for 
+a 80x80-lattice}
+\label{fig:e80}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/e100.png}
+\caption{Different properties around the critical temperature for 
+a 100x100-lattice}
+\label{fig:e100}
+\end{figure}
+
+
 \subsection{Reproduction of results}
 
 Benchmark calculations along with the programs used are available at
 
 \url{https://github.com/mulimoen/FYS3150CompPhy/}
 
-under the folder \emph{Project 4}.g
+under the folder \emph{Project 4}.
 
 \section{Conclusion}
 

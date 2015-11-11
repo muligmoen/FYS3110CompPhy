@@ -181,20 +181,20 @@ void Ising::find_statistics(const int tau, const int Measurements,
                        double& E, double& sigmaE, double& M, double& sigmaM,
                        double& acceptance_rate)
 {
-  long long int Esum = 0;
-  long long int Esum_sq = 0;
-  long long int Msum = 0;
-  long long int Msum_sq = 0;
+  double Esum = 0;
+  double Esum_sq = 0;
+  double Msum = 0;
+  double Msum_sq = 0;
   int Naccepts = 0;
   
   for (int ii=0; ii<Measurements; ii++){
     const int accept = this->try_flip();
     if (!(accept == FlipCodes::NOT_FLIPPED)) Naccepts++;
     
-    const int M_ = this->Magnetisation;
     const int E_ = this->Energy;
+    const int M_ = this->Magnetisation;
     Esum += E_;
-    Msum += M_;
+    Msum += std::abs(M_);
       
     Esum_sq += E_*E_;
     Msum_sq += M_*M_;
@@ -205,11 +205,11 @@ void Ising::find_statistics(const int tau, const int Measurements,
   const int Nspins = L*L;
   
   
-  E = (double)Esum/(Nspins*Measurements);
-  M = std::abs((double)Msum/(Nspins*Measurements));
+  E = Esum/(Nspins*Measurements);
+  M = Msum/(Nspins*Measurements);
   
-  const double Esq = (double)Esum_sq/(Nspins*Nspins*Measurements);
-  const double Msq = (double)Msum_sq/(Nspins*Nspins*Measurements);
+  const double Esq = Esum_sq/(Nspins*Nspins*Measurements);
+  const double Msq = Msum_sq/(Nspins*Nspins*Measurements);
   
   sigmaE = (Esq - E*E);
   sigmaM = (Msq - M*M);
@@ -222,5 +222,5 @@ double cv(const double beta, const int Nspins, const double sigmaE)
 
 double chi(const double beta, const int Nspins, const double sigmaM)
 {
-  return beta*sigmaM/Nspins;  
+  return beta*beta*Nspins*sigmaM;
 }

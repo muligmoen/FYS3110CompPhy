@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import subprocess
 import os
+from math import exp, cosh, sinh
+import numpy as np
 
 filename = 'test.txt'
 saveloc = os.path.join('report','pics')
@@ -13,23 +15,81 @@ def get_stdout(cmd):
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
   return p.stdout.read()
 
+
+
 def Z(beta):
-  return 12 + 4*np.cosh(8*beta)
+  return 12 + 4*cosh(8*beta)
 
-def lnZ(beta):
-  return np.log(Z(beta))
+def E(beta, Z):
+  return -32*sinh(8*beta)/Z
 
-def derivative(f, x, h):
-  return (f(x+h/2) - f(x-h/2))/h
+def M(beta, Z):
+  return (4*exp(8*beta) + 2)/Z
 
-#b) 2x2 lattice
+def Cv(beta, Z):
+  return beta**2*(256*cosh(8*beta)/Z - 1024*sinh(8*beta)**2/Z**2)
 
-T = 1
-cmd = ['./project4', 'b', str(T)]
-line = get_stdout(cmd)
-E, sigmaE, M, sigmaM = line.split()
+def chi(beta, Z):
+  return beta**2*(-32*(4*exp(8*beta) + 2)*sinh(8*beta)/(4*cosh(8*beta) + 12)**2 + 32*exp(8*beta)/(4*cosh(8*beta) + 12))
 
-Eana = 3
+
+
+#a) + b) 2x2 lattice
+if (False):
+  N = 20
+  Ts = np.linspace(1, 5, N)
+  E_measured = [0]*N
+  sigmaE = [0]*N
+  M_measured = [0]*N
+  sigmaM = [0]*N
+
+  for i, T in enumerate(Ts):
+    cmd = ['./project4', 'b', str(T)]
+    line = get_stdout(cmd)
+    E_measured[i], M_measured[i], sigmaE[i], sigmaM[i] = line.split()
+
+
+  beta = [1/T for T in Ts]
+  Z = [Z(beta_) for beta_ in beta]
+  cv = [Cv(beta_, Z_)/4 for beta_, Z_ in zip(beta, Z)]
+  Chi = [chi(beta_, Z_)/4 for beta_, Z_ in zip(beta, Z)]
+
+
+  plt.plot(Ts, E_measured,linewidth=2, label='E measured from Ising model')
+  E_analytical = [E(beta_, Z_)/4 for beta_, Z_ in zip(beta, Z)]
+  plt.plot(Ts, E_analytical,linewidth=2, label='E analytically solved')
+  plt.legend(loc='upper left')
+  plt.xlabel('Temperature')
+  plt.ylabel('Energy per particle')
+  pic_filename = os.path.join(saveloc, 'aE.png')
+  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
+  plt.show()
+
+  plt.plot(Ts, M_measured,linewidth=2, label='M measured from Ising model')
+  M_analytical = [M(beta_, Z_)/2 for beta_, Z_ in zip(beta, Z)]
+  plt.plot(Ts, M_analytical,linewidth=2, label='M analytically solved')
+  plt.legend(loc='lower left')
+  plt.xlabel('Temperature')
+  plt.ylabel('Magnetisation per particle')
+  pic_filename = os.path.join(saveloc, 'aM.png')
+  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
+  plt.show()
+
+  plt.plot(Ts, cv, linewidth=2, label='$C_v$ measured from Ising model')
+  plt.plot(Ts, sigmaE, linewidth=2, label='$C_v$ analytically solved')
+  plt.xlabel('Temperature')
+  plt.ylabel('$C_v$ per particle')
+  pic_filename = os.path.join(saveloc, 'acv.png')
+  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
+  plt.show()
+
+  plt.plot(Ts, Chi)
+  plt.plot(Ts, sigmaM)
+  plt.xlabel('Temperature')
+  plt.ylabel('$\chi$ per particle')
+  pic_filename = os.path.join(saveloc, 'achi.png')
+  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
+  plt.show()
 
 
 #c) Correlation time
@@ -118,6 +178,7 @@ if (False):
   plt.show()
 
 #e) Critical temperature
+"""
 for dim in [20, 40, 60, 80, 100]:
   command = ['./project4', 'e', str(dim)]
 
@@ -169,5 +230,5 @@ for dim in [20, 40, 60, 80, 100]:
   pic_filename = os.path.join(saveloc, 'e{}.png'.format(dim))
   plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
-    
+    """
   

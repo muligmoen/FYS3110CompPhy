@@ -134,10 +134,10 @@ public:
                      double& acceptance_rate);
 };
 
-//! Returns heat capcity from sigmaE = < E^2 > - < E >^2
+//! Returns heat capcity (per part) from sigmaE = < E^2 > - < E >^2
 double cv(const double beta, const int Nspins, const double sigmaE);
 
-//! Returns magnetic susceptibility from sigmaM = < M^2 > - < M >^2
+//! Returns magnetic susceptibility (per part) from sigmaM = < M^2 > - < M >^2
 double chi(const double beta, const int Nspins, const double sigmaM);
 
 

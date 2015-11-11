@@ -45,18 +45,18 @@ int main(const int argc, const char **argv)
   //Problem b)
   if (argc>2 && !std::strcmp(argv[1], "b")){
     
-    const double T = std::atoi(argv[2]);
+    const double T = std::atof(argv[2]);
     const double beta = 1.0/T;
-    Ising model(2, global_seed, beta, 'r');
+    Ising model(2, global_seed, beta, 'u');
     
     
-    const int N = std::atoi(argv[2]);
+    const int N = 100;
     
     double E, M, sigmaE, sigmaM, ar;
     
-    model.thermalise(50);
+    model.thermalise(N);
     
-    model.find_statistics(N, 100, E, sigmaE, M, sigmaM, ar);
+    model.find_statistics(N, 1000, E, sigmaE, M, sigmaM, ar);
     
     
     
@@ -140,8 +140,10 @@ int main(const int argc, const char **argv)
   if (argc>2 && !std::strcmp(argv[1], "e")){
     const int dim = std::atoi(argv[2]);
     
-    const int Ntemps = 15;
-    const int Ntherm = 1000000;
+    const int Ntemps = 5;
+    
+    
+    const int Ntherm = 10*dim*dim; // every particle gets 100 tries to flip
     const int Nmeasurements = 100;
   
 
@@ -161,7 +163,7 @@ int main(const int argc, const char **argv)
     for (int ii = 0; ii<Ntemps; ii++){
       const auto seed = global_seed + ii;
       Ising model(dim, seed, 1/T[ii], 'r');
-      model.thermalise(Ntherm);
+      model.thermalise(10*Ntherm);
       
       model.find_statistics(Ntherm, Nmeasurements, E[ii], cv[ii], M[ii], chi[ii], ar[ii]);
     }
@@ -169,7 +171,7 @@ int main(const int argc, const char **argv)
     #pragma omp parallel for default(shared)
     for (int ii=0; ii<Ntemps; ii++){ // modifying cv and chi to be dependent on beta and N
       cv[ii] *= dim*dim/(T[ii]*T[ii]);
-      chi[ii] /= (dim*dim)*T[ii];
+      chi[ii] *= (dim*dim)/(T[ii]*T[ii]);
     }
       
     
