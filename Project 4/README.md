@@ -22,3 +22,6 @@ In the terminal run 'project4', this should give the input parameters required t
 
 For a visual look at the evolution of the system run 'animation', which can be specified with the options beta and L by the command line.
 
+To reproduce the data some data has been run with a constant seed. Look under the 
+Reproduction folder to see how to recreate these data-series.
+

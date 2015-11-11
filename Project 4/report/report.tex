@@ -257,7 +257,7 @@ Using the partition function we obtain an expression for the energy;
 \end{gather}
 magnetisation;
 \begin{gather}
-\expval{\abs{M}} = \frac{\abs{M_i}e^{-E_i\beta}}{Z}
+\expval{\abs{\magM}} = \frac{\abs{\magM_i}e^{-E_i\beta}}{Z}
 = \frac{4e^{8J\beta} + 2}{12+4\cosh(8J\beta))}
 \end{gather}
 heat capacity;
@@ -271,11 +271,8 @@ and magnetic susceptibility;
 \left(4 \cosh{\left (8 J \beta \right )} + 12\right)^{2}} 
 + \frac{32 J e^{8 J \beta}}{4 \cosh(8 J \beta) + 12}\right)
 \end{gather}
-
-
-
-
-\textcolor{red}{KSK: Maybe make this section consistent with the notation of $\beta = 1/ k_B T$ ? And add reference for 2D. solution}
+The heat capacity and magnetic susceptibility follows from the derivative 
+of $\expval{E}$ and $\expval{\abs{\magM}}$.
 
 \subsection{1-D Ising model}
 Solutions for the Ising model in one dimension in the 
@@ -308,15 +305,21 @@ here $T_C$ is the \emph{Curie temperature} and $z = e^{-2J/k_B T}$. This result 
 \section{Implementation/Numerical}
 
 The numerical model of the Ising model has been programmed in C++ and is 
-available in the repository given 
+available in the repository given in the introduction.
+Most of the program code is well documented, and is available in the 
+repository given above. The classes are tested using unittest 
+implemented in Catch, \url{https://github.com/philsquared/Catch}.
 
-A lattice class with periodic boundary conditions, so access of an
-element follows \eqref{eq:boundary}. The energy of an element in the 
-lattice and the total energy is easily calculated from the definition
-of the energy. 
+In this program a lattice class with periodic boundary conditions is given,
+so access of an element follows the requirement in \eqref{eq:boundary}.
+The energy of an element in the 
+lattice and the total energy is calculated from the definition
+of the energy, \eqref{eq:Esum}.
 
-The documentation for the program is included with the program, and 
-running ''make docs'' will generate a new copy.
+As a bonus a small program to plot the Ising model live is included. 
+This allows one to see how the domains are connected to the temperature.
+This program is available by running \emph{make animation}.
+
 
 \subsection{The metropolis algorithm}
 
@@ -353,8 +356,8 @@ energy-difference of the lattice which is
 \begin{gather}
 \Delta E = -2s_0(s_1 + s_2 + s_3 + s_4)
 \end{gather}
-It is also clear that this is quantized, which means that the 
-exponential function in \eqref{eq:transition} can be precomputed.
+This is clearly quantized, and the exponential function in 
+\eqref{eq:transition} is precomputed to save computations.
 
 
 This can be summarized in the following algorithm:
@@ -388,7 +391,11 @@ The pseudo random number generator used for the simulations in
 this report is the Mersenne Twister engine
 instantiated with the parameters of 
 \emph{Mersenne Twister 19937 generator} seeded with the time.
-This is available in the \texttt{<random>} header of the standard
+This generator is stored in each model, which makes 
+parallelisation trivial.
+
+The Mersenne Twister is available in the \texttt{<random>} header 
+of the standard
 library in C++ and has a period of the \emph{Mersenne number},
 $2^{(n-1)w}-1$.
 The instantiation chosen gives $w=32$ and $n=624$, and a period which is 
@@ -397,27 +404,30 @@ far larger than the minimum requirement.
 \subsection{Computing thermodynamic properties}
 The different thermodynamic properties of interest were computed 
 according to the formulas \eqref{eq:Esum}, \eqref{eq:Msum} and
+some modified formulas for the specific heat and magnetic susceptibility
+are used.
 
-Specific heat:
+These formulas can be justified by physical means, where $\sigma$ gives 
+the changes the small perturbations in temperature when a flip happens.
+The difference will be smaller if the system is tightly bound, and it 
+does not induce a big change in the energy or magnetisation.
+
+\subsubsection{Spesific heat}
 \begin{equation}
-c_v = \frac{\beta^2}{L^2}\left(\expval{E^2} - \expval{E}^2\right)
+C_v = \beta^2L^2\left(\expval{E^2} - \expval{E}^2\right)
 \end{equation}
 
-Magnetic susceptibility:
+\subsubsection{Magnetic susceptibility}
 \begin{equation}
 \chi = \beta^2 L^2 \left(\expval{\magM^2} - \expval{\magM}^2\right)
 \end{equation}
 
-All these quantities were computed per particle and divided by the number 
-of samplings.
+All these quantities are computed per particle and divided by the number 
+of samplings. This gives specific heat and magnetic susceptibility 
+per particle.
 
 \subsection{Finite size scaling}
 \textcolor{red}{KSK:Newman and Barkema has a good section on this topic. I will write about this asap.} 
-
-\subsection{Test environment}
-
-The testing framework is \href{https://github.com/philsquared/Catch}{Catch}.
-The test cases should be self-explanatory.
 
 
 \section{Results}
@@ -582,11 +592,11 @@ a 100x100-lattice}
 
 \subsection{Reproduction of results}
 
-Benchmark calculations along with the programs used are available at
-
-\url{https://github.com/mulimoen/FYS3150CompPhy/}
-
-under the folder \emph{Project 4}.
+Benchmark calculations along with the programs used are available 
+along with the program. These are available under the Reproduction folder.
+This requires setting the 
+\url{global_seed} in \emph{main.cpp} to 42. More information is included
+in the README in this folder.
 
 \section{Conclusion}
 
