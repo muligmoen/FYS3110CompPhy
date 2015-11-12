@@ -1,16 +1,24 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-x=np.array([20,40,60,80])		# L values
-y=np.array([-1,0.2,0.9,2.1])	# corresponding approximated T_c values
+# Fitting the constant a for finite scaling using least squares method.
 
-A = np.vstack([x, np.ones(len(x))]).T 	# setting up matrix system for least squares method
-a, c = np.linalg.lstsq(A, y)[0]			# solving the system, obtaining the slope
+L = np.array([20,40,60,80])			# L values
+T_C = np.array([2.34,2.31,2.32,2.27])	# corresponding approximated T_c(L) values
 
-plt.plot(x, y, 'o', label='$T_c (L)$', markersize=10)
-plt.plot(x, a*x + c, 'r', label='Best fit')
-plt.title('Fitting line through $T_c(L)$ to obtain the slope $a=$ {}'.format(a))
-plt.xlabel('L')
-plt.ylabel('$T_c (L)$')
-plt.legend()
-plt.show()
+a = np.zeros(6)
+
+a[0] = (T_C[3]-T_C[2])/(L[3]-L[2])
+a[1] = (T_C[3]-T_C[1])/(L[3]-L[1])
+a[2] = (T_C[3]-T_C[0])/(L[3]-L[0])
+a[3] = (T_C[2]-T_C[1])/(L[2]-L[1])
+a[4] = (T_C[2]-T_C[0])/(L[2]-L[0])
+a[5] = (T_C[1]-T_C[0])/(L[1]-L[0])
+
+print a
+
+a = sum(a)/6
+
+print 'Mean value of a: ', a
+
+print 'Finite scaled approximation of T_c: ', T_C[3]-a*L[3]**-1
