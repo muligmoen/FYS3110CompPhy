@@ -118,9 +118,9 @@ int main(const int argc, const char **argv)
     const int L = 20;
     
     const int M = std::atoi(argv[3]);
-    const int Ntherm = 50000;
+    const int Ntherm = 5000*L*L;
     
-    Ising random(L, global_seed, 1.0/T, 'r');
+    Ising random(L, global_seed, 1.0/T, 'u');
     
     random.thermalise(Ntherm);
     
@@ -128,7 +128,7 @@ int main(const int argc, const char **argv)
     
     for (int ii=0; ii<M; ii++){
       E[random.get_energy()] += 1;
-      random.thermalise(Ntherm);
+      random.thermalise(L*L);
     }
     for (auto elem : E){
       std::cout << elem.first << "," << elem.second << " ";
