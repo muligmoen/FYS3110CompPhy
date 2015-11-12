@@ -46,17 +46,17 @@ int main(const int argc, const char **argv)
   if (argc>2 && !std::strcmp(argv[1], "b")){
     
     const double T = std::atof(argv[2]);
-    const double beta = 1.0/T;
-    Ising model(2, global_seed, beta, 'u');
+    const double beta = 1.0/T;    
+    const int dim = 2;
+    Ising model(dim, global_seed, beta, 'u');
     
-    
-    const int N = 100;
+
     
     double E, M, sigmaE, sigmaM, ar;
     
-    model.thermalise(N);
+    model.thermalise(50*dim*dim);
     
-    model.find_statistics(N, 1000, E, sigmaE, M, sigmaM, ar);
+    model.find_statistics(10*dim*dim, 1000, E, sigmaE, M, sigmaM, ar);
     
     
     
@@ -102,7 +102,7 @@ int main(const int argc, const char **argv)
       ao[ii+1] = (accept==FlipCodes::NOT_FLIPPED) ? ao[ii] : ao[ii] + 1;
     }
     
-    print_to_file(Ncycles, Eo, Mo, ar, Er, Mr, ao);
+    print_to_file(Ncycles, Eo, Mo, ao, Er, Mr, ar);
     
     delete[] Er;
     delete[] Mr;
@@ -118,7 +118,7 @@ int main(const int argc, const char **argv)
     const int L = 20;
     
     const int M = std::atoi(argv[3]);
-    const int Ntherm = 5000;
+    const int Ntherm = 50000;
     
     Ising random(L, global_seed, 1.0/T, 'r');
     
@@ -143,8 +143,8 @@ int main(const int argc, const char **argv)
     const int Ntemps = 15;
     
     
-    const int Ntherm = 50*dim*dim; // every particle gets 50 tries to flip
-    const int Nmeasurements = 100; // 100 measurments for each average
+    const int tau = dim*dim; // a MC-step is one flip per site
+    const int Nmeasurements = 100000; // 10000 measurments for each average
   
 
   
@@ -162,10 +162,10 @@ int main(const int argc, const char **argv)
     #pragma omp parallel for default(shared)
     for (int ii = 0; ii<Ntemps; ii++){
       const auto seed = global_seed + ii;
-      Ising model(dim, seed, 1/T[ii], 'r');
-      model.thermalise(10*Ntherm);
+      Ising model(dim, seed, 1.0/T[ii], 'u');
+      model.thermalise(100000*tau);
       
-      model.find_statistics(Ntherm, Nmeasurements, E[ii], cv[ii], M[ii], chi[ii], ar[ii]);
+      model.find_statistics(tau, Nmeasurements, E[ii], cv[ii], M[ii], chi[ii], ar[ii]);
     }
     
     #pragma omp parallel for default(shared)

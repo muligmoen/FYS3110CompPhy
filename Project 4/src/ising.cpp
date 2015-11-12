@@ -22,7 +22,7 @@ Ising::Ising(const int L, const long int seed, const double Jbeta, const char me
   } else if (method=='u'){
     this->init_up();
   } else {
-    std::cerr << "Invalid method name, model not init" << std::endl;
+    std::cerr << "Invalid method name, Ising not initialised" << std::endl;
   }
   Magnetisation = lat.sum_spins();
   Energy = lat.energy();

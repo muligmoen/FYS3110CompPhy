@@ -11,7 +11,9 @@ of False in the if-loops to create the figures associated with that exercise
 
 
 filename = 'test.txt'
-saveloc = os.path.join('report','pics')
+saveloc = 'pics'  #os.path.join('report','pics')
+if (not os.path.exists(saveloc)):
+  os.mkdir(saveloc)
 
 def normalise(array, factor):
   for i in range(len(array)):
@@ -81,8 +83,8 @@ if (False):
   plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
   plt.show()
 
-  plt.plot(Ts, cv, linewidth=2, label='$C_v$ measured from Ising model')
-  plt.plot(Ts, sigmaE, linewidth=2, label='$C_v$ analytically solved')
+  plt.plot(Ts, sigmaE, linewidth=2, label='$C_v$ measured from Ising model')
+  plt.plot(Ts, cv, linewidth=2, label='$C_v$ analytically solved')
   plt.xlabel('Temperature')
   plt.ylabel('$C_v$ per particle')
   plt.legend(loc='lower right')
@@ -101,142 +103,142 @@ if (False):
 
 
 #c) Correlation time
-if (False):
+if (True):
   dim = 20
-  T = 2.4
-  command = ['./project4', 'c', str(T)]
-  subprocess.call(command)
-  with open(filename) as f:
-    Eo = list(map(float, f.readline().split()))
-    Mo = list(map(float, f.readline().split()))
-    ao = list(map(float, f.readline().split()))
-    Er = list(map(float, f.readline().split()))
-    Mr = list(map(float, f.readline().split()))
-    ar = list(map(float, f.readline().split()))
+  for T in [1, 2.4]:
+    command = ['./project4', 'c', str(T)]
+    subprocess.call(command)
+    with open(filename) as f:
+      Eo = list(map(float, f.readline().split()))
+      Mo = list(map(float, f.readline().split()))
+      ao = list(map(float, f.readline().split()))
+      Er = list(map(float, f.readline().split()))
+      Mr = list(map(float, f.readline().split()))
+      ar = list(map(float, f.readline().split()))
 
-  N = len(Eo)
+    N = len(Eo)
 
-  spins = dim*dim
+    spins = dim*dim
 
-  normalise(Eo, spins)
+    normalise(Eo, spins)
 
-  if Mo[-1]< 0:
-    normalise(Mo, -spins)
-  else:
-    normalise(Mo, spins)
+    if Mo[-1]< 0:
+      normalise(Mo, -spins)
+    else:
+      normalise(Mo, spins)
 
 
-  normalise(Er, spins)
-  if Mr[-1]<0:
-    normalise(Mr, -spins)
-  else:
-    normalise(Mr, spins)
-    
-    
-  plt.ylim((-2.1,2.1))
-  plt.xlim((0,N))
+    normalise(Er, spins)
+    if Mr[-1]<0:
+      normalise(Mr, -spins)
+    else:
+      normalise(Mr, spins)
+      
+      
+    plt.ylim((-2.1,2.1))
+    plt.xlim((0,N))
 
-  plt.plot(Eo,label='Energy, ordered start',linewidth=2)
-  plt.plot(Er,label='Energy, random start',linewidth=2)
+    plt.plot(Eo,label='Energy, ordered start',linewidth=2)
+    plt.plot(Er,label='Energy, random start',linewidth=2)
 
-  plt.plot(Mo,'-',label='Magnetism, ordered start',linewidth=2)
-  plt.plot(Mr,'-',label='Magnetism, random start',linewidth=2)
+    plt.plot(Mo,'-',label='Magnetism, ordered start',linewidth=2)
+    plt.plot(Mr,'-',label='Magnetism, random start',linewidth=2)
 
-  plt.legend(loc='center right')
-  plt.xlabel('Number of MC cycles')
-  plt.ylabel('Property per particle')
-  plt.title('Energy and magnetism for ordered/unordered start with lattice size 20x20')
-  pic_filename = os.path.join(saveloc, 'cEM{}.png'.format(T))
-  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
-  plt.show()
+    plt.legend(loc='best')
+    plt.xlabel('Number of MC cycles')
+    plt.ylabel('Property per particle')
+    plt.title('Energy and magnetism for ordered/unordered start with lattice size 20x20')
+    pic_filename = os.path.join(saveloc, 'cEM{}.png'.format(T))
+    plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
+    plt.show()
 
-  plt.plot(ao,label='Ordered start',linewidth=2)
-  plt.plot(ar,label='Random start',linewidth=2)
-  plt.ylim(0, max(ao[-1],ar[-1])*1.1)
-  plt.legend(loc='center right')
-  plt.xlim((0,N))
-  plt.xlabel('Number of MC cycles')
-  plt.ylabel('Accumulated accepted flips')
-  plt.title('Number of acceptances for ordered/unordered start with lattice size 20x20')
-  pic_filename = os.path.join(saveloc, 'cA{}.png'.format(T))
-  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
-  plt.show()
+    plt.plot(ao,label='Ordered start',linewidth=2)
+    plt.plot(ar,label='Random start',linewidth=2)
+    plt.ylim(0, max(ao[-1],ar[-1])*1.1)
+    plt.legend(loc='center right')
+    plt.xlim((0,N))
+    plt.xlabel('Number of MC cycles')
+    plt.ylabel('Accumulated accepted flips')
+    plt.title('Number of acceptances for ordered/unordered start with lattice size 20x20')
+    pic_filename = os.path.join(saveloc, 'cA{}.png'.format(T))
+    plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
+    plt.show()
 
 
 #d) Probability for E
 if (False):
-  T = 2.4
-  M = 10000
-  cmd = ['./project4', 'd', str(T), str(M)]
+  for T in [1, 2.4]:
+    M = 10000
+    cmd = ['./project4', 'd', str(T), str(M)]
 
-  Epair = get_stdout(cmd).split()
+    Epair = get_stdout(cmd).split()
 
-  E = [int(pair.split(',')[0]) for pair in Epair]
-  p = [int(pair.split(',')[1]) for pair in Epair]
+    E = [int(pair.split(',')[0]) for pair in Epair]
+    p = [int(pair.split(',')[1]) for pair in Epair]
 
-  normalise(p, sum(p))
+    normalise(p, sum(p))
 
-  plt.xlim(E[0],E[-1])
-  plt.plot(E, p,'-o', linewidth=2)
-  plt.title('Probability for energy in a 20x20 system with T = {}'.format(T))
-  plt.xlabel('Energy')
-  plt.ylabel('p(E)')
-  pic_filename = os.path.join(saveloc, 'dT={}.png'.format(T))
-  plt.savefig(pic_filename, dpi=400, bbox_inches='tight')
-  plt.show()
+    plt.xlim(E[0],E[-1])
+    plt.plot(E, p,'-o', linewidth=2)
+    plt.title('Probability for energy in a 20x20 system with T = {}'.format(T))
+    plt.xlabel('Energy')
+    plt.ylabel('p(E)')
+    pic_filename = os.path.join(saveloc, 'dT={}.png'.format(T))
+    plt.savefig(pic_filename, dpi=400, bbox_inches='tight')
+    plt.show()
 
 #e) Critical temperature
+if (False):  
+  for dim in [20, 40, 60, 80, 100]:
+    command = ['./project4', 'e', str(dim)]
 
-for dim in [20, 40, 60, 80, 100]:
-  command = ['./project4', 'e', str(dim)]
+    subprocess.call(command)
 
-  subprocess.call(command)
+    with open(filename) as f:
+      N = int(f.readline().split()[0]);
+      f.readline()
+      f.readline()
+      f.readline()
+      f.readline()
+      f.readline()
+      f.readline()
+      f.readline()
+      f.readline()
+      f.readline() # Input types
+      
+      T = [0]*N
+      E = [0]*N
+      M = [0]*N
+      Cv = [0]*N
+      chi = [0]*N
+      ar = [0]*N
+      
+      for i in range(N):
+        line = f.readline();
+        T[i], E[i], M[i], Cv[i], chi[i], ar[i] = map(float, line.split())
 
-  with open(filename) as f:
-    N = int(f.readline().split()[0]);
-    f.readline()
-    f.readline()
-    f.readline()
-    f.readline()
-    f.readline()
-    f.readline()
-    f.readline()
-    f.readline()
-    f.readline() # Input types
+    f, ax = plt.subplots(2,2,sharex=True)
+
+    ax[0, 0].plot(T, E, label='Energy', linewidth=2)
+    ax[0, 0].set_title('$<E>$')
+
+    ax[0, 1].plot(T, M, label='Magnetism', linewidth=2)
+    ax[0, 1].set_title(r'$<M>$')
+
+    ax[1, 0].plot(T, Cv, label=r'$C_v$', linewidth=2)
+    ax[1, 0].set_title(r'$C_v$')
+
+    ax[1, 1].plot(T, chi, label=r'$\chi$', linewidth=2)
+    ax[1, 1].set_title(r'$\chi$')
+
+    for tick in ax[1,0].get_xticklabels():
+      tick.set_rotation(45)
+      
+    for tick in ax[1,1].get_xticklabels():
+      tick.set_rotation(45)
+
+    pic_filename = os.path.join(saveloc, 'e{}.png'.format(dim))
+    plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
+    plt.show()
+
     
-    T = [0]*N
-    E = [0]*N
-    M = [0]*N
-    Cv = [0]*N
-    chi = [0]*N
-    ar = [0]*N
-    
-    for i in range(N):
-      line = f.readline();
-      T[i], E[i], M[i], Cv[i], chi[i], ar[i] = map(float, line.split())
-
-  f, ax = plt.subplots(2,2,sharex=True)
-
-  ax[0, 0].plot(T, E, label='Energy', linewidth=2)
-  ax[0, 0].set_title('$<E>$')
-
-  ax[0, 1].plot(T, M, label='Magnetism', linewidth=2)
-  ax[0, 1].set_title(r'$<M>$')
-
-  ax[1, 0].plot(T, Cv, label=r'$C_v$', linewidth=2)
-  ax[1, 0].set_title(r'$C_v$')
-
-  ax[1, 1].plot(T, chi, label=r'$\chi$', linewidth=2)
-  ax[1, 1].set_title(r'$\chi$')
-
-  for tick in ax[1,0].get_xticklabels():
-    tick.set_rotation(45)
-    
-  for tick in ax[1,1].get_xticklabels():
-    tick.set_rotation(45)
-
-  pic_filename = os.path.join(saveloc, 'e{}.png'.format(dim))
-  plt.savefig(pic_filename,dpi=400,bbox_inches='tight')
-  plt.show()
-
-  
