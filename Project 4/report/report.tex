@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,english,draft]{article}
+\documentclass[11pt,a4paper,draft]{article}
 \usepackage[english]{babel} % Using babel for hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -22,6 +22,10 @@
 \usepackage{physics} % Typesetting of mathematical physics examples: 
                      % \bra{}, \ket{}, expval{}
 \usepackage{url}
+
+
+\usepackage{caption}
+\usepackage{subcaption}
 
 \definecolor{red}{RGB}{255,10,10}
 
@@ -403,6 +407,34 @@ $2^{(n-1)w}-1$.
 The instantiation chosen gives $w=32$ and $n=624$, and a period which is 
 far larger than the minimum requirement.
 
+\subsection{Hot start vs. cold start}
+The system can not be started in the most likely state, an as such two 
+approximations are used. The first one sets all spins to be pointing in 
+the same direction, which creates the lowest energy. This is the 
+low temperature start, as the system is in the most likely state 
+(ground state) for low temperatures. The other approach is to set 
+all spins randomly, which is the high temperature approach, where 
+all states are equally possible.
+
+If a system is started with a random orientation it can have problems 
+reaching the lowest state. There are areas with metastability, where 
+there is a formation of magnetic domains, bands which crosses the lattice.
+To break this up the temperature needs to be turned a little higher to 
+increase the chance for the system to decrease in energy. The system 
+needs to be thermally shaken. An example of this formation is visible in 
+figure \ref{fig:mag_domain}, where the band is crossing the periodic 
+boundary. All the simulations are therefore started with an ordered
+set up.
+
+\begin{figure}
+\centering
+\includegraphics[width=\figurewidth]{pics/mag_domain.png}
+\caption{Example of a magnetic domain for $T = \frac{1}{10}$}
+\label{fig:mag_domain}
+\end{figure}
+
+
+
 \subsection{Computing thermodynamic properties}
 The different thermodynamic properties of interest were computed 
 according to the formulas \eqref{eq:Esum}, \eqref{eq:Msum} and
@@ -414,7 +446,7 @@ the changes the small perturbations in temperature when a flip happens.
 The difference will be smaller if the system is tightly bound, and it 
 does not induce a big change in the energy or magnetisation.
 
-\subsubsection{Spesific heat}
+\subsubsection{Specific heat}
 \begin{equation}
 C_v = \beta^2L^2\left(\expval{E^2} - \expval{E}^2\right)
 \end{equation}
@@ -432,26 +464,27 @@ per particle.
 \textcolor{red}{KSK:Newman and Barkema has a good section on this topic. I will write about this asap.} 
 
 \subsection{Equilibration}
-In this section we will look into how many Monte Carlo cycles are needed 
-to reach the most likely state. This will be done by looking at a 
-$20 \cross 20$-lattice for different dimensionless temperatures 
-$\tilde{T}=1/\beta$, for both a ordered start configuration ("cold start") 
-and a random start configuration ("hot start"). 
-This will be done by an "by the eye"-approach, simply plotting the 
-magnetisation and energy as a function of monte carlo cycles and see 
-when they have only small fluctuations around some mean value. This will 
-become later become out starting point for gathering data. The unstable 
-phase before equilibrium is called \emph{thermalisation}.
+In order to find out how many steps are needed to to reach the most likely
+state, we look at a 
+$20 \cross 20$-lattice for different temperatures,
+for both an ordered start configuration
+and a random start configuration. 
+This is done by an "by the eye"-approach, simply plotting the 
+magnetisation and energy as a function of Monte Carlo cycles and see 
+where they have only small fluctuations around some mean value. This is 
+later used to as the starting point for gathering the data.
 
-We will also study the total number of accepted spin-flips as function of 
-Monte Carlo cycles.
+The flips needed before equilibrium has been reached is 
+called \emph{thermalisation}. The number of accepted spin-flips as 
+function of Monte Carlo cycles is also plotted to find the significance 
+this has on the equilibrium.
 
 \section{Results}
 
 \subsection{Numerical vs. analytical results for 2x2-case}
 
-In figure \ref{fig:aE}, \ref{fig:aM}, \ref{fig:acv} and \ref{fig:achi}
-the analytical expressions for the 2x2-case is compared to the numerical.
+In \cref{fig:aE,fig:aM,fig:acv,fig:achi}
+ the analytical expressions for the 2x2-case is compared to the numerical.
 The energy from the Ising model is closely following the analytical 
 expression, especially for low temperatures. For higher temperatures
 the energy tends to deviate from the analytical expression. The 
@@ -504,8 +537,8 @@ of a 2x2 Ising model}
 
 \subsubsection{Cold start and hot start}
 
-Lattices which start out ordered and unordered has been compared. This 
-results in the figures \ref{fig:EM_low_T} and \ref{fig:EM_high_T}. For low 
+The results for the different start configurations are visible 
+in \cref{fig:EM_low_T,fig:EM_high_T}. For low 
 temperatures the ordered system starts out in the most likely state. For 
 the unordered system to enter the same state, it needs about 30000 total 
 flips, or about 75 trial flips per site to enter this state.
@@ -595,7 +628,7 @@ Gaussian distribution.
 \end{figure}
 
 
-By looking at the \cref{fig:e20,fig:e40,fig:e60,fig:e80},
+By looking at \cref{fig:EM},
  we see that the 
 thermodynamic properties go through drastic changes in the interval
 $\tilde{T}\in (2.0,2.4)$. This is the trace of the phase transition.
@@ -611,35 +644,49 @@ has a sharper cliff.
 
 \begin{figure}
 \centering
-\includegraphics[width=\figurewidth]{pics/e20.png}
-\caption{Different properties around the critical temperature for 
-a 20x20-lattice}
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\textwidth]{pics/e20.png}
+\caption{20x20 lattice}
 \label{fig:e20}
-\end{figure}
-
-
-\begin{figure}
+\end{subfigure}
+%
+\begin{subfigure}{0.49\textwidth}
 \centering
-\includegraphics[width=\figurewidth]{pics/e40.png}
-\caption{Different properties around the critical temperature for 
-a 40x40-lattice}
+\includegraphics[width=\textwidth]{pics/e40.png}
+\caption{40x40 lattice}
 \label{fig:e40}
-\end{figure}
+\end{subfigure}
 
-\begin{figure}
-\centering
-\includegraphics[width=\figurewidth]{pics/e60.png}
-\caption{Different properties around the critical temperature for 
-a 60x60-lattice}
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\textwidth]{pics/e60.png}
+\caption{60x60 lattice}
 \label{fig:e60}
-\end{figure}
-
-\begin{figure}
+\end{subfigure}
+%
+\begin{subfigure}{0.49\textwidth}
 \centering
-\includegraphics[width=\figurewidth]{pics/e80.png}
-\caption{Different properties around the critical temperature for 
-a 80x80-lattice}
+\includegraphics[width=\textwidth]{pics/e80.png}
+\caption{80x80 lattice}
 \label{fig:e80}
+\end{subfigure}
+
+\begin{subfigure}{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{pics/e100.png}
+\caption{100x100 lattice}
+\label{fig:e100}
+\end{subfigure}
+%
+\begin{subfigure}{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{pics/e200.png}
+\caption{200x200 lattice, $C_v$ is miscalculated due to overflow}
+\label{fig:e200}
+\end{subfigure}
+
+\caption{Energy, magnetisations, specific heat and magnetic 
+susceptibility for differently sized lattices}
+\label{fig:EM}
 \end{figure}
 
 
@@ -651,6 +698,11 @@ along with the program. These are available under the Reproduction folder.
 This requires setting the 
 \url{global_seed} in \emph{main.cpp} to 42. More information is included
 in the README in this folder.
+
+\section{Discussion}
+
+
+
 
 \section{Conclusion}
 

@@ -103,7 +103,7 @@ if (False):
 
 
 #c) Correlation time
-if (True):
+if (False):
   dim = 20
   for T in [1, 2.4]:
     command = ['./project4', 'c', str(T)]
@@ -188,8 +188,8 @@ if (False):
     plt.show()
 
 #e) Critical temperature
-if (False):  
-  for dim in [20, 40, 60, 80, 100]:
+if (True):  
+  for dim in [200]:#20, 40, 60, 80, 100]:
     command = ['./project4', 'e', str(dim)]
 
     subprocess.call(command)
