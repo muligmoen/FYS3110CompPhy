@@ -9,6 +9,7 @@
 \usepackage{cleveref}
 
 %\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
+\usepackage{framed}
 \usepackage{tcolorbox}
 \tcbuselibrary{hooks}
 \usepackage[parfill]{parskip} % Removes indents
@@ -461,7 +462,47 @@ of samplings. This gives specific heat and magnetic susceptibility
 per particle.
 
 \subsection{Finite size scaling}
-\textcolor{red}{KSK:Newman and Barkema has a good section on this topic. I will write about this asap.} 
+
+Near $T_C$ we can characterize the behavior of many physical quantities
+by a power law behavior.
+As an example the mean magnetization is given by
+\begin{equation}
+  \langle {\cal M}(T) \rangle \sim \left(T-T_C\right)^{\beta},
+\end{equation}
+where $\beta=1/8$ is a so-called critical exponent. A similar relation
+applies to the heat capacity 
+\begin{equation}
+  C_V(T) \sim \left|T_C-T\right|^{\alpha},
+\end{equation}
+and the susceptibility
+\begin{equation}
+  \chi(T) \sim \left|T_C-T\right|^{\gamma},
+\end{equation}
+with $\alpha = 0$ and $\gamma = 7/4$.
+Another important quantity is the correlation length, which is expected
+to be of the order of the lattice spacing for $T>> T_C$. Because the spins
+become more and more correlated as $T$ approaches $T_C$, the correlation
+length increases as we get closer to the critical temperature. The divergent
+behavior of $\xi$ near $T_C$ 
+is
+\begin{equation}
+  \xi(T) \sim \left|T_C-T\right|^{-\nu}.
+  \label{eq:xi}
+\end{equation}
+A second-order phase transition is characterized by a
+correlation length which spans the whole system.
+Since we are always limited to a finite lattice, $\xi$ will
+be proportional with the size of the lattice. 
+Through so-called finite size scaling relations
+it is possible to relate the behavior at finite lattices with the 
+results for an infinitely large lattice.
+The critical temperature scales then as
+\begin{equation}
+ T_C(L)-T_C(L=\infty) = aL^{-1/\nu},
+ \label{eq:tc}
+\end{equation}
+for a constant, $a$ and  $\nu$ (Hjort-Jensen, 2015). 
+
 
 \subsection{Equilibration}
 In order to find out how many steps are needed to to reach the most likely
@@ -689,6 +730,40 @@ susceptibility for differently sized lattices}
 \label{fig:EM}
 \end{figure}
 
+\subsubsection{The critical temperature and finite size scaling}
+We will now see how close we can come to Lars Onsager's exact result of the critical temperature using the theory of finite size scaling from section 3.3.
+
+From equation 3.10, using $\nu = 1$, having computed $T_C(L), L \in \{20,40,60,80 \}$ we have four equations and two unknowns. That means we can calculate sevral approximations for $a$, simply by subtracting one equation from the other. Obtaining the following expression for $a$:
+\begin{equation}
+a = \frac{T_C(L_j)-T_C(L_i)}{L_j - L_i}
+\end{equation}
+
+ We can do this for all the combinations of equation sets, and then compute an avarage value of $a$. 
+\begin{table}[!h]
+\caption{ $T_C$ for different lattice sizes. The values for $T_C (L)$ where gathered by locating the peak in susceptibility and reading off the graphs.  }
+\begin{center}
+\vspace{5mm}
+\begin{tabular}{| c | c | c |}
+	\hline
+	L  & $T_C(L)$  \\		\hline		
+	$20$ & $2.34$ \\
+    $40$ & $2.31$ \\
+    $60$ & $2.32$ \\
+    $80$ & $2.27$ \\
+  \hline
+\end{tabular}
+\end{center}
+\end{table} 
+
+Finally, we can compute $T_C(L=\infty)$ using equation 3.10 and the numerical results above. Running the python script \texttt{finite\_size\_scaling.py} using the results from table 1 gives the following result:
+
+\begin{framed}
+\noindent
+Finite size scaling approximation of T\_c:  2.27001284722 \\
+Relative error:  0.00044638484893
+\end{framed}
+
+We have come very colse to Lars Onsager's original result of $T_C = 2.269$. 
 
 
 \subsection{Reproduction of results}
@@ -707,6 +782,8 @@ in the README in this folder.
 \section{Conclusion}
 
 \section{References}
+Hjort-Jensen,M., 2015. \emph{Project 4}, accessible at github: https://github.com/mhjensen .
+
 Huang, K. 1987, \emph{Statistical mechanics}, Wiley, New York. 
 
 Plischke, M. and Bergersen, B. 1994, \emph{Equilibrium statistical physics}, World Scientific Pub. Co., Singapore.
