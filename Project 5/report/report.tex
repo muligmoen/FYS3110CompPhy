@@ -1,0 +1,184 @@
+\documentclass[11pt,a4paper,english]{article}
+\usepackage[english]{babel} % Using babel for hyphenation
+\usepackage{lmodern} % Changing the font
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+
+\usepackage[colorlinks=true]{hyperref}
+
+%\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
+\usepackage{tcolorbox}
+\tcbuselibrary{hooks}
+\usepackage[parfill]{parskip} % Removes indents
+\usepackage{amsmath} % Environment, symbols etc...
+\usepackage{amssymb}
+\usepackage{float} % Fixing figure locations
+\usepackage{multirow} % For nice tables
+%\usepackage{wasysym} % Astrological symbols
+\usepackage{graphicx} % For pictures etc...
+\usepackage{enumitem} % Points/lists
+\usepackage{physics} % Typesetting of mathematical physics examples: 
+                     % \bra{}, \ket{}, expval{}
+\usepackage{url}
+
+\definecolor{red}{RGB}{255,10,10}
+
+% To include code(-snippets) with æøå
+\usepackage{listings}
+\lstset{
+language=c++,
+showspaces=false,
+showstringspaces=false,
+frame=l,
+}
+
+\tolerance = 5000 % Bedre tekst
+\hbadness = \tolerance
+\pretolerance = 2000
+
+\numberwithin{equation}{section}
+
+\newcommand{\conj}[1]{#1^*}
+\newcommand{\ve}[1]{\mathbf{#1}} % Vektorer i bold
+\let\oldhat\hat
+\renewcommand{\hat}[1]{\oldhat{#1}}
+\newcommand{\trans}[1]{#1^\top}
+\newcommand{\herm}[1]{#1^\dagger}
+
+\newcommand{\Real}{\mathbb{R}}
+\newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
+
+\newcommand{\di}{\mathrm{d}}
+\newcommand{\magM}{\mathcal{M}}
+
+\newcounter{algcounter}
+\renewcommand{\thealgcounter}{\Roman{algcounter}}
+
+\newenvironment{algorithm}{%
+\refstepcounter{algcounter}
+\begin{tcolorbox}
+\centerline{Algorithm \thealgcounter}\vspace{2mm}
+}
+{\end{tcolorbox}}
+
+\newcommand{\figurewidth}{.85\textwidth}
+
+\title{FYS3150/4150\\Computational Physics\\Project 5}
+\author{Magnus Ulimoen (33) \& Krister Stræte Karlsen (63)}
+\date{\today}
+
+\begin{document}
+\tcbset{before app=\parfillskip0pt}
+\maketitle
+
+\section{Mathematical problem}
+
+\begin{gather}
+\frac{\partial u}{\partial t} = D\nabla^2u
+\end{gather}
+One dimensional,
+\subsection{Boundary conditions}
+Interval $x \in (0, d)$
+\begin{align}
+u(0,t) &= u_0\\
+u(d,t) &= 0\\
+u(x,0) &= 0
+\end{align}
+
+\subsection{Scaling}
+
+
+\section{Closed form}
+In steady state
+\begin{gather}
+\frac{\partial^2 u}{\partial x^2} = 0\\
+u = Ax + b\\
+u(0) \to b = 1\\
+u(1) \to A = -1\\
+u(x) = 1-x
+\end{gather}
+Defining new non-steady solution
+\begin{gather}
+u(x,t) = u_s(x) + v(x,t)
+\end{gather}
+
+
+\section{Formulas}
+
+\subsection{Explicit forward Euler}
+
+\begin{gather}
+u_i^{n+1} = u_i^n + \frac{\Delta t}{\Delta x^2}\left(
+u_{i+1}^n - 2u_i^n + u_{i-1}^n
+\right)
+\end{gather}
+In matrix
+\begin{gather}
+u^{n+1} = 
+\begin{pmatrix}
+1 - 2s & s & 0 & 0\\
+s & 1 - 2s & s & 0\\
+0 & s & 1-2s & s
+\end{pmatrix}u^n
+\end{gather}
+
+
+
+\subsection{Implicit backward Euler}
+
+\begin{gather}
+u_i^n = u_i^{n-1} + \frac{\Delta t}{\Delta x^2}\left(
+u_{i+1}^n - 2u_i^n + u_{i-1}^n
+\right)
+\end{gather}
+This can be transformed into a matrix equation
+\begin{gather}
+u^n = u^{n-1} + \frac{\Delta t}{\Delta x^2}
+\begin{pmatrix}
+-2 & 1 & 0 & 0\\
+1 & -2 & 1 & 0\\
+0 & 1 & -2 & 1\\
+\end{pmatrix}u^n\\
+u^{n-1} =
+\begin{pmatrix}
+1 + 2s & -s & 0 & 0\\
+-s & 1 + 2s & -s & 0\\
+0 & -s & 1 + 2s & -s
+\end{pmatrix}u^n
+\end{gather}
+
+\subsection{Implicit Crank-Nicolson}
+\begin{gather}
+u_i^{n+1} = u_i^n + \frac{\Delta t}{2\Delta x^2}\left(
+u_{i+1}^n - 2u_i^n + u_{i-1}^n + u_{i+1}^{n+1} - 2u_i^{n+1} + u_{i-1}^{n+1}
+\right)
+\end{gather}
+In matrix
+\begin{gather}
+u^{n+1} = u^n + \frac{\Delta t}{2\Delta x^2}
+\begin{pmatrix}
+-2 & 1 & 0\\
+1 & -2 & 1\\
+0 & 1 & -2
+\end{pmatrix} u^n
+ + \frac{\Delta t}{2\Delta x^2}
+\begin{pmatrix}
+-2 & 1 & 0\\
+1 & -2 & 1\\
+0 & 1 & -2
+\end{pmatrix}u^{n+1}\\
+\begin{pmatrix}
+1 + 2s & -s & 0 & 0\\
+-s & 1 + 2s & -s & 0\\
+0 & -s & 1 + 2s & -s
+\end{pmatrix}
+u^{n+1} = 
+\begin{pmatrix}
+1 - 2s & s & 0 & 0\\
+s & 1 - 2s & s &  0\\
+0 & s & 1 - 2s & s
+\end{pmatrix}u^n
+\end{gather}
+
+
+\end{document}
