@@ -20,18 +20,18 @@ LDFLAGS = -g -Wall
 
 
 # libraries to link into executable
-LDLIBS =  -fopenmp
+LDLIBS =  
 
 # build executable
 TARGET = project5
-CPP_FILES = main.cpp
+CPP_FILES = main.cpp integrate.cpp
 
 SRCS = $(addprefix src/,$(notdir $(CPP_FILES)))
 OBJS = $(patsubst src/%.cpp,obj/%.o,$(SRCS))
 
 
 TEST_TARGET = testit
-TEST_FILES = tests.cpp catch.cpp
+TEST_FILES = tests.cpp catch.cpp integrate.cpp
 TEST_SRCS = $(addprefix src/,$(notdir $(TEST_FILES)))
 TEST_OBJS = $(patsubst src/%.cpp,obj/%.o,$(TEST_SRCS))
 

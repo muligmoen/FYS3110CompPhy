@@ -1,6 +1,7 @@
 #include "catch.hpp"
 
 #include "vector.hpp"
+//#include "integrate.hpp"
 
 
 TEST_CASE( "SANITIY" )
@@ -15,6 +16,11 @@ TEST_CASE( "Simple vector functions" , "[Vector]")
   Vector<int> vec(N);
   for (int ii=0; ii<N; ii++){
     vec[ii] = ii;
+  }
+  
+  SECTION( "Check size of vector" )
+  {
+    REQUIRE( N == vec.size() );
   }
   
   SECTION( "Indexing" )
@@ -61,6 +67,19 @@ TEST_CASE( "Simple vector functions" , "[Vector]")
 }
 
 
+TEST_CASE( "Initializing vector from function" )
+{
+  auto f = [](double x){return x*x;};
+  
+  const int N = 4;
+  
+  auto vec = init_vector(0, 3, N, f);
+  
+  for (int ii=0; ii<N; ii++){
+    CHECK(ii*ii == Approx(vec[ii]));
+  }
+}
+
 TEST_CASE( "Advanced vector tests", "[Vector]" )
 {
   const int N = 4;
@@ -69,6 +88,12 @@ TEST_CASE( "Advanced vector tests", "[Vector]" )
   vec[1] = 7;
   vec[2] = 8;
   vec[3] = 3;
+  
+  Vector<double> double_vec(N);
+  double_vec[0] = vec[0];
+  double_vec[1] = vec[1];
+  double_vec[2] = vec[2];
+  double_vec[3] = vec[3];
   
   const int a = 2;
   const int b = 5;
@@ -102,8 +127,42 @@ TEST_CASE( "Advanced vector tests", "[Vector]" )
     
   }
   
-  SECTION( "Testing inverse matrix solver" )
+  SECTION( "Inverse matrices")
   {
+    const double ad = a;
+    const double bd = b;
+    Vector<double> sympy(N); // Solution from sympy
+    sympy[0] = 0.879765395894428;
+    sympy[1] = 0.648093841642229;
+    sympy[2] = 0.26099706744868;
+    sympy[3] = 0.847507331378299;
     
+    SECTION( "Inverse matrix solver" )
+    {
+      auto Avec = solve(double_vec, ad, bd);
+      
+      for (int ii=0; ii<N; ii++){
+        CHECK( Avec[ii] == Approx(sympy[ii]) );
+      }
+      
+      // Using the multiplication
+      auto avev = multiply(Avec, (double)a, (double)b);
+      for (int ii=0; ii<N; ii++){
+        CHECK( avev[ii] == Approx(double_vec[ii]) );
+      }
+    }
+    
+    SECTION( "Inplace matrix solver" )
+    {
+      auto new_vec = double_vec;
+      
+      solve_inplace(new_vec, (double)a, (double)b);
+      
+      for (int ii=0; ii<N; ii++){
+        CHECK( new_vec[ii] == Approx(sympy[ii]) );
+      }
+    }
   }
+    
+    
 }

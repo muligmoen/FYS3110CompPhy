@@ -1,5 +1,15 @@
-#include <cassert>
+#ifndef vector_hpp
+#define vector_hpp
+
 #include <ostream>
+
+/*!
+ *\file vector.hpp 
+ * 
+ * This file contains the Vector class and some functions for 
+ * tridiagonal matrices.
+ * 
+ */
 
 //! This class holds an array of type T
 /*! 
@@ -82,7 +92,7 @@ public:
     return vec[N];
   }
   
-  //! Gets the size og the vector
+  //! Gets the size of the vector
   int size() const
   {
     return N;
@@ -102,7 +112,7 @@ public:
  * and u is the returned vector
  */
 template <typename T>
-Vector<T> multiply(const Vector<T>& d, const T a, const T b)
+inline Vector<T> multiply(const Vector<T>& d, const T a, const T b)
 {
   const int N = d.size();
   Vector<T> u(N);
@@ -116,10 +126,9 @@ Vector<T> multiply(const Vector<T>& d, const T a, const T b)
   
   return u;
 }
-
 //! Same as multiply() but works inplace
 template <typename T>
-Vector<T>& multiply_inplace(Vector<T> &u, const T a, const T b)
+inline Vector<T>& multiply_inplace(Vector<T> &u, const T a, const T b)
 {
   const int N = u.size();
   
@@ -142,7 +151,7 @@ Vector<T>& multiply_inplace(Vector<T> &u, const T a, const T b)
  * first offdiagonal element as b, and the rest as zero.
  */
 template <typename T>
-Vector<T> solve(const Vector<T>& d, const T a, const T b)
+inline Vector<T> solve(const Vector<T>& d, const T a, const T b)
 {
   const int N = d.size();
   Vector<T> u(N);
@@ -151,22 +160,24 @@ Vector<T> solve(const Vector<T>& d, const T a, const T b)
   Vector<T> gamma(N);
   
   beta[0] = d[0]/a;
-  gamma[0] = -b/a;
+  gamma[0] = b/a;
   
-  for (int ii=1; ii<N; ii++){
-    beta[ii] = (d[ii] - b*beta[ii-1])/(b*gamma[ii-1] + a);
-    gamma[ii] = -b/(b*gamma[ii-1]+a);
+  for (int ii=1; ii<N; ii++){ // forward substition/sweep
+    beta[ii] = (d[ii] - b*beta[ii-1])/(a - b*gamma[ii-1]);
+    gamma[ii] = b/(a - b*gamma[ii-1]);
   }
+  
   u[N-1] = beta[N-1];
-  for (int ii=N-1; ii>1; ii--){
-    u[ii-1] = beta[ii-1] + gamma[ii-1]*u[ii];
+  
+  for (int ii=N-1; ii>0; ii--){ // backwards substitution
+    u[ii-1] = beta[ii-1] - gamma[ii-1]*u[ii];
   }
   return u;
 }
 
 //! Same as solve() but works inplace
 template <typename T>
-Vector<T>& solve_inplace(Vector<T> &d, const T a, const T b)
+inline Vector<T>& solve_inplace(Vector<T> &d, const T a, const T b)
 {
   const int N = d.size();
   
@@ -174,22 +185,24 @@ Vector<T>& solve_inplace(Vector<T> &d, const T a, const T b)
   Vector<T> gamma(N);
   
   beta[0] = d[0]/a;
-  gamma[0] = -b/a;
+  gamma[0] = b/a;
   
-  for (int ii=1; ii<N; ii++){
-    beta[ii] = (d[ii] - b*beta[ii-1])/(b*gamma[ii-1] + a);
-    gamma[ii] = -b/(b*gamma[ii-1]+a);
+  for (int ii=1; ii<N; ii++){ // forward substition/sweep
+    beta[ii] = (d[ii] - b*beta[ii-1])/(a - b*gamma[ii-1]);
+    gamma[ii] = b/(a - b*gamma[ii-1]);
   }
+  
   d[N-1] = beta[N-1];
-  for (int ii=N-1; ii>1; ii--){
-    d[ii-1] = beta[ii-1] + gamma[ii-1]*d[ii];
+  
+  for (int ii=N-1; ii>0; ii--){ // backwards substitution
+    d[ii-1] = beta[ii-1] - gamma[ii-1]*d[ii];
   }
   return d;
 }
 
-
+//! Prints the vector elements in the format [ v0 v1 v2 ... vN ]
 template <typename T>
-std::ostream& operator<<(std::ostream& out, const Vector<T> &vector)
+inline std::ostream& operator<<(std::ostream& out, const Vector<T> &vector)
 {
   out << "[ ";
   for (int ii=0; ii<vector.size(); ii++){
@@ -199,3 +212,22 @@ std::ostream& operator<<(std::ostream& out, const Vector<T> &vector)
   return out;
 }
 
+//! Sets up f(x) in the ranges specified
+/*
+ * x0, x1 are the range of the range, linearly spaced, and f(x) are
+ * computed for all the points
+ */
+inline Vector<double> init_vector(const double x0, const double x1, const int N,
+                           double (*f)(double))
+{
+  Vector<double> vec(N);
+  const double dx = (x1 - x0)/(N-1);
+  
+  for (int ii = 0; ii<N; ii++){
+    const double x = x0 + dx*ii;
+    vec[ii] = f(x);
+  }
+  return vec;
+}
+
+#endif
