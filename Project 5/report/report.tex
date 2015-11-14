@@ -1,12 +1,15 @@
-\documentclass[11pt,a4paper,english]{article}
+\documentclass[11pt,a4paper,draft]{article}
 \usepackage[english]{babel} % Using babel for hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+
 \usepackage[colorlinks=true]{hyperref}
+\usepackage{cleveref}
 
 %\usepackage[moderate]{savetrees} % [subtle/moderate/extreme] really compact writing
+\usepackage{framed}
 \usepackage{tcolorbox}
 \tcbuselibrary{hooks}
 \usepackage[parfill]{parskip} % Removes indents
@@ -20,6 +23,10 @@
 \usepackage{physics} % Typesetting of mathematical physics examples: 
                      % \bra{}, \ket{}, expval{}
 \usepackage{url}
+
+
+\usepackage{caption}
+\usepackage{subcaption}
 
 \definecolor{red}{RGB}{255,10,10}
 
@@ -63,8 +70,9 @@ frame=l,
 
 \newcommand{\figurewidth}{.85\textwidth}
 
-\title{FYS3150/4150\\Computational Physics\\Project 5}
-\author{Magnus Ulimoen (33) \& Krister Stræte Karlsen (63)}
+\title{FYS3150/4150\\Computational Physics\\Project 4}
+\author{Magnus Ulimoen \& Krister Stræte Karlsen\\
+Candidate numbers 33 \& 63}
 \date{\today}
 
 \begin{document}
@@ -87,23 +95,56 @@ u(x,0) &= 0
 
 \subsection{Scaling}
 
+To shrink the range of x, we introduce the length scaling,
+\begin{gather}
+\tilde{x} = \frac{x}{d}
+\end{gather}
+And a time scaling
+\begin{gather}
+\tilde{t} = t\frac{D}{d^2}
+\end{gather}
+And scaling the function
+\begin{gather}
+\tilde{u}(x,t) = \frac{u(x,t)}{u_0}
+\end{gather}
+Our equation then takes the simple form
+\begin{gather}
+\frac{\partial \tilde{u}}{\partial \tilde{t}}
+= \frac{\partial \tilde{u}^2}{\partial \tilde{x}^2}\\
+0 \le \tilde{x} \le 1\\
+\tilde{u}(0,\tilde{t})
+= 1, \quad \tilde{u}(1,\tilde{t}) = 0, \quad \tilde{u}(\tilde{x}, 0 ) = 0
+\end{gather}
+In the next sections we will drop the tilde and work with the 
+dimensionless parameters.
+
+
+
+
 
 \section{Closed form}
 In steady state
 \begin{gather}
-\frac{\partial^2 u}{\partial x^2} = 0\\
-u = Ax + b\\
-u(0) \to b = 1\\
-u(1) \to A = -1\\
-u(x) = 1-x
+\frac{\partial^2 u_s}{\partial x^2} = 0\\
+u_s(x) = Ax + b\\
+u_s(0) \to b = 1, \quad
+u_s(1) \to A = -1\\
+u_s(x) = 1-x
 \end{gather}
 Defining new non-steady solution
 \begin{gather}
-u(x,t) = u_s(x) + v(x,t)
+v(x,t) = u(x,t) - u_s(x)\\
+v(x,0) = -u_s(x)\\
+v(0,t) = 0, \quad v(1, t) = 0
 \end{gather}
 
 
-\section{Formulas}
+\section{Discretisation}
+
+We look at three different ways of discretising the equations, and 
+show how all can be reduced to tridiagonal matrices. The notation used 
+has the disretised elements as $u_i^n$ where i is the x-element and 
+n is the time-element, and u is the element at this spacetime position.
 
 \subsection{Explicit forward Euler}
 
@@ -179,6 +220,67 @@ s & 1 - 2s & s &  0\\
 0 & s & 1 - 2s & s
 \end{pmatrix}u^n
 \end{gather}
+
+
+\section{Sparse matrix}
+The matrices encountered in the solvers are very sparse, with the same 
+diagonal element and off-diagonals. In order to maximize performance 
+we implement solvers for the necessary operations.
+
+There are two methods implemented for each method, one inplace and one 
+to a new vector
+
+\subsection{Multiplication}
+\begin{equation}
+d = Au =
+\begin{pmatrix}
+a & b & 0 & 0\\
+b & a & b & 0\\
+0 & b & a & b
+\end{pmatrix}u
+\end{equation}
+
+\begin{algorithm}
+\begin{enumerate}[label=\bfseries \arabic*)]
+\item Get initial vector u, and the numbers a and b
+\item Allocate a new vector d
+\item make a loop over all but the ends,
+\begin{gather*}
+d_i = bu_{i-1} + au_i + bu_{i+1}
+\end{gather*}
+\item Take care of the ends, 
+\begin{align*}
+ d_1 = au_1 + bu_2\\
+ d_n = bu_{n-1} + au_n
+\end{align*}
+\end{enumerate}
+\end{algorithm}
+
+For inplace
+\begin{algorithm}
+\begin{enumerate}[label=\bfseries \arabic*)]
+\item Get initial vector u, and the numbers a and b
+\item Make a loop which saves $u_{prev}$
+\begin{align*}
+u_{prev} &= u_i\\
+u_1 &= u_1*a + u_2*b\\
+\text{Loop over i not ends}\\
+u_{temp} &= u_i\\
+u_i &= bu_{prev} + au_i + bu_{i+1}\\
+u_{prev} &= u_{temp}
+\end{align*}
+\begin{gather*}
+u_n = bu_{prev} + au_n
+\end{gather*}
+\end{enumerate}
+\end{algorithm}
+
+\subsection{Inverse matrix multiplication}
+We have the equation 
+\begin{gather}
+d = Au
+\end{gather}
+with d and A known, where A is a supersparse matrix
 
 
 \end{document}

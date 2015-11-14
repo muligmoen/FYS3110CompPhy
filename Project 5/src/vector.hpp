@@ -1,10 +1,11 @@
-
+#include <cassert>
+#include <ostream>
 
 //! This class holds an array of type T
 /*! 
- * This class supports addition, subtraction and 
- * tridiagonal matrix operations on simple matrices
+ * This class supports copy, and accesing with operator[].
  * 
+ * There are no checks of any type or size1
  */
 template <typename T>
 class Vector
@@ -23,10 +24,28 @@ public:
     vec = new T[N];
   }
   
+  //! Copy constructor (deep copy)
+  Vector(const Vector<T> &other) : N(other.N)
+  {
+    vec = new T[N];
+    for (int ii=0; ii<N; ii++){
+      vec[ii] = other[ii];
+    }
+  }
+  
   //! Destructs the vector
   ~Vector()
   {
     delete[] vec;
+  }
+  
+  //! Copies one vector to the other
+  Vector<T>& operator=(const Vector<T> &other)
+  {
+    for (int ii=0;ii<N; ii++){
+      vec[ii] = other[ii];
+    }
+    return *this;
   }
   
   //! Accesing of the elements
@@ -35,61 +54,148 @@ public:
     return vec[N];
   }
   
+  //! Addition of two vectors
+  Vector<T> operator+(const Vector<T> other)
+  {
+    Vector<T> new_vec(N);
+    
+    for (int ii=0; ii<N; ii++){
+      new_vec[ii] = vec[ii] + other[ii];
+    }
+    
+    return new_vec;
+  }
+  
+  //! Unary negative operator
+  Vector<T> operator-()
+  {
+    Vector<T> new_vec(N);
+    for (int ii=0; ii<N; ii++){
+      new_vec[ii] = -vec[ii];
+    }
+    return new_vec;
+  }
+  
   //! Constant version of accessor
   T operator[](const int N) const
   {
     return vec[N];
   }
   
-  //! Solves the equation d = Au
-  /*!
-   * d is this vector (known), A is on the form 
-   * \f$
-   * \begin{pmatrix}
-   * a & b & 0 & 0\\
-   * b & a & b & 0\\
-   * 0 & b & a & b
-   * \end{pmatrix}\f$
-   * and u is the returned vector
-   */
-  Vector<T> solve(const Vector &d, const T a, const T b) const
+  //! Gets the size og the vector
+  int size() const
   {
-    Vector<T> u(N);
-    
-    Vector<T> beta(N);
-    Vector<T> gamma(N);
-    
-    beta[0] = vec[0]/a;
-    gamma[0] = -b/a;
-    
-    for (int ii=1; ii<N; ii++){
-      beta[ii] = (d[ii] - b*beta[ii-1])/(b*gamma[ii-1] + a);
-      gamma[ii] = -b/(b*gamma[ii-1]+a);
-    }
-    u[N-1] = beta[N-1];
-    for (int ii=N-1; ii>1; ii--){
-      u[ii-1] = beta[ii-1] + gamma[ii-1]*u[ii];
-    }
-    
-    return u;
-  }
-  
-  //! Solves d = Au
-  /*!
-   * A is known, and u is this vector. A is on the form of solve()
-   * this is done destructively? See if destructive is necessary/wanted
-   * 
-   */
-  Vector<T> multiply(const T a, const T b) const
-  {
-    Vector<T> d(N);
-    d[0] = a*vec[0] + b*vec[1];
-    d[N-1] = b*vec[N-2] + a*vec[N-1];
-    
-    for (int ii=1; ii<N-1; ii++){
-      d[ii] = b*vec[ii-1] + a*vec[ii] + b*vec[ii+1];
-    }
-   return d;
+    return N;
   }
   
 };
+
+//! Solves the equation d = Au
+ /*!
+ * A is on the form
+ * \f$
+ * \begin{pmatrix}
+ * a & b & 0 & 0\\
+ * b & a & b & 0\\
+ * 0 & b & a & b
+ * \end{pmatrix}\f$
+ * and u is the returned vector
+ */
+template <typename T>
+Vector<T> multiply(const Vector<T>& d, const T a, const T b)
+{
+  const int N = d.size();
+  Vector<T> u(N);
+  
+  for (int ii=1; ii<N-1; ii++){
+    u[ii] = b*d[ii-1] + a*d[ii] + b*d[ii+1];
+  }
+  
+  u[0] = a*d[0] + b*d[1];
+  u[N-1] = b*d[N-2] + a*d[N-1];
+  
+  return u;
+}
+
+//! Same as multiply() but works inplace
+template <typename T>
+Vector<T>& multiply_inplace(Vector<T> &u, const T a, const T b)
+{
+  const int N = u.size();
+  
+  T u_previous = u[0];
+  u[0] = a*u[0] + b*u[1];
+  
+  for (int ii=1; ii<N-1; ii++){
+    const T u_temp = u[ii];
+    u[ii] = b*u_previous + a*u[ii] + b*u[ii+1];
+    u_previous = u_temp;
+  }
+  
+  u[N-1] = b*u_previous + a*u[N-1];
+  return u;
+}
+
+//! Solves d = Au with d and A known
+/*!
+ * A is a supersparse matrix, with diagonal element a and 
+ * first offdiagonal element as b, and the rest as zero.
+ */
+template <typename T>
+Vector<T> solve(const Vector<T>& d, const T a, const T b)
+{
+  const int N = d.size();
+  Vector<T> u(N);
+  
+  Vector<T> beta(N);
+  Vector<T> gamma(N);
+  
+  beta[0] = d[0]/a;
+  gamma[0] = -b/a;
+  
+  for (int ii=1; ii<N; ii++){
+    beta[ii] = (d[ii] - b*beta[ii-1])/(b*gamma[ii-1] + a);
+    gamma[ii] = -b/(b*gamma[ii-1]+a);
+  }
+  u[N-1] = beta[N-1];
+  for (int ii=N-1; ii>1; ii--){
+    u[ii-1] = beta[ii-1] + gamma[ii-1]*u[ii];
+  }
+  return u;
+}
+
+//! Same as solve() but works inplace
+template <typename T>
+Vector<T>& solve_inplace(Vector<T> &d, const T a, const T b)
+{
+  const int N = d.size();
+  
+  Vector<T> beta(N);
+  Vector<T> gamma(N);
+  
+  beta[0] = d[0]/a;
+  gamma[0] = -b/a;
+  
+  for (int ii=1; ii<N; ii++){
+    beta[ii] = (d[ii] - b*beta[ii-1])/(b*gamma[ii-1] + a);
+    gamma[ii] = -b/(b*gamma[ii-1]+a);
+  }
+  d[N-1] = beta[N-1];
+  for (int ii=N-1; ii>1; ii--){
+    d[ii-1] = beta[ii-1] + gamma[ii-1]*d[ii];
+  }
+  return d;
+}
+
+
+template <typename T>
+std::ostream& operator<<(std::ostream& out, const Vector<T> &vector)
+{
+  out << "[ ";
+  for (int ii=0; ii<vector.size(); ii++){
+    out << vector[ii] << " ";
+  }
+  out << "]";
+  return out;
+}
+
