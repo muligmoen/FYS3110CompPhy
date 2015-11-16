@@ -141,10 +141,7 @@ v(0,t) = 0, \quad v(1, t) = 0
 
 \section{Discretisation}
 
-We look at three different ways of discretising the equations, and 
-show how all can be reduced to tridiagonal matrices. The notation used 
-has the disretised elements as $u_i^n$ where i is the x-element and 
-n is the time-element, and u is the element at this spacetime position.
+Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i,..,x_L$ and the time be discretized as $t_0,t_1,..,t_n,..,t_N$. Then we denote the solution, $u(x_i,t_n)$, as $u_i^n$.  
 
 \subsection{Explicit forward Euler}
 
@@ -167,26 +164,42 @@ s & 1 - 2s & s & 0\\
 
 \subsection{Implicit backward Euler}
 
-\begin{gather}
-u_i^n = u_i^{n-1} + \frac{\Delta t}{\Delta x^2}\left(
-u_{i+1}^n - 2u_i^n + u_{i-1}^n
-\right)
-\end{gather}
-This can be transformed into a matrix equation
-\begin{gather}
-u^n = u^{n-1} + \frac{\Delta t}{\Delta x^2}
-\begin{pmatrix}
--2 & 1 & 0 & 0\\
-1 & -2 & 1 & 0\\
-0 & 1 & -2 & 1\\
-\end{pmatrix}u^n\\
-u^{n-1} =
-\begin{pmatrix}
-1 + 2s & -s & 0 & 0\\
--s & 1 + 2s & -s & 0\\
-0 & -s & 1 + 2s & -s
-\end{pmatrix}u^n
-\end{gather}
+Using a backward discretization of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
+\begin{align*}
+\frac{u_{i}^{n}-u_{i}^{n-1}}{\Delta t} = \frac{u_{i-1}^{n}-2u_{i}^{n}+u_{i+1}^{n}}{\Delta x^2}
+\end{align*}
+Moving all unknowns to the left hand side and defining $\alpha = \frac{\Delta t}{\Delta x^2}$ we get
+\begin{align*}
+-\alpha u_{i-1}^n + (1+2\alpha)u_i^n - \alpha u_{i+1}^n = u_i^{n-1}. 
+\end{align*}
+Let's say we have only five spatial mesh points and Dirichlet boundary conditions, $u(0)=D_0$ and $u(d)=D_1$ , then all the equations reads
+\begin{align*}
+u_0^n &= D_0 \\
+-\alpha u_{0}^n + (1+2\alpha)u_1^n - \alpha u_{2}^n &= u_1^{n-1} \\
+-\alpha u_{1}^n + (1+2\alpha)u_2^n - \alpha u_{3}^n &= u_2^{n-1} \\
+-\alpha u_{2}^n + (1+2\alpha)u_3^n - \alpha u_{4}^n &= u_3^{n-1} \\
+u_L^n &= D_1 
+\end{align*}
+This now should be recognized as a matrix system on the from, $Au=b$ for 
+
+\begin{align*}
+\begin{pmatrix} 1 & 0 & \dots   & \dots         & 0 \\
+                -\alpha & 1+2\alpha & -\alpha & 0           &0 \\
+        \dots  & \ddots & \ddots & \ddots         & \dots\\
+ 0   & \dots &  -\alpha & 1+2\alpha & -\alpha \\
+ 0   & \dots & \dots & \dots    &  1
+             \end{pmatrix}
+\begin{pmatrix} D_0 \\
+      u_1^{n-1} \\
+      u_2^{n-1}\\ \dots\\ u_{L-1}^{n-1}\\
+      D_1
+\end{pmatrix} 
+=  \begin{pmatrix} u_0^n \\
+                   u_1^n  \\
+           \dots\\ \dots\\ \dots\\
+                   u_L^n 
+             \end{pmatrix} 
+\end{align*} 
 
 \subsection{Implicit Crank-Nicolson}
 \begin{gather}
