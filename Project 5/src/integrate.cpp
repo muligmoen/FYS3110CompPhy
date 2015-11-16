@@ -1,8 +1,9 @@
+#include "vector.hpp"
 #include "integrate.hpp"
 
 
 
-Vector<double> forward_euler(const Vector<double> &init_vec,
+Vector<double> diffusion::forward_euler(const Vector<double> &init_vec,
                              const double s, const int steps)
 {
   auto new_vec = init_vec;
@@ -18,7 +19,7 @@ Vector<double> forward_euler(const Vector<double> &init_vec,
   return new_vec;
 }
 
-Vector<double> backward_euler(const Vector<double>& init_vec,
+Vector<double> diffusion::backward_euler(const Vector<double>& init_vec,
                                 const double s, const int steps)
 {
   auto vec = init_vec;
@@ -36,7 +37,7 @@ Vector<double> backward_euler(const Vector<double>& init_vec,
 }
 
 
-Vector<double> Crank_Nicolson(const Vector<double>& init_vec,
+Vector<double> diffusion::Crank_Nicolson(const Vector<double>& init_vec,
                               const double s, const int steps)
 {
   auto vec = init_vec;

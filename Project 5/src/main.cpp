@@ -2,6 +2,7 @@
 #include "vector.hpp"
 #include "integrate.hpp"
 
+using namespace diffusion;
 
 int main()
 {
