@@ -267,7 +267,7 @@ The error analysis for this scheme is the same as for the forward scheme. One ca
 instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section (??)). 
 
 \subsection{Crank-Nicholson}
-To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$ and subtracting $a=t-\Delta t/2$ for the series (??) we can the following center time-derivative:
+To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$, $h=\Delta t$ and subtracting $a=t-\Delta t/2$, $h=-\Delta t$ for the series (??) we get the following center time-derivative:
 \begin{equation}
 \frac{u(t + \Delta t)-u(t)}{\Delta t} = u'(t+\Delta t) + O(\Delta t^2)
 \end{equation}
