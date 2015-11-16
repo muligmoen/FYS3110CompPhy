@@ -234,6 +234,50 @@ s & 1 - 2s & s &  0\\
 \end{pmatrix}u^n
 \end{gather}
 
+\section{Error}
+
+To investigate the truncation error in the schemes we look into the approximations we have made deriving them. In order to do that we need the following Taylor series:
+\begin{equation}
+u(a+h) = u(a) +hu'(a)+O(h^2)
+\end{equation}
+\begin{equation}
+u(a+h) = u(a) +hu'(a)+\frac{1}{2}h^2 u''(a) +O(h^3)
+\end{equation}
+\begin{equation}
+u(a+h/2) = u(a) +\frac{h}{2}u'(a) + \frac{1}{2} \left( \frac{h}{2} \right)^2 u''(a) + O(h^3)
+\end{equation}
+
+\subsection{Forward Euler}
+The forward time-derivative is obtained by solving (??) for $u'(a)$, with $a=t$ and $h=\Delta t$
+\begin{equation}
+\frac{u(t+\Delta t)-u(t)}{\Delta t} = u'(t)+O(\Delta t).
+\end{equation}  
+Having to divide by $h$ we get an truncation error of $O(h)$ in time.
+
+The second derivative with respect to space is obtained by adding (??), with $a=x$,  $h=\Delta x$ and 
+$a=x$,  $h= -\Delta x$ and solving for $u''(x)$:
+\begin{equation}
+\frac{u(x+\Delta x)-2u(x)+u(x-\Delta x)}{\Delta x^2} = u''(x)+O(\Delta x^2).
+\end{equation}  
+
+Using these approximations we have that the truncation error of the Forward Euler scheme is of magnitude $O(\Delta x^2)+O(\Delta t)$.  
+
+\subsection{Backward Euler}
+The error analysis for this scheme is the same as for the forward scheme. One can just set $h=- \Delta t$
+instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section (??)). 
+
+\subsection{Crank-Nicholson}
+To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$ and subtracting $a=t-\Delta t/2$ for the series (??) we can the following center time-derivative:
+\begin{equation}
+\frac{u(t + \Delta t)-u(t)}{\Delta t} = u'(t+\Delta t) + O(\Delta t^2)
+\end{equation}
+Having evaluated the time-derivative in $t+\Delta t$ we must evaluate the spatial-derivative in between time-points. That can be done by using an arithmetic mean of the two closest time-points
+\begin{align*}
+u(t+\Delta t/2) \simeq \frac{1}{2}(u(t)+u(t+\Delta t)).
+\end{align*}
+Using approximation above combined with expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme. 
+
+
 
 \section{Sparse matrix}
 The matrices encountered in the solvers are very sparse, with the same 
