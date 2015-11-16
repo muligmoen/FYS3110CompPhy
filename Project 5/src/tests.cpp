@@ -1,7 +1,7 @@
 #include "catch.hpp"
 
 #include "vector.hpp"
-//#include "integrate.hpp"
+//#include "diffusion.hpp"
 
 
 TEST_CASE( "SANITIY" )

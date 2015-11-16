@@ -1,5 +1,5 @@
 #include "vector.hpp"
-#include "integrate.hpp"
+#include "diffusion.hpp"
 
 
 
@@ -43,15 +43,15 @@ Vector<double> diffusion::Crank_Nicolson(const Vector<double>& init_vec,
   auto vec = init_vec;
   const int N = init_vec.size();
   
-  const double a1 = 1 + 2*s;
-  const double b1 = -s;
+  const double a_forward = 1 + s;
+  const double b_forward = -s/2;
   
-  const double a2 = 1 - 2*s;
-  const double b2 = s;
+  const double a_backward = 1 - s;
+  const double b_backward = s/2;
   
   for (int ii=0; ii<steps; ii++){
-    multiply_inplace(vec, a2, b2);
-    solve_inplace(vec, a1, b1);
+    multiply_inplace(vec, a_backward, b_backward);
+    solve_inplace(vec, a_forward, b_forward);
     vec[0] = 0;
     vec[N-1] = 0;
   }

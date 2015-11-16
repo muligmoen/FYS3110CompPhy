@@ -160,7 +160,27 @@ s & 1 - 2s & s & 0\\
 \end{pmatrix}u^n
 \end{gather}
 
-
+\subsection{Implicit backward Euler (MU)}
+\begin{gather}
+u_i^n = u_i^{n-1} + \frac{\Delta t}{\Delta x^2}\left(
+u_{i+1}^n - 2u_i^n + u_{i-1}^n
+\right)
+\end{gather}
+This can be transformed into a matrix equation
+\begin{gather}
+u^n = u^{n-1} + \frac{\Delta t}{\Delta x^2}
+\begin{pmatrix}
+-2 & 1 & 0 & 0\\
+1 & -2 & 1 & 0\\
+0 & 1 & -2 & 1\\
+\end{pmatrix}u^n\\
+u^{n-1} =
+\begin{pmatrix}
+1 + 2s & -s & 0 & 0\\
+-s & 1 + 2s & -s & 0\\
+0 & -s & 1 + 2s & -s
+\end{pmatrix}u^n
+\end{gather}
 
 \subsection{Implicit backward Euler}
 
@@ -222,15 +242,15 @@ u^{n+1} = u^n + \frac{\Delta t}{2\Delta x^2}
 0 & 1 & -2
 \end{pmatrix}u^{n+1}\\
 \begin{pmatrix}
-1 + 2s & -s & 0 & 0\\
--s & 1 + 2s & -s & 0\\
-0 & -s & 1 + 2s & -s
+1 + s & -\frac{s}{2} & 0 & 0\\
+-\frac{s}{2} & 1 + s & -\frac{s}{2} & 0\\
+0 & -\frac{s}{2} & 1 + s & -\frac{s}{2}
 \end{pmatrix}
 u^{n+1} = 
 \begin{pmatrix}
-1 - 2s & s & 0 & 0\\
-s & 1 - 2s & s &  0\\
-0 & s & 1 - 2s & s
+1 - s & \frac{s}{2} & 0 & 0\\
+\frac{s}{2} & 1 - s & \frac{s}{2} &  0\\
+0 & \frac{s}{2} & 1 - s & \frac{s}{2}
 \end{pmatrix}u^n
 \end{gather}
 
@@ -313,24 +333,6 @@ d_i = bu_{i-1} + au_i + bu_{i+1}
 \end{enumerate}
 \end{algorithm}
 
-For inplace
-\begin{algorithm}
-\begin{enumerate}[label=\bfseries \arabic*)]
-\item Get initial vector u, and the numbers a and b
-\item Make a loop which saves $u_{prev}$
-\begin{align*}
-u_{prev} &= u_i\\
-u_1 &= u_1*a + u_2*b\\
-\text{Loop over i not ends}\\
-u_{temp} &= u_i\\
-u_i &= bu_{prev} + au_i + bu_{i+1}\\
-u_{prev} &= u_{temp}
-\end{align*}
-\begin{gather*}
-u_n = bu_{prev} + au_n
-\end{gather*}
-\end{enumerate}
-\end{algorithm}
 
 \subsection{Inverse matrix multiplication}
 We have the equation 
@@ -341,7 +343,7 @@ with d and A known, where A is a supersparse matrix. Adapting the
 tridiagonal matrix algorithm from project 1,
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
-\item 
+\item Use TDMA from project 1
 \end{enumerate}
 \end{algorithm}
 

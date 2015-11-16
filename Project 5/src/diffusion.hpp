@@ -3,7 +3,7 @@
 
 #include "vector.hpp"
 
-/*! \file integrate.hpp
+/*! \file diffusion.hpp
  * 
  * @brief Functions to solve the diffusion problem
  * 

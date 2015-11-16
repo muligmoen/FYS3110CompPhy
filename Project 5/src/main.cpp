@@ -1,6 +1,6 @@
 #include <iostream>
 #include "vector.hpp"
-#include "integrate.hpp"
+#include "diffusion.hpp"
 
 using namespace diffusion;
 
