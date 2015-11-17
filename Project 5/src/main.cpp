@@ -13,12 +13,13 @@ int main()
   auto u_steady = init_vector(0, 1, N, f_steady);
   
   auto init_vec = -u_steady;
+
+  auto vec = init_vec;
   
-  init_vec[0] = 0;
-  init_vec[N-1] = 0;
+  const double s = 0.3;
+  for (int ii=0; ii<100; ii++){
+    vec = Crank_Nicolson(vec, s, 1);
   
-  const double s = 4;
-  auto vec = Crank_Nicolson(init_vec, s, 100);
-  
-  std::cout << vec << std::endl;
+    std::cout << vec << std::endl;
+  }
 }

@@ -32,7 +32,8 @@ class Vector;
  * \begin{pmatrix}
  * a & b & 0 & 0\\
  * b & a & b & 0\\
- * 0 & b & a & b
+ * 0 & b & a & b\\
+ * \cdots & & 0 & 1
  * \end{pmatrix}\f$
  * and u is the returned vector
  */

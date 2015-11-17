@@ -150,37 +150,18 @@ u_i^{n+1} = u_i^n + \frac{\Delta t}{\Delta x^2}\left(
 u_{i+1}^n - 2u_i^n + u_{i-1}^n
 \right)
 \end{gather}
-In matrix
+In matrix with boundary conditions
 \begin{gather}
 u^{n+1} = 
 \begin{pmatrix}
-1 - 2s & s & 0 & 0\\
-s & 1 - 2s & s & 0\\
-0 & s & 1-2s & s
+1 & 0 & 0 & 0 & \cdots\\
+\alpha & 1 - 2\alpha & \alpha & 0 & \cdots\\
+0 & \alpha & 1-2\alpha & \alpha & \cdots\\
+\cdots & \cdots & \ddots & \ddots& \\
+&&& 0 & 1
 \end{pmatrix}u^n
 \end{gather}
 
-\subsection{Implicit backward Euler (MU)}
-\begin{gather}
-u_i^n = u_i^{n-1} + \frac{\Delta t}{\Delta x^2}\left(
-u_{i+1}^n - 2u_i^n + u_{i-1}^n
-\right)
-\end{gather}
-This can be transformed into a matrix equation
-\begin{gather}
-u^n = u^{n-1} + \frac{\Delta t}{\Delta x^2}
-\begin{pmatrix}
--2 & 1 & 0 & 0\\
-1 & -2 & 1 & 0\\
-0 & 1 & -2 & 1\\
-\end{pmatrix}u^n\\
-u^{n-1} =
-\begin{pmatrix}
-1 + 2s & -s & 0 & 0\\
--s & 1 + 2s & -s & 0\\
-0 & -s & 1 + 2s & -s
-\end{pmatrix}u^n
-\end{gather}
 
 \subsection{Implicit backward Euler}
 
@@ -241,18 +222,40 @@ u^{n+1} = u^n + \frac{\Delta t}{2\Delta x^2}
 1 & -2 & 1\\
 0 & 1 & -2
 \end{pmatrix}u^{n+1}\\
+s = \alpha/2\\
 \begin{pmatrix}
-1 + s & -\frac{s}{2} & 0 & 0\\
--\frac{s}{2} & 1 + s & -\frac{s}{2} & 0\\
-0 & -\frac{s}{2} & 1 + s & -\frac{s}{2}
+1 & 0 & 0 & 0\\
+-\frac{\alpha}{2} & 1 + \alpha & -\frac{\alpha}{2} & 0\\
+0 & -\frac{\alpha}{2} & 1 + \alpha & -\frac{\alpha}{2}\\
+0 & & \ddots\\
+&&& 1
 \end{pmatrix}
 u^{n+1} = 
 \begin{pmatrix}
-1 - s & \frac{s}{2} & 0 & 0\\
-\frac{s}{2} & 1 - s & \frac{s}{2} &  0\\
-0 & \frac{s}{2} & 1 - s & \frac{s}{2}
+1 & 0 & 0 & 0\\
+\frac{\alpha}{2} & 1 - \alpha & \frac{\alpha}{2} &  0\\
+0 & \frac{\alpha}{2} & 1 - \alpha & \frac{\alpha}{2}\\
+&& \ddots\\
+&&&1
 \end{pmatrix}u^n
 \end{gather}
+
+\subsection{Specialisation to our problem}
+
+If we consider our problem with ends equal to zero, the schemes can 
+be reduced to a submatrix with the ''frame'' not included,
+and the operations we need are 
+\begin{gather}
+d = 
+\begin{pmatrix}
+a & b & 0 & \cdots\\
+b & a & b & \cdots\\
+&&\ddots & \ddots\\
+&&0& b& a & b\\
+&&&&b&a
+\end{pmatrix}u
+\end{gather}
+As both inverse and forward.
 
 \section{Error}
 
@@ -313,7 +316,8 @@ d = Au =
 \begin{pmatrix}
 a & b & 0 & 0\\
 b & a & b & 0\\
-0 & b & a & b
+0 & b & a & b\\
+\cdots & & b & a
 \end{pmatrix}u
 \end{equation}
 
@@ -327,8 +331,8 @@ d_i = bu_{i-1} + au_i + bu_{i+1}
 \end{gather*}
 \item Take care of the ends, 
 \begin{align*}
- d_1 = au_1 + bu_2\\
- d_n = bu_{n-1} + au_n
+ d_1 &= ad_0 + bd_1\\
+ d_{end} &= bd_{end -1} + ad_{end}
 \end{align*}
 \end{enumerate}
 \end{algorithm}
