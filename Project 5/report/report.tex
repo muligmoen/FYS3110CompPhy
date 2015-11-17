@@ -141,9 +141,9 @@ v(0,t) = 0, \quad v(1, t) = 0
 
 \section{Discretisation}
 
-Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i,..,x_L$ and the time be discretized as $t_0,t_1,..,t_n,..,t_N$. Then we denote the solution, $u(x_i,t_n)$, as $u_i^n$.  
+Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i,..,x_L$ and the time be discretised as $t_0,t_1,..,t_n,..,t_N$. Then we denote the solution, $u(x_i,t_n)$, as $u_i^n$.  
 
-\subsection{Explicit forward Euler}
+\subsection{Explicit Euler}
 
 \begin{gather}
 u_i^{n+1} = u_i^n + \frac{\Delta t}{\Delta x^2}\left(
@@ -160,7 +160,7 @@ s & 1 - 2s & s & 0\\
 \end{pmatrix}u^n
 \end{gather}
 
-\subsection{Implicit backward Euler (MU)}
+\subsection{Implicit Euler (MU)}
 \begin{gather}
 u_i^n = u_i^{n-1} + \frac{\Delta t}{\Delta x^2}\left(
 u_{i+1}^n - 2u_i^n + u_{i-1}^n
@@ -182,7 +182,7 @@ u^{n-1} =
 \end{pmatrix}u^n
 \end{gather}
 
-\subsection{Implicit backward Euler}
+\subsection{Implicit Euler}
 
 Using a backward discretization of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
 \begin{align*}
@@ -254,6 +254,8 @@ u^{n+1} =
 \end{pmatrix}u^n
 \end{gather}
 
+\subsection{The $\theta-$scheme}
+
 \section{Error}
 
 To investigate the truncation error in the schemes we look into the approximations we have made deriving them. In order to do that we need the following Taylor series:
@@ -267,7 +269,7 @@ u(a+h) = u(a) +hu'(a)+\frac{1}{2}h^2 u''(a) +O(h^3)
 u(a+h/2) = u(a) +\frac{h}{2}u'(a) + \frac{1}{2} \left( \frac{h}{2} \right)^2 u''(a) + O(h^3)
 \end{equation}
 
-\subsection{Forward Euler}
+\subsection{Explicit Euler}
 The forward time-derivative is obtained by solving (??) for $u'(a)$, with $a=t$ and $h=\Delta t$
 \begin{equation}
 \frac{u(t+\Delta t)-u(t)}{\Delta t} = u'(t)+O(\Delta t).
@@ -282,7 +284,7 @@ $a=x$,  $h= -\Delta x$ and solving for $u''(x)$:
 
 Using these approximations we have that the truncation error of the Forward Euler scheme is of magnitude $O(\Delta x^2)+O(\Delta t)$.  
 
-\subsection{Backward Euler}
+\subsection{Implicit Euler}
 The error analysis for this scheme is the same as for the forward scheme. One can just set $h=- \Delta t$
 instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section (??)). 
 
