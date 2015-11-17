@@ -304,6 +304,46 @@ u(t+\Delta t/2) \simeq \frac{1}{2}(u(t)+u(t+\Delta t)).
 Using approximation above combined with expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme. 
 
 
+\section{Stability}
+
+The key to our stability analysis is to investegate how the numerical solution grows(or in the case of diffusion; decays) compared to the analytical. This will be done by using the known analytical solution on the form:
+\begin{equation}
+u(x,t) = T(t)e^{ik \pi x} = e^{-(k\pi)^t}e^{ik \pi x}
+\end{equation}
+The solution consists of a periodic wave component, and a component decaying in time, $T(t)=e^{-(k\pi)^t}$. We will define a discrete solution on the form
+\begin{equation}
+v^n_i = A^n e^{ik \pi x_i}
+\end{equation}
+and insert it into the different discrete equations(schemes) and see what restrictions this puts on $\Delta x$ and $\Delta t$ (\emph{i} sub-script is discrete spatial position, not the imaginary unit as in the wave component).
+
+This form of analysis is known as \emph{Von Neumann's stability analysis}.
+
+\subsection{Explicit Euler}
+
+By inserting the discrete solution, $v^n_i$, into the explicit Euler scheme we get
+\begin{align*}
+\frac{A^{n+1}-A^{n}}{\Delta t} e^{ik \pi x_i} = \frac{e^{ik \pi x_{i+1}} -2e^{ik \pi x_i} + e^{ik \pi x_{i-1}}}{\Delta x^2} A^n.
+\end{align*}
+If we now use the fact that $x_i = i\Delta x$ and divide both sides by $A^n e^{ik \pi x_i}$ we obtain the simpler equation
+\begin{align*}
+\frac{A-1}{\Delta t} = \frac{e^{-ik \pi \Delta x} -2 + e^{ik \pi \Delta x}}{\Delta x^2} = -\frac{4}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)
+\end{align*}
+which solved for $A$ gives
+\begin{align*}
+A=1-\frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right).
+\end{align*}
+Now, since $T(0)=1$ and $T(t)$ is decaying we must have that $|A| \leq 1$, that is, from the expression above, 
+\begin{align*}
+|\frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)| \leq 2
+\end{align*} 
+wich is satisfied for $\frac{\Delta t}{\Delta x^2} \leq \frac{1}{2}$.
+
+\subsection{Implicit Euler}
+To be added soon..
+
+\subsection{Crank-Nicholson}
+To be added soon..
+
 
 \section{Sparse matrix}
 The matrices encountered in the solvers are very sparse, with the same 
