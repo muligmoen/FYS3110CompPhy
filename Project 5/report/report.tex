@@ -70,7 +70,7 @@ frame=l,
 
 \newcommand{\figurewidth}{.85\textwidth}
 
-\title{FYS3150/4150\\Computational Physics\\Project 4}
+\title{FYS3150/4150\\Computational Physics\\Project 5}
 \author{Magnus Ulimoen \& Krister Stræte Karlsen\\
 Candidate numbers 33 \& 63}
 \date{\today}
@@ -334,7 +334,7 @@ A=1-\frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right).
 \end{align*}
 Now, since $T(0)=1$ and $T(t)$ is decaying we must have that $|A| \leq 1$, that is, from the expression above, 
 \begin{align*}
-|\frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)| \leq 2
+\abs{ \frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)} \leq 2
 \end{align*} 
 which is satisfied for $\frac{\Delta t}{\Delta x^2} \leq \frac{1}{2}$. The scheme is so called \emph{conditionally stable}.
 
