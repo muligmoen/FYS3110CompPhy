@@ -326,7 +326,7 @@ By inserting the discrete solution, $v^n_i$, into the explicit Euler scheme we g
 \end{align*}
 If we now use the fact that $x_i = i\Delta x$ and divide both sides by $A^n e^{ik \pi x_i}$ we obtain the simpler equation
 \begin{align*}
-\frac{A-1}{\Delta t} = \frac{e^{-ik \pi \Delta x} -2 + e^{ik \pi \Delta x}}{\Delta x^2} = -\frac{4}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)
+\frac{A-1}{\Delta t} = \frac{e^{ik \pi \Delta x} -2 + e^{-ik \pi \Delta x}}{\Delta x^2} = -\frac{4}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)
 \end{align*}
 which solved for $A$ gives
 \begin{align*}
@@ -336,7 +336,7 @@ Now, since $T(0)=1$ and $T(t)$ is decaying we must have that $|A| \leq 1$, that 
 \begin{align*}
 |\frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)| \leq 2
 \end{align*} 
-which is satisfied for $\frac{\Delta t}{\Delta x^2} \leq \frac{1}{2}$. THe scheme is so called \emph{conditionally stable}.
+which is satisfied for $\frac{\Delta t}{\Delta x^2} \leq \frac{1}{2}$. The scheme is so called \emph{conditionally stable}.
 
 \subsection{Implicit Euler}
 We follow the same reasoning and procedure as for explicit Euler and start by inserting the discrete solution, $v^n_i$, into the scheme:
@@ -345,7 +345,7 @@ We follow the same reasoning and procedure as for explicit Euler and start by in
 \end{align*}
 If we now use the fact that $x_i = i\Delta x$ and divide both sides by $A^n e^{ik \pi x_i}$ we obtain the simpler equation
 \begin{align*}
-\frac{1-A^{-1}}{\Delta t} = \frac{e^{-ik \pi \Delta x} -2 + e^{ik \pi \Delta x}}{\Delta x^2} = -\frac{4}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)
+\frac{1-A^{-1}}{\Delta t} = \frac{e^{ik \pi \Delta x} -2 + e^{-ik \pi \Delta x}}{\Delta x^2} = -\frac{4}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)
 \end{align*}
 which solved for $A$ gives
 \begin{align*}
@@ -355,7 +355,24 @@ Again we require that $|A| \leq 1$, which this time puts no restrictions on the 
 
 
 \subsection{Crank-Nicholson}
-To be added soon..
+To quote the cult television classic \emph{Dinner for one}:  \emph{"Same procedure as every year, James!}
+
+Inserting  $v^n_i$, into the Crank-Nicholson scheme
+\begin{align*}
+\frac{A^{n+1} - A^{n}}{\Delta t} e^{ik \pi x_i} = \frac{1}{2} \left( \frac{e^{ik \pi x_{i+1}}-2e^{ik \pi x_{i}} + e^{ik \pi x_{i-1}}}{\Delta x^2} (A^n + A^{n+1})  \right)
+\end{align*}
+which can be written 
+\begin{align*}
+\frac{A-1}{\Delta t} &= \frac{1}{2} \left( \frac{e^{ik \pi \Delta x} -2 + e^{-ik \pi \Delta x}}{\Delta x^2} (1 + A) \right) \\
+&= \frac{1}{2} \left( -\frac{4}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)(1 + A) \right).
+\end{align*}
+Solving this equation for $A$
+\begin{align*}
+A = \frac{1-\frac{2\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)}{1+\frac{2\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)}
+\end{align*}
+we see that $|A| \leq 1$ is fulfilled, and the scheme is  \emph{unconditionally stable}.
+
+
 
 
 \section{Sparse matrix}
