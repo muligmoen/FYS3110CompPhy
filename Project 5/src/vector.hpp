@@ -117,7 +117,7 @@ public:
   
   
   //! Addition of two vectors
-  Vector<T> operator+(const Vector<T> other)
+  Vector<T> operator+(const Vector<T> other) const
   {
     Vector<T> new_vec(N);
     
@@ -129,7 +129,7 @@ public:
   }
   
   //! Unary negative operator
-  Vector<T> operator-()
+  Vector<T> operator-() const
   {
     Vector<T> new_vec(N);
     for (int ii=0; ii<N; ii++){

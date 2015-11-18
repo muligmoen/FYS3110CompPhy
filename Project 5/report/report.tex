@@ -138,6 +138,41 @@ v(x,0) = -u_s(x)\\
 v(0,t) = 0, \quad v(1, t) = 0
 \end{gather}
 
+This equation can be assumed to be on the form
+\begin{gather}
+v(x,t) = X(x)T(t)
+\end{gather}
+And so
+\begin{gather}
+\frac{\partial^2 X(x)T(t)}{\partial x^2}
+= \frac{\partial X(x)T(t)}{\partial t}\\
+\frac{1}{X(x)}\frac{\partial^2 X(x)}{\partial x^2}
+ = \frac{1}{T(t)}\frac{\partial T(t)}{\partial t} = C
+ \label{eq:coupled_constant}
+\end{gather}
+The solution to these two equations are 
+\begin{gather}
+X(x) = e^{\pm i\pi kx}\\
+T(t) = e^{\pm at}
+\end{gather}
+Since $T(t)$ can not grow to infinity, only the solution with a 
+negative exponential is 
+allowed. Now using \eqref{eq:coupled_constant} to find the relation 
+between $k$ and $a$ and summing over all the possible values of k,
+\begin{gather}
+v(x,t) = \int \!\! \mathrm{d}k\,\, C_k e^{\pm i\pi kx}e^{-(k\pi)^2 t}
+\end{gather}
+To find $C_k$ we use a Fourier transform at time $t=0$,
+\begin{gather}
+C(k) = \frac{1}{2\pi^2}\int \!\! \mathrm{d}x\,\, 
+v(x,0) e^{\mp i\pi kx}
+\end{gather}
+Setting in the solution for the initial state,
+\begin{gather}
+C(k) = \frac{1}{2\pi^2}\int_0^1 \!\! \mathrm{d}x\,\,
+(x - 1) e^{\pm i\pi kx}
+\end{gather}
+
 
 \section{Discretisation}
 
@@ -394,6 +429,73 @@ tridiagonal matrix algorithm from project 1,
 \end{enumerate}
 \end{algorithm}
 
+\section{Algorithm}
+A standard matrix
+\begin{gather}
+A = \begin{pmatrix} a & b & 0&\cdots\\
+		    b & a & b & 0&\cdots\\
+		    0 &b&a&b& 0&\cdots\\
+		    \vdots&0&\ddots&\ddots&\ddots\\
+		    &\vdots&&\\
+		    &&\cdots&0&b&a
+    \end{pmatrix}
+    \label{eq:matrixA}
+\end{gather}
+
+
+\subsection{Explicit Euler}
+\begin{algorithm}
+\begin{enumerate}[label=\bfseries \arabic*)]
+\item Calculate
+\begin{gather*}
+\alpha = \frac{\Delta t}{\Delta x^2}\\
+a = 1 - \alpha\\
+b = \alpha
+\end{gather*}
+\item Mulitply $u^n$ with the matrix A, \eqref{eq:matrixA}
+\item Repeat for the next time-step
+\end{enumerate}
+\end{algorithm}
+
+\subsection{Implicit Euler}
+\begin{algorithm}
+\begin{enumerate}[label=\bfseries \arabic*)]
+\item Calculate
+\begin{gather*}
+\alpha = \frac{\Delta t}{\Delta x^2}\\
+a = 1 + \alpha\\
+b = -\alpha
+\end{gather*}
+\item Solve the matrix equation $d = Au$ with A as \eqref{eq:matrixA},
+and $d$ as $u^n$ using TDMA. The solution is $u^{n+1}$
+
+\item Repeat for the next time-step
+\end{enumerate}
+\end{algorithm}
+
+\subsection{Crank Nicholson}
+
+\begin{algorithm}
+\begin{enumerate}[label=\bfseries \arabic*)]
+\item Calculate
+\begin{gather*}
+\alpha = \frac{1}{2}\frac{\Delta t}{\Delta x^2}\\
+a_1 = 1 - \alpha, \quad
+b_1 = \alpha\\
+a_2 = 1 + \alpha, \quad
+b_2 = -\alpha
+\end{gather*}
+
+\item Do a matrix multiplication with $u^n$ and $A_1$, where $A_1$ has 
+the entries $a_1$ and $b_1$ on the form of \eqref{eq:matrixA}.
+
+\item Do an inverse matrix multiplication with $A_2$, where $A_2$ has 
+the entries $a_2$ and $b_2$
+
+\item Repeat for the next time-step
+
+\end{enumerate}
+\end{algorithm}
 
 
 \end{document}

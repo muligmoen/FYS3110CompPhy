@@ -57,5 +57,11 @@ namespace diffusion{
   */
   Vector<double> Crank_Nicolson(const Vector<double> &init_vec,
                                 const double alpha, const int steps);
+  
+  
+  
+  //! Monte Carlo simulation of diffusion equation
+  Vector<int> Monte_Carlo(const Vector<int> &init_vec,
+                          const int steps, const int fill_rigth);
   }
 #endif

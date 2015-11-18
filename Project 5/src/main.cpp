@@ -6,20 +6,37 @@ using namespace diffusion;
 
 int main()
 {
-  const int N = 8;
   
+  const int N = 800;
+  const int Nt = 20000;
+  /*
   auto f_steady = [](double x){return 1 - x;};
   
-  auto u_steady = init_vector(0, 1, N, f_steady);
+  const auto u_steady = init_vector(0, 1, N, f_steady);
   
-  auto init_vec = -u_steady;
+  const auto init_vec = -u_steady;
 
   auto vec = init_vec;
   
-  const double s = 0.3;
-  for (int ii=0; ii<100; ii++){
-    vec = Crank_Nicolson(vec, s, 1);
+  std::cout << N << std::endl;
+  std::cout << Nt << std::endl;
   
+  const double s = 3;
+  for (int ii=0; ii<Nt; ii++){
+    vec = Crank_Nicolson(vec, s, 1);
+    std::cout << u_steady + vec << std::endl;
+  }
+  */
+  std::cout << N << std::endl;
+  std::cout << Nt << std::endl;
+  
+  Vector<int> vec(N);
+  vec[0] = 100;
+  for (int ii=1; ii<N; ii++){
+    vec[ii] = 0;
+  };
+  for (int ii=0; ii<Nt; ii++){
+    vec = Monte_Carlo(vec, 1, 100);
     std::cout << vec << std::endl;
   }
 }
