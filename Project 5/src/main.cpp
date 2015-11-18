@@ -7,8 +7,8 @@ using namespace diffusion;
 int main()
 {
   
-  const int N = 800;
-  const int Nt = 20000;
+  //const int N = 800;
+  //const int Nt = 20000;
   /*
   auto f_steady = [](double x){return 1 - x;};
   
@@ -27,16 +27,16 @@ int main()
     std::cout << u_steady + vec << std::endl;
   }
   */
-  std::cout << N << std::endl;
-  std::cout << Nt << std::endl;
+  //std::cout << N << std::endl;
+  //std::cout << Nt << std::endl;
   
-  Vector<int> vec(N);
-  vec[0] = 100;
-  for (int ii=1; ii<N; ii++){
-    vec[ii] = 0;
-  };
-  for (int ii=0; ii<Nt; ii++){
-    vec = Monte_Carlo(vec, 1, 100);
-    std::cout << vec << std::endl;
-  }
+  //Vector<int> vec(N, [](){return 0;});
+  //vec[0] = 100;
+  
+  std::cout << Monte_Carlo_gaussian(100000, 10, 1000, 0.01) << std::endl;
+
+  //for (int ii=0; ii<Nt; ii++){
+  //  vec = Monte_Carlo(vec, 1, 100);
+  //  std::cout << vec << std::endl;
+  //}
 }

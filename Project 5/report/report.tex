@@ -527,5 +527,37 @@ the entries $a_2$ and $b_2$
 \end{enumerate}
 \end{algorithm}
 
+\section{Monte Carlo}
+
+The diffusion equation has close ties with random walk. If we let a 
+particle only be able to move to the right or the left, we should obtain
+the solution to the diffusion equation when the number of samplings 
+increases.
+
+The typical displacement for a particle is $l_0 = \sqrt{2D\Delta t}$
+
+\section{Equal steplength}
+Letting the particles move on a solid lattice we can place them as 
+numbers in a vector. Then we can choose the number of particles from 
+each bin that is going to the right. The rest goes to the left. 
+How many going to right is decided by a binomial distribution.
+
+\subsection{Unequal steplength}
+\begin{algorithm}
+\begin{enumerate}[label=\bfseries \arabic*)]
+\item Set up the lattice with all the particles in bin 0
+\item Let each particle move a length $L_0\zeta$ with $\zeta$ drawn
+from a normal distribution with mean 0, and $\sigma = 1$
+\item Fix up particles outside $(0,1)$
+\item Repeat 2)-3) for the next timestep
+
+\item Bin up all the particles to get discrete values again
+
+\item Normalise with regards to the first bin (boundary cond)
+
+\end{enumerate}
+
+\end{algorithm}
+
 
 \end{document}

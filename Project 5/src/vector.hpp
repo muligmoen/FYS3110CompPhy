@@ -11,48 +11,76 @@
  * 
  */
 
-//! This class holds an array of type T
+
 /*! 
+ * 
+ * @brief This class holds a vector of type T
+ * 
  * This class supports copy, and accessing with operator[].
  * 
  * Some functions are defined as friend functions, and solves sparse multiplication
  * for a special kind of matrice.
  * 
  * There are no checks of any type or size, use vectors with equal size!
+ * 
+ * This should be used as a replacement for pointers to arrays, as 
+ * it is destructed automatically and has some types overloaded
  */
 template <typename T> 
 class Vector;
 
 
 
-//! Solves the equation d = Au
+ 
 /*!
+ * 
+ * @brief Solves the equation d = Au
+ * 
+ * @param d The input vector
+ * @param a Diagonal element of A
+ * @param b Non-diagonal element of A
+ * 
  * A is on the form
  * \f$
  * \begin{pmatrix}
- * a & b & 0 & 0\\
+ * a & b & 0 & \cdots\\
  * b & a & b & 0\\
  * 0 & b & a & b\\
- * \cdots & & 0 & 1
+ *  \cdots  &   &  \ddots\\
+ * & & b & a
  * \end{pmatrix}\f$
- * and u is the returned vector
  */
 template <typename T>
 Vector<T> multiply(const Vector<T>& d, const T a, const T b);
 
-//! Same as multiply() but works inplace
+/*!
+ * @brief Same as multiply() but works inplace
+ * 
+ * @see multiply()
+ */
 template <typename T>
 Vector<T>& multiply_inplace(Vector<T> &u, const T a, const T b);
 
-//! Solves d = Au with d and A known
+
 /*!
- * A is a supersparse matrix, with diagonal element a and 
- * first offdiagonal element as b, and the rest as zero.
+ * @brief Solves d = Au with d and A known
+ * 
+ * @param d The input vector
+ * @param a The diagonal element of A
+ * @param b The off-diagonal element of A
+ * 
+ * @see multiply() For a description of A
  */
 template <typename T>
 Vector<T> solve(const Vector<T>& d, const T a, const T b);
 
-//! Same as solve() but works inplace
+/*!
+ * @brief Solves d = Au
+ * 
+ * Inplace version of solve()
+ * 
+ * @see solve()
+ */
 template <typename T>
 Vector<T>& solve_inplace(Vector<T> &d, const T a, const T b);
 
@@ -69,14 +97,45 @@ private:
   //! The size of the vector
   int N;
   
-  //! The array elements
+  //! The vector elements
   T* vec;
   
 public:
-  //! Creates the vector
+  /*! 
+   * @brief Creates the vector
+   * 
+   * @param size Size of vector
+   * 
+   * @return A vector with uninitialized values
+   */
   Vector(const int size) : N(size)
   {
     vec = new T[N];
+  }
+  
+  /*! 
+   * 
+   * @brief Function constructor
+   * 
+   * @param size Size of vector
+   * @param f Function which decides the elements in the vector
+   * 
+   * @return A constructed Vector with the elements given by f
+   * 
+   * By calling a function this vector can be initialised with 
+   * whatever the caller wants. This is mostly used for zeroing
+   * the vector. If all elements are to be set to zero, one 
+   * way is by calling with a lambda function,
+   * 
+   * Vector< int > vector(5, [](){return 0;})
+   * 
+   */
+  Vector(const int size, T (*f)() ) : N(size)
+  {
+    vec = new T[N];
+    for (int ii=0; ii<N; ii++){
+      vec[ii] = f();
+    }
   }
   
   //! Copy constructor (deep copy)

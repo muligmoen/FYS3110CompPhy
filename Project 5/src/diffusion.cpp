@@ -1,8 +1,11 @@
 #include "vector.hpp"
 #include "diffusion.hpp"
+
 #include <random>
 #include <functional>
 #include <chrono>
+
+#include <iostream>
 
 Vector<double> diffusion::forward_euler(const Vector<double> &init_vec,
                              const double alpha, const int steps)
@@ -51,18 +54,19 @@ Vector<double> diffusion::Crank_Nicolson(const Vector<double>& init_vec,
   return vec;
 }
 
+
+
 Vector<int> Monte_Carlo_step(const Vector<int> &start_vec, std::mt19937 &generator)
 {
   const int Nbins = start_vec.size();
-  Vector<int> out_vec(Nbins);
-  
-  for (int ii=0; ii<Nbins; ii++){
-    out_vec[ii] = 0;
-  }
+  Vector<int> out_vec(Nbins, [](){return 0;});
+
+  std::cout << out_vec << std::endl;
   
   for (int ii=0; ii<Nbins; ii++){
     const int N = start_vec[ii];
-    std::uniform_int_distribution<int> right_moves(0, N); // how many moves right?
+    std::binomial_distribution<int> right_moves(N, 0.5); // Picking N where each got .5 change -> binominal
+    
     const int Nrights = right_moves(generator);
     const int Nlefts = N - Nrights;
     
@@ -92,5 +96,39 @@ Vector<int> diffusion::Monte_Carlo(const Vector<int>& init_vec,
     vec[init_vec.size()-1] = 0;
   }
   return vec;
+}
+
+Vector<int> diffusion::Monte_Carlo_gaussian(const int steps, const int bins,
+                                            const int Nparticles, const double L0)
+{ 
+  auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
+  std::mt19937 generator(seed);
+  
+  std::normal_distribution<double> gaussian_dist(0, 1);
+  
+  auto zeta = std::bind(gaussian_dist, generator);
+  
+  Vector<double> particles(Nparticles, [](){return 0.0;}); // all the particles start at x = 0
+  
+  for (int t=0; t<steps; t++){ // time steps
+    for (int ii=0; ii<Nparticles; ii++){ // looping over all the particles
+      particles[ii] += L0*zeta();
+      if (particles[ii] < 0){
+        particles[ii] = 0; // Bounce back
+      }
+      if (particles[ii] >= 1){
+        particles[ii] = 0; // Return to start
+      }
+    }
+  }
+
+  // Need to bin all the particles
+  Vector<int> binned_particles(bins, [](){return 0;});
+  
+  for (int ii=0; ii<Nparticles; ii++){
+    const int bin = particles[ii]*bins;
+    binned_particles[bin]++;
+  }
+  return binned_particles;
 }
 
