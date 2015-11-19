@@ -79,6 +79,10 @@ Candidate numbers 33 \& 63}
 \tcbset{before app=\parfillskip0pt}
 \maketitle
 
+\begin{abstract}
+To be added..
+\end{abstract}
+
 \section{Mathematical problem}
 
 \begin{gather}
@@ -118,11 +122,7 @@ Our equation then takes the simple form
 In the next sections we will drop the tilde and work with the 
 dimensionless parameters.
 
-
-
-
-
-\section{Closed form}
+\subsection{Analytical solution}
 In steady state
 \begin{gather}
 \frac{\partial^2 u_s}{\partial x^2} = 0\\
@@ -295,7 +295,7 @@ As both inverse and forward.
 
 \subsection{The $\theta-$scheme}
 
-\section{Error}
+\section{Truncation error analysis}
 
 To investigate the truncation error in the schemes we look into the approximations we have made deriving them. In order to do that we need the following Taylor series:
 \begin{equation}
@@ -339,7 +339,7 @@ u(t+\Delta t/2) \simeq \frac{1}{2}(u(t)+u(t+\Delta t)).
 Using approximation above combined with expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme. 
 
 
-\section{Stability}
+\section{Stability analysis}
 
 The key to our stability analysis is to investigate how the numerical solution grows(or in the case of diffusion; decays) compared to the analytical. This will be done by using the known analytical solution on the form:
 \begin{equation}
@@ -408,9 +408,9 @@ A = \frac{1-\frac{2\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right
 we see that $|A| \leq 1$ is fulfilled, and the scheme is  \emph{unconditionally stable}.
 
 
+\section{Implementation}
 
-
-\section{Sparse matrix}
+\subsection{Sparse matrix}
 The matrices encountered in the solvers are very sparse, with the same 
 diagonal element and off-diagonals. In order to maximize performance 
 we implement solvers for the necessary operations.
@@ -418,7 +418,7 @@ we implement solvers for the necessary operations.
 There are two methods implemented for each method, one inplace and one 
 to a new vector
 
-\subsection{Multiplication}
+\subsubsection{Multiplication}
 \begin{equation}
 d = Au =
 \begin{pmatrix}
@@ -446,7 +446,7 @@ d_i = bu_{i-1} + au_i + bu_{i+1}
 \end{algorithm}
 
 
-\subsection{Inverse matrix multiplication}
+\subsubsection{Inverse matrix multiplication}
 We have the equation 
 \begin{gather}
 d = Au
@@ -459,7 +459,7 @@ tridiagonal matrix algorithm from project 1,
 \end{enumerate}
 \end{algorithm}
 
-\section{Algorithm}
+\subsection{Algorithms}
 A standard matrix
 \begin{gather}
 A = \begin{pmatrix} a & b & 0&\cdots\\
@@ -473,7 +473,7 @@ A = \begin{pmatrix} a & b & 0&\cdots\\
 \end{gather}
 
 
-\subsection{Explicit Euler}
+\subsubsection{Explicit Euler}
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Calculate
@@ -487,7 +487,7 @@ b = \alpha
 \end{enumerate}
 \end{algorithm}
 
-\subsection{Implicit Euler}
+\subsubsection{Implicit Euler}
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Calculate
@@ -503,7 +503,7 @@ and $d$ as $u^n$ using TDMA. The solution is $u^{n+1}$
 \end{enumerate}
 \end{algorithm}
 
-\subsection{Crank Nicholson}
+\subsubsection{Crank Nicholson}
 
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
@@ -536,13 +536,13 @@ increases.
 
 The typical displacement for a particle is $l_0 = \sqrt{2D\Delta t}$
 
-\section{Equal steplength}
+\subsection{Equal step length}
 Letting the particles move on a solid lattice we can place them as 
 numbers in a vector. Then we can choose the number of particles from 
 each bin that is going to the right. The rest goes to the left. 
 How many going to right is decided by a binomial distribution.
 
-\subsection{Unequal steplength}
+\subsection{Unequal step length}
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Set up the lattice with all the particles in bin 0
@@ -558,6 +558,20 @@ from a normal distribution with mean 0, and $\sigma = 1$
 \end{enumerate}
 
 \end{algorithm}
+
+\subsection{Chioce of random number generator}
+
+\section{Results}
+
+\subsection{Reproduction of results}
+
+\section{Conclusion}
+
+\begin{thebibliography}{9}
+\bibitem{PB94}
+Plischke, M. and Bergersen, B. 1994, \emph{Equilibrium statistical physics}, World Scientific Pub. Co., Singapore.
+\end{thebibliography}
+
 
 
 \end{document}
