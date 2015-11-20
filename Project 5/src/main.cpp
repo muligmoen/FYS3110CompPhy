@@ -7,10 +7,10 @@ using namespace diffusion;
 int main()
 {
   
-  //const int N = 800;
-  //const int Nt = 20000;
-  /*
-  auto f_steady = [](double x){return 1 - x;};
+  const int N = 8;
+  const int Nt = 50;
+  
+  auto f_steady = [](double x){return 1.0 - x;};
   
   const auto u_steady = init_vector(0, 1, N, f_steady);
   
@@ -21,19 +21,19 @@ int main()
   std::cout << N << std::endl;
   std::cout << Nt << std::endl;
   
-  const double s = 3;
+  const double s = 1;
   for (int ii=0; ii<Nt; ii++){
     vec = Crank_Nicolson(vec, s, 1);
     std::cout << u_steady + vec << std::endl;
   }
-  */
+  
   //std::cout << N << std::endl;
   //std::cout << Nt << std::endl;
   
   //Vector<int> vec(N, [](){return 0;});
   //vec[0] = 100;
   
-  std::cout << Monte_Carlo_gaussian(100000, 10, 1000, 0.01) << std::endl;
+  //std::cout << Monte_Carlo_gaussian(100000, 10, 1000, 0.01) << std::endl;
 
   //for (int ii=0; ii<Nt; ii++){
   //  vec = Monte_Carlo(vec, 1, 100);

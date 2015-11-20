@@ -24,10 +24,13 @@ for ii in range(Nt):
 fig, ax = plt.subplots()
 
 x = np.linspace(0, 1, N)
-line, = ax.plot(x, u[0])
-plt.ylim(-0.1, 1.1)
+line, = ax.plot(x, u[0], linewidth=2)
+plt.xlabel('x')
+plt.ylabel('Concentration')
 
-plt.ylim(0, 150)
+plt.ylim(-1, 1)
+
+#plt.ylim(0, 150) #MC with 150 particles ?
 
 
 def animate(i):
@@ -36,7 +39,7 @@ def animate(i):
 
 
 
-ani = animation.FuncAnimation(fig, animate, range(Nt), interval=3)
+ani = animation.FuncAnimation(fig, animate, range(Nt), interval=250)
 
 plt.show()
 #for i in range()

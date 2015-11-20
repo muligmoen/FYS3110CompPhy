@@ -152,26 +152,56 @@ And so
 \end{gather}
 The solution to these two equations are 
 \begin{gather}
-X(x) = e^{\pm i\pi kx}\\
+X(x) = \sin(\pi kx) \lor \cos(\pi kx)\\
 T(t) = e^{\pm at}
 \end{gather}
 Since $T(t)$ can not grow to infinity, only the solution with a 
-negative exponential is 
-allowed. Now using \eqref{eq:coupled_constant} to find the relation 
-between $k$ and $a$ and summing over all the possible values of k,
+negative exponential is allowed. Using the boundary conditions on 
+$v(x=0,0)$, we see that the sine-solution is the only possible.
+The relation on the other boundary gives 
 \begin{gather}
-v(x,t) = \int \!\! \mathrm{d}k\,\, C_k e^{\pm i\pi kx}e^{-(k\pi)^2 t}
+\pi k = n\pi
 \end{gather}
-To find $C_k$ we use a Fourier transform at time $t=0$,
+with n as an integer. $k$ is quantized as an integer. The full solution 
+is the superposition of all the solutions,
 \begin{gather}
-C(k) = \frac{1}{2\pi^2}\int \!\! \mathrm{d}x\,\, 
-v(x,0) e^{\mp i\pi kx}
+v(x,t) = \sum_{n=1}^\infty c_k \sin(\pi kx)e^{-(k\pi)^2t}
 \end{gather}
-Setting in the solution for the initial state,
+To determine $c_k$ we use the Fourier expansion of the initial 
+state, (this is from Rottman page 122, Fourier-rekker)
 \begin{gather}
-C(k) = \frac{1}{2\pi^2}\int_0^1 \!\! \mathrm{d}x\,\,
-(x - 1) e^{\pm i\pi kx}
+\frac{\pi - x}{2} = \sum_{n=1}^\infty \frac{\sin(nx)}{n}
 \end{gather}
+Which gives
+\begin{gather}
+x-1 = -\frac{2}{\pi}\sum_{k=1}^\infty \frac{\sin\pi kx}{k}
+\end{gather}
+And the Fourier constants
+\begin{gather}
+c_k = -\frac{2}{\pi k}
+\end{gather}
+And the analytical solution
+\begin{gather}
+v(x,t) = -\sum_{k=1}^\infty \frac{2}{\pi k}\sin(k\pi x)e^{-(k\pi)^2t}
+\end{gather}
+
+
+
+%Now using \eqref{eq:coupled_constant} to find the relation 
+%between $k$ and $a$ and summing over all the possible values of k,
+%\begin{gather}
+%v(x,t) = \int \!\! \mathrm{d}k\,\, C_k e^{\pm i\pi kx}e^{-(k\pi)^2 t}
+%\end{gather}
+%To find $C_k$ we use a Fourier transform at time $t=0$,
+%\begin{gather}
+%C(k) = \frac{1}{2\pi^2}\int \!\! \mathrm{d}x\,\, 
+%v(x,0) e^{\mp i\pi kx}
+%\end{gather}
+%Setting in the solution for the initial state,
+%\begin{gather}
+%C(k) = \frac{1}{2\pi^2}\int_0^1 \!\! \mathrm{d}x\,\,
+%(x - 1) e^{\pm i\pi kx}
+%\end{gather}
 
 
 \section{Discretisation}
