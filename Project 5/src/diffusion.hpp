@@ -109,5 +109,19 @@ namespace diffusion{
    */
   Vector<int> Monte_Carlo_gaussian(const int steps, const int bins,
                                    const int Nparticles, const double L0);
+  
+  /*!
+   * @brief Analytical solution of diffusion equation for our special problem
+   * 
+   * The function solved is x-1, the negative of the steady state solution,
+   * with boundary conditions 0
+   * 
+   * @param t Time after initial start-time
+   * @param N Number of points the interval is split into
+   * @param order Order which the analytical solution is scaled to. The 
+   * default value is 1000
+   * 
+   */
+  Vector<double> Analytical(const double t, const int N, const int order=1000);
 }
 #endif

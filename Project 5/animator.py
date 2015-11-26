@@ -7,7 +7,7 @@ def get_stdout(cmd):
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
   return p.stdout.read()
 
-command = ['./project5']
+command = ['./project5', 'ANA']
 
 strings = get_stdout(command).split('\n')
 

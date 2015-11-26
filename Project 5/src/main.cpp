@@ -2,30 +2,53 @@
 #include "vector.hpp"
 #include "diffusion.hpp"
 
+#include <cstring>
+
 using namespace diffusion;
 
-int main()
+int main(int argc, char **argv)
 {
-  
-  const int N = 8;
-  const int Nt = 50;
-  
-  auto f_steady = [](double x){return 1.0 - x;};
-  
-  const auto u_steady = init_vector(0, 1, N, f_steady);
-  
-  const auto init_vec = -u_steady;
+  if (argc>1 && !std::strcmp(argv[1], "CN")){
+    const int N = 8;
+    const int Nt = 50;
+    
+    auto f_steady = [](double x){return 1.0 - x;};
+    
+    const auto u_steady = init_vector(0, 1, N, f_steady);
+    
+    const auto init_vec = -u_steady;
 
-  auto vec = init_vec;
-  
-  std::cout << N << std::endl;
-  std::cout << Nt << std::endl;
-  
-  const double s = 1;
-  for (int ii=0; ii<Nt; ii++){
-    vec = Crank_Nicolson(vec, s, 1);
-    std::cout << u_steady + vec << std::endl;
+    auto vec = init_vec;
+    
+    std::cout << N << std::endl;
+    std::cout << Nt << std::endl;
+    
+    const double s = 1;
+    for (int ii=0; ii<Nt; ii++){
+      vec = Crank_Nicolson(vec, s, 1);
+      std::cout << u_steady + vec << std::endl;
+    }
   }
+  
+  if (argc>1 && !std::strcmp(argv[1], "ANA")){
+    const int N = 100;
+    const int Nt = 30;
+    
+    std::cout << N << std::endl;
+    std::cout << Nt << std::endl;
+    
+    auto f_steady = [](double x){return 1.0 - x;};
+    
+    const auto u_steady = init_vector(0, 1, N, f_steady);
+    
+    const double dt = 0.01;
+    for (int ii=0; ii<Nt; ii++){
+      const double t = dt*ii; 
+      std::cout << Analytical(t, N) + u_steady << std::endl;
+    }
+  }
+    
+    
   
   //std::cout << N << std::endl;
   //std::cout << Nt << std::endl;

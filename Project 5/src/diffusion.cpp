@@ -5,7 +5,7 @@
 #include <functional>
 #include <chrono>
 
-#include <iostream>
+#include <cmath>
 
 Vector<double> diffusion::forward_euler(const Vector<double> &init_vec,
                              const double alpha, const int steps)
@@ -60,8 +60,7 @@ Vector<int> Monte_Carlo_step(const Vector<int> &start_vec, std::mt19937 &generat
 {
   const int Nbins = start_vec.size();
   Vector<int> out_vec(Nbins, [](){return 0;});
-
-  std::cout << out_vec << std::endl;
+  
   
   for (int ii=0; ii<Nbins; ii++){
     const int N = start_vec[ii];
@@ -132,3 +131,23 @@ Vector<int> diffusion::Monte_Carlo_gaussian(const int steps, const int bins,
   return binned_particles;
 }
 
+const double pi = 4.0*std::atan(1);
+
+
+Vector<double> diffusion::Analytical(const double t, const int N,
+                                     const int order)
+{
+  Vector<double> u(N, [](){return 0.0;});
+  
+  auto f = [](int k, double t, double x){
+            return -2.0/(k*pi)*std::sin(k*x*pi)*std::exp(-(pi*k)*t); };
+  const double dx = 1.0/(N-1);
+  
+  
+  for (int k=1; k<order; k++){
+    for (int ii=0; ii<N; ii++){
+      u[ii] += f(k, t, dx*ii);
+    }
+  }
+  return u;
+}
