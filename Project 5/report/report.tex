@@ -83,6 +83,10 @@ Candidate numbers 33 \& 63}
 To be added..
 \end{abstract}
 
+\section{Introduction}
+Add stuff and point to article..
+
+
 \section{Mathematical problem}
 
 \begin{gather}
@@ -204,11 +208,13 @@ v(x,t) = -\sum_{k=1}^\infty \frac{2}{\pi k}\sin(k\pi x)e^{-(k\pi)^2t}
 %\end{gather}
 
 
-\section{Discretisation}
+\section{Finite difference methods}
 
 Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i,..,x_L$ and the time be discretised as $t_0,t_1,..,t_n,..,t_N$. Then we denote the solution, $u(x_i,t_n)$, as $u_i^n$.  
 
-\subsection{Explicit Euler}
+\subsection{Schemes}
+
+\subsubsection{Explicit Euler}
 
 \begin{gather}
 u_i^{n+1} = u_i^n + \frac{\Delta t}{\Delta x^2}\left(
@@ -228,7 +234,7 @@ u^{n+1} =
 \end{gather}
 
 
-\subsection{Implicit Euler}
+\subsubsection{Implicit Euler}
 
 Using a backward discretization of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
 \begin{align*}
@@ -267,7 +273,7 @@ This now should be recognized as a matrix system on the from, $Au=b$ for
              \end{pmatrix} 
 \end{align*} 
 
-\subsection{Implicit Crank-Nicolson}
+\subsubsection{Crank-Nicolson}
 \begin{gather}
 u_i^{n+1} = u_i^n + \frac{\Delta t}{2\Delta x^2}\left(
 u_{i+1}^n - 2u_i^n + u_{i-1}^n + u_{i+1}^{n+1} - 2u_i^{n+1} + u_{i-1}^{n+1}
@@ -306,7 +312,7 @@ u^{n+1} =
 \end{gather}
 
 
-\subsection{Specialisation to our problem}
+\subsubsection{Specialisation to our problem}
 
 If we consider our problem with ends equal to zero, the schemes can 
 be reduced to a submatrix with the ''frame'' not included,
@@ -323,9 +329,9 @@ b & a & b & \cdots\\
 \end{gather}
 As both inverse and forward.
 
-\subsection{The $\theta-$scheme}
+\subsubsection{The $\theta-$scheme}
 
-\section{Truncation error analysis}
+\subsection{Truncation error analysis}
 
 To investigate the truncation error in the schemes we look into the approximations we have made deriving them. In order to do that we need the following Taylor series:
 \begin{equation}
@@ -338,7 +344,7 @@ u(a+h) = u(a) +hu'(a)+\frac{1}{2}h^2 u''(a) +O(h^3)
 u(a+h/2) = u(a) +\frac{h}{2}u'(a) + \frac{1}{2} \left( \frac{h}{2} \right)^2 u''(a) + O(h^3)
 \end{equation}
 
-\subsection{Explicit Euler}
+\subsubsection{Explicit Euler}
 The forward time-derivative is obtained by solving (??) for $u'(a)$, with $a=t$ and $h=\Delta t$
 \begin{equation}
 \frac{u(t+\Delta t)-u(t)}{\Delta t} = u'(t)+O(\Delta t).
@@ -353,11 +359,11 @@ $a=x$,  $h= -\Delta x$ and solving for $u''(x)$:
 
 Using these approximations we have that the truncation error of the Forward Euler scheme is of magnitude $O(\Delta x^2)+O(\Delta t)$.  
 
-\subsection{Implicit Euler}
+\subsubsection{Implicit Euler}
 The error analysis for this scheme is the same as for the forward scheme. One can just set $h=- \Delta t$
 instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section (??)). 
 
-\subsection{Crank-Nicholson}
+\subsubsection{Crank-Nicholson}
 To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$, $h=\Delta t$ and subtracting $a=t-\Delta t/2$, $h=-\Delta t$ for the series (??) we get the following center time-derivative:
 \begin{equation}
 \frac{u(t + \Delta t)-u(t)}{\Delta t} = u'(t+\Delta t) + O(\Delta t^2)
@@ -369,7 +375,7 @@ u(t+\Delta t/2) \simeq \frac{1}{2}(u(t)+u(t+\Delta t)).
 Using approximation above combined with expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme. 
 
 
-\section{Stability analysis}
+\subsection{Stability analysis}
 
 The key to our stability analysis is to investigate how the numerical solution grows(or in the case of diffusion; decays) compared to the analytical. This will be done by using the known analytical solution on the form:
 \begin{equation}
@@ -383,7 +389,7 @@ and insert it into the different discrete equations(schemes) and see what restri
 
 This form of analysis is known as \emph{Von Neumann's stability analysis}.
 
-\subsection{Explicit Euler}
+\subsubsection{Explicit Euler}
 
 By inserting the discrete solution, $v^n_i$, into the explicit Euler scheme we get
 \begin{align*}
@@ -403,7 +409,7 @@ Now, since $T(0)=1$ and $T(t)$ is decaying we must have that $|A| \leq 1$, that 
 \end{align*} 
 which is satisfied for $\frac{\Delta t}{\Delta x^2} \leq \frac{1}{2}$. The scheme is so called \emph{conditionally stable}.
 
-\subsection{Implicit Euler}
+\subsubsection{Implicit Euler}
 We follow the same reasoning and procedure as for explicit Euler and start by inserting the discrete solution, $v^n_i$, into the scheme:
 \begin{align*}
 \frac{A^{n}-A^{n-1}}{\Delta t} e^{ik \pi x_i} = \frac{e^{ik \pi x_{i+1}} -2e^{ik \pi x_i} + e^{ik \pi x_{i-1}}}{\Delta x^2} A^n.
@@ -419,7 +425,7 @@ A=\left( \frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)-1
 Again we require that $|A| \leq 1$, which this time puts no restrictions on the $\Delta t/ \Delta x^2$ relationship. This is therefore a so called \emph{unconditionally stable} scheme.
 
 
-\subsection{Crank-Nicholson}
+\subsubsection{Crank-Nicholson}
 To quote the cult television classic \emph{Dinner for one}:  \emph{"Same procedure as every year, James!}
 
 Inserting  $v^n_i$, into the Crank-Nicholson scheme
@@ -438,7 +444,9 @@ A = \frac{1-\frac{2\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right
 we see that $|A| \leq 1$ is fulfilled, and the scheme is  \emph{unconditionally stable}.
 
 
-\section{Implementation}
+\subsection{Implementation}
+
+\subsubsection{Convergence rate}
 
 \subsection{Sparse matrix}
 The matrices encountered in the solvers are very sparse, with the same 
