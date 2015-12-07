@@ -228,7 +228,11 @@ Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i
 \subsection{Schemes}
 
 \subsubsection{Explicit Euler}
-This scheme uses a forward Euler step
+Using a forward discretization of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
+\begin{align}
+\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} = \frac{u_{i-1}^{n}-2u_{i}^{n}+u_{i+1}^{n}}{\Delta x^2}
+\end{align}
+Solved for $u_{i}^{n+1}$ the explicit Euler scheme is recovered:
 \begin{gather}
 u_i^{n+1} = u_i^n + \frac{\Delta t}{\Delta x^2}\left(
 u_{i+1}^n - 2u_i^n + u_{i-1}^n
@@ -251,7 +255,7 @@ u^{n+1} =
 \subsubsection{Implicit Euler}
 \label{subsubsec:implicit_euler}
 
-Using a backward discretization of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
+Using a backward discretization of the time-derivative we obtain the following finite difference approximation of (2.11):
 \begin{align}
 \frac{u_{i}^{n}-u_{i}^{n-1}}{\Delta t} = \frac{u_{i-1}^{n}-2u_{i}^{n}+u_{i+1}^{n}}{\Delta x^2}
 \end{align}
