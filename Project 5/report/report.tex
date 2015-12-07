@@ -4,6 +4,10 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 
+\usepackage{csquotes}
+\usepackage[sortcites=true,sorting=nyt,backend=biber]{biblatex}
+\addbibresource{bibliography.bib}
+
 
 \usepackage[colorlinks=true]{hyperref}
 \usepackage{cleveref}
@@ -55,8 +59,6 @@ frame=l,
 \newcommand{\Real}{\mathbb{R}}
 \newcommand{\bigO}[1]{\mathcal{O}\left( #1 \right)}
 
-\newcommand{\di}{\mathrm{d}}
-\newcommand{\magM}{\mathcal{M}}
 
 \newcounter{algcounter}
 \renewcommand{\thealgcounter}{\Roman{algcounter}}
@@ -84,37 +86,45 @@ To be added..
 \end{abstract}
 
 \section{Introduction}
-Add stuff and point to article..
+This projects solves the diffusion equation in one dimension. We look 
+at the diffusion of neutransmitters in the synaptic cleft. In the brain 
+and here a discussion about the processes. This is how the signals are
+transmitted in the brain.
 
 
 \section{Mathematical problem}
-
+As a mathematical problem the problem is solved as the equation
 \begin{gather}
 \frac{\partial u}{\partial t} = D\nabla^2u
 \end{gather}
-One dimensional,
+Where $D$ is a constant determining how ''solid'' the fluid which is 
+diffused through is. Our problem is one-dimensional and has conditions on 
+the boundaries.
 \subsection{Boundary conditions}
-Interval $x \in (0, d)$
+The interval of interest is $x \in [0, d]$
 \begin{align}
+u(x,0) &= 0\\
 u(0,t) &= u_0\\
-u(d,t) &= 0\\
-u(x,0) &= 0
+u(d,t) &= 0
 \end{align}
 
 \subsection{Scaling}
+To make this problem more general and easier to solve we introduce 
+scaling of the dimensions. This gives dimensionless parameters which 
+are easily adapted to all sorts of diffusion problems.
 
-To shrink the range of x, we introduce the length scaling,
-\begin{gather}
+Length scaling
+\begin{equation}
 \tilde{x} = \frac{x}{d}
-\end{gather}
-And a time scaling
-\begin{gather}
+\end{equation}
+Time scaling
+\begin{equation}
 \tilde{t} = t\frac{D}{d^2}
-\end{gather}
-And scaling the function
-\begin{gather}
+\end{equation}
+Amplitude scaling
+\begin{equation}
 \tilde{u}(x,t) = \frac{u(x,t)}{u_0}
-\end{gather}
+\end{equation}
 Our equation then takes the simple form
 \begin{gather}
 \frac{\partial \tilde{u}}{\partial \tilde{t}}
@@ -127,22 +137,24 @@ In the next sections we will drop the tilde and work with the
 dimensionless parameters.
 
 \subsection{Analytical solution}
-In steady state
+In the steady state we must have
 \begin{gather}
-\frac{\partial^2 u_s}{\partial x^2} = 0\\
+\frac{\partial^2 u_s}{\partial x^2} = 0
+\end{gather}
+This has the solution
+\begin{gather}
 u_s(x) = Ax + b\\
 u_s(0) \to b = 1, \quad
 u_s(1) \to A = -1\\
-u_s(x) = 1-x
+u_s(x) = 1-x \label{eq:u_steady}
 \end{gather}
-Defining new non-steady solution
+Defining the new non-steady solution
 \begin{gather}
 v(x,t) = u(x,t) - u_s(x)\\
 v(x,0) = -u_s(x)\\
-v(0,t) = 0, \quad v(1, t) = 0
+v(0,t) = v(1, t) = 0
 \end{gather}
-
-This equation can be assumed to be on the form
+To solve this equation we assume that it is on the separable form
 \begin{gather}
 v(x,t) = X(x)T(t)
 \end{gather}
@@ -160,8 +172,8 @@ X(x) = \sin(\pi kx) \lor \cos(\pi kx)\\
 T(t) = e^{\pm at}
 \end{gather}
 Since $T(t)$ can not grow to infinity, only the solution with a 
-negative exponential is allowed. Using the boundary conditions on 
-$v(x=0,0)$, we see that the sine-solution is the only possible.
+negative exponential is allowed. Using the boundary conditions at 
+$x=0$, we see that the cosine solution is not possible.
 The relation on the other boundary gives 
 \begin{gather}
 \pi k = n\pi
@@ -172,7 +184,8 @@ is the superposition of all the solutions,
 v(x,t) = \sum_{n=1}^\infty c_k \sin(\pi kx)e^{-(k\pi)^2t}
 \end{gather}
 To determine $c_k$ we use the Fourier expansion of the initial 
-state, (this is from Rottman page 122, Fourier-rekker)
+state \eqref{eq:u_steady}, 
+%(this is from Rottman page 122, Fourier-rekker)
 \begin{gather}
 \frac{\pi - x}{2} = \sum_{n=1}^\infty \frac{\sin(nx)}{n}
 \end{gather}
@@ -215,13 +228,14 @@ Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i
 \subsection{Schemes}
 
 \subsubsection{Explicit Euler}
-
+This scheme uses a forward Euler step
 \begin{gather}
 u_i^{n+1} = u_i^n + \frac{\Delta t}{\Delta x^2}\left(
 u_{i+1}^n - 2u_i^n + u_{i-1}^n
 \right)
 \end{gather}
-In matrix with boundary conditions
+Written in a matrix equation with boundary conditions (the notation 
+is explained in \ref{subsubsec:implicit_euler})
 \begin{gather}
 u^{n+1} = 
 \begin{pmatrix}
@@ -235,11 +249,12 @@ u^{n+1} =
 
 
 \subsubsection{Implicit Euler}
+\label{subsubsec:implicit_euler}
 
 Using a backward discretization of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
-\begin{align*}
+\begin{align}
 \frac{u_{i}^{n}-u_{i}^{n-1}}{\Delta t} = \frac{u_{i-1}^{n}-2u_{i}^{n}+u_{i+1}^{n}}{\Delta x^2}
-\end{align*}
+\end{align}
 Moving all unknowns to the left hand side and defining $\alpha = \frac{\Delta t}{\Delta x^2}$ we get
 \begin{align*}
 -\alpha u_{i-1}^n + (1+2\alpha)u_i^n - \alpha u_{i+1}^n = u_i^{n-1}. 
@@ -253,8 +268,7 @@ u_0^n &= D_0 \\
 u_L^n &= D_1 
 \end{align*}
 This now should be recognized as a matrix system on the from, $Au=b$ for 
-
-\begin{align*}
+\begin{align}
 \begin{pmatrix} 1 & 0 & \dots   & \dots         & 0 \\
                 -\alpha & 1+2\alpha & -\alpha & 0           &0 \\
         \dots  & \ddots & \ddots & \ddots         & \dots\\
@@ -271,15 +285,16 @@ This now should be recognized as a matrix system on the from, $Au=b$ for
            \dots\\ \dots\\ \dots\\
                    u_L^n 
              \end{pmatrix} 
-\end{align*} 
+\end{align} 
 
 \subsubsection{Crank-Nicolson}
+This scheme uses a time-centered scheme at $(x,t+\Delta t/2)$
 \begin{gather}
 u_i^{n+1} = u_i^n + \frac{\Delta t}{2\Delta x^2}\left(
 u_{i+1}^n - 2u_i^n + u_{i-1}^n + u_{i+1}^{n+1} - 2u_i^{n+1} + u_{i-1}^{n+1}
 \right)
 \end{gather}
-In matrix
+In a matrix equation it takes the form
 \begin{gather}
 u^{n+1} = u^n + \frac{\Delta t}{2\Delta x^2}
 \begin{pmatrix}
@@ -293,7 +308,6 @@ u^{n+1} = u^n + \frac{\Delta t}{2\Delta x^2}
 1 & -2 & 1\\
 0 & 1 & -2
 \end{pmatrix}u^{n+1}\\
-s = \alpha/2\\
 \begin{pmatrix}
 1 & 0 & 0 & 0\\
 -\frac{\alpha}{2} & 1 + \alpha & -\frac{\alpha}{2} & 0\\
@@ -315,19 +329,20 @@ u^{n+1} =
 \subsubsection{Specialisation to our problem}
 
 If we consider our problem with ends equal to zero, the schemes can 
-be reduced to a submatrix with the ''frame'' not included,
-and the operations we need are 
+be reduced to a submatrix with the cornes equal to zero, and is therefore
+not required to reach the solution. All the three schemes can be written 
+with the use of the matrix
 \begin{gather}
-d = 
+A = 
 \begin{pmatrix}
 a & b & 0 & \cdots\\
 b & a & b & \cdots\\
 &&\ddots & \ddots\\
 &&0& b& a & b\\
 &&&&b&a
-\end{pmatrix}u
+\end{pmatrix}
+\label{eq:matrixA}
 \end{gather}
-As both inverse and forward.
 
 \subsubsection{The $\theta-$scheme}
 
@@ -444,72 +459,69 @@ A = \frac{1-\frac{2\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right
 we see that $|A| \leq 1$ is fulfilled, and the scheme is  \emph{unconditionally stable}.
 
 
-\subsection{Implementation}
+\section{Monte Carlo methods}
 
-\subsubsection{Convergence rate}
+The diffusion equation has close ties with random walk. If we let a 
+particle only be able to move to the right or the left, we should obtain
+the solution to the diffusion equation when the number of samplings 
+increases.
+
+The methods used here are based on \cite{farnell2005monte}. This gives 
+the standard displacement for a particle in one dimension 
+as $l_0 = \sqrt{2D\Delta t}$.
+
+\subsection{Equal step length}
+Letting the particles move on a solid lattice we can place them as 
+numbers in a vector, where each number is equal to the number of 
+particles in that position. Then we can choose the number of particles
+from  each bin that is going to the right, and letting the rest go
+to the left. 
+How many going to right is decided by a binomial distribution.
+
+\subsection{Unequal step length}
+The other method that we are exploring is letting all the particles 
+walk a distance $L_0\zeta$ with $\zeta$ as a number from a normal 
+distribution with mean 1. This should more closely resemble real
+particles, as they show a somewhat equal resemblance to the velocity 
+distribution.
+
+
+\subsection{Choice of random number generator}
+
+For the MC-methods the Mersenne Twister from the \emph{<random>}
+header in the standard library in C++ is used. This should give numbers 
+with a suitable entropy and period.
+
+
+\section{Implementation}
+
 
 \subsection{Sparse matrix}
 The matrices encountered in the solvers are very sparse, with the same 
 diagonal element and off-diagonals. In order to maximize performance 
 we implement solvers for the necessary operations.
 
-There are two methods implemented for each method, one inplace and one 
-to a new vector
-
-\subsubsection{Multiplication}
-\begin{equation}
-d = Au =
-\begin{pmatrix}
-a & b & 0 & 0\\
-b & a & b & 0\\
-0 & b & a & b\\
-\cdots & & b & a
-\end{pmatrix}u
-\end{equation}
-
+The schemes used can all be represented as a multiplication with 
+a matrix on the form of \eqref{eq:matrixA}. The matrix multiplication is 
+given in the algorithm
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
-\item Get initial vector u, and the numbers a and b
-\item Allocate a new vector d
-\item make a loop over all but the ends,
+\item Get vector u, and the numbers a and b
+\item Loop over all but the ends,
 \begin{gather*}
 d_i = bu_{i-1} + au_i + bu_{i+1}
 \end{gather*}
-\item Take care of the ends, 
+\item Compute the ends, 
 \begin{align*}
  d_1 &= ad_0 + bd_1\\
  d_{end} &= bd_{end -1} + ad_{end}
 \end{align*}
 \end{enumerate}
 \end{algorithm}
+The inverse matrix multiplication uses the same method as in project 1, 
+which is in the Github repository.
 
-
-\subsubsection{Inverse matrix multiplication}
-We have the equation 
-\begin{gather}
-d = Au
-\end{gather}
-with d and A known, where A is a supersparse matrix. Adapting the 
-tridiagonal matrix algorithm from project 1,
-\begin{algorithm}
-\begin{enumerate}[label=\bfseries \arabic*)]
-\item Use TDMA from project 1
-\end{enumerate}
-\end{algorithm}
-
-\subsection{Algorithms}
-A standard matrix
-\begin{gather}
-A = \begin{pmatrix} a & b & 0&\cdots\\
-		    b & a & b & 0&\cdots\\
-		    0 &b&a&b& 0&\cdots\\
-		    \vdots&0&\ddots&\ddots&\ddots\\
-		    &\vdots&&\\
-		    &&\cdots&0&b&a
-    \end{pmatrix}
-    \label{eq:matrixA}
-\end{gather}
-
+\subsection{Difference schemes}
 
 \subsubsection{Explicit Euler}
 \begin{algorithm}
@@ -542,7 +554,6 @@ and $d$ as $u^n$ using TDMA. The solution is $u^{n+1}$
 \end{algorithm}
 
 \subsubsection{Crank Nicholson}
-
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Calculate
@@ -565,22 +576,10 @@ the entries $a_2$ and $b_2$
 \end{enumerate}
 \end{algorithm}
 
-\section{Monte Carlo}
-
-The diffusion equation has close ties with random walk. If we let a 
-particle only be able to move to the right or the left, we should obtain
-the solution to the diffusion equation when the number of samplings 
-increases.
-
-The typical displacement for a particle is $l_0 = \sqrt{2D\Delta t}$
-
-\subsection{Equal step length}
-Letting the particles move on a solid lattice we can place them as 
-numbers in a vector. Then we can choose the number of particles from 
-each bin that is going to the right. The rest goes to the left. 
-How many going to right is decided by a binomial distribution.
-
-\subsection{Unequal step length}
+\subsection{Monte Carlo}
+The Monte Carlo method with equal steps is very simple to program, and 
+is therefore just included in the source code. The algorithm for 
+unequal steplength
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Set up the lattice with all the particles in bin 0
@@ -588,27 +587,22 @@ How many going to right is decided by a binomial distribution.
 from a normal distribution with mean 0, and $\sigma = 1$
 \item Fix up particles outside $(0,1)$
 \item Repeat 2)-3) for the next timestep
-
-\item Bin up all the particles to get discrete values again
-
-\item Normalise with regards to the first bin (boundary cond)
-
+\item Bin up all the particles to get discrete values
+\item Normalise with regards to the first bin (boundary condition)
 \end{enumerate}
-
 \end{algorithm}
 
-\subsection{Chioce of random number generator}
-
 \section{Results}
+
+\subsection{Convergence rate}
 
 \subsection{Reproduction of results}
 
 \section{Conclusion}
 
-\begin{thebibliography}{9}
-\bibitem{PB94}
-Plischke, M. and Bergersen, B. 1994, \emph{Equilibrium statistical physics}, World Scientific Pub. Co., Singapore.
-\end{thebibliography}
+
+
+\printbibliography
 
 
 

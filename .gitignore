@@ -22,6 +22,10 @@ obj
 *.aux
 *.backup
 *.out
+*.bbl
+*.bcf
+*.blg
+*.run.xml
 
 # Kdevelop project files
 .kdev4/
