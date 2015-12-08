@@ -600,6 +600,25 @@ from a normal distribution with mean 0, and $\sigma = 1$
 
 \subsection{Convergence rate}
 
+One should expect that the error $E$ in the numerical solution is reduced if the mesh is refined. More specifically, many numerical methods obey a power-law relation between $E$ and step length $h$
+\begin{align*}
+E=Ch^r,
+\end{align*}
+where $C$ is just some constant and $r$ is known as the convergence rate.  
+
+For some chosen time-level the error will be computed according to 
+\begin{equation}
+E = \sqrt{\frac{1}{N+1} \sum_{i=0}^{N} (u_{e(i)}-u_{i})^2}
+\end{equation}
+which is the \emph{discrete L2-norm}. 
+
+The convergence rate can then be computed as
+\begin{align*}
+r_i = \frac{log(E_{i-1}/E_i)}{log(h_{i-1}/ h_i)}
+\end{align*}
+for a number of different numerical simulations, $..,i-1,i,..$ using different $h_i=\Delta t = \Delta x^2 $.
+
+
 \subsection{Reproduction of results}
 
 \section{Conclusion}
