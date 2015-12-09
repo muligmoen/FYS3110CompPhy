@@ -82,20 +82,24 @@ Candidate numbers 33 \& 63}
 \maketitle
 
 \begin{abstract}
-To be added..
+This project studies the diffusion equations using both finite difference methods and monte carlo methods. Accuracy and stability for the methods will be compared, and a practical application of transporting signals in the brain will be brifly introduced. 
 \end{abstract}
-
-\section{Introduction}
-This projects solves the diffusion equation in one dimension. We look 
-at the diffusion of neurotransmitters in the synaptic cleft. In the brain 
-and here a discussion about the processes. This is how the signals are
-transmitted in the brain.
 
 The program used is hosted on Github, at 
 \url{https://github.com/mulimoen/FYS3150CompPhy} under project 5.
 
+\section{Introduction}
+The dominant way of transporting signals between nerve cells in the brain is by means of diffusion of neurotransmitters across the synaptic cleft separating the cell membranes of the two cells. A simple model for this phenomenon is a one dimensional diffusion equation (see figure 1 for schematic drawing of the process). 
+
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.15]{fig1.png}
+\caption{Illustration of the process of vesicle release from the axon terminal and release of transmitter molecules into the synaptic cleft. (From Thompson: “The Brain”, Worth Publ., 2000).}
+\label{fig:spin_neighbours_full}
+\end{figure}
+
 \section{Mathematical problem}
-As a mathematical problem the problem is solved as the equation
+A mathematical formulation of this problem is a diffuson equation on the form
 \begin{gather}
 \frac{\partial u}{\partial t} = D\nabla^2u
 \end{gather}
@@ -372,11 +376,11 @@ To ensure better accuracy a center derivative in time can be used as well. By le
 \begin{equation}
 \frac{u(t + \Delta t)-u(t)}{\Delta t} = u'(t+\Delta t) + O(\Delta t^2)
 \end{equation}
-Having evaluated the time-derivative in $t+\Delta t$ we must evaluate the spatial-derivative in between time-points. That can be done by using an arithmetic mean of the two closest time-points
+Having evaluated the time-derivative in $t+\Delta t$ we must evaluate the spatial-derivative in between time-points. This can be done by using an arithmetic mean of the two closest time-points
 \begin{align*}
 u(t+\Delta t/2) \simeq \frac{1}{2}(u(t)+u(t+\Delta t)).
 \end{align*}
-Using approximation above combined with expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme. 
+Using the approximation above combined with the expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme. 
 
 
 \subsection{Stability analysis}
@@ -574,7 +578,7 @@ unequal steplength
 \item Set up the lattice with all the particles in bin 0
 \item Let each particle move a length $L_0\zeta$ with $\zeta$ drawn
 from a normal distribution with mean 0, and $\sigma = 1$
-\item Fix up particles outside $(0,1)$
+\item Clean up particles outside $(0,1)$
 \item Repeat 2)-3) for the next timestep
 \item Bin up all the particles to get discrete values
 \item Normalise with regards to the first bin (boundary condition)
