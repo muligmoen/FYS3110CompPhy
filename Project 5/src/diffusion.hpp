@@ -22,6 +22,9 @@
  * The boundary conditions need to be 0, so init_vec needs to be the 
  * negative steady solution, as shown in the report
  * 
+ * The MC method will advance the system according to the number of MC-steps and 
+ * the length of the interval. These methods require a seed
+ * 
  */
 namespace diffusion{
 
@@ -73,22 +76,35 @@ namespace diffusion{
   Vector<double> Crank_Nicolson(const Vector<double> &init_vec,
                                 const double alpha, const int steps);
   
-  
+  /*!
+   * @brief Monte Carlo simulation of diffusion equation
+   * 
+   * @param steps number of MC-steps
+   * @param fill_rigth The amount of particles which should be ''refilled''
+   * on the right side after one MC-step.
+   * @param seed The seed used to initialize the random number generator
+   * 
+   * @return A vector with the elements as the number of particles currently 
+   * on this lattice point
+   */
+  Vector<int> Monte_Carlo(const int N, const int steps, const int fill_rigth,
+                          const long seed);
   
   /*!
    * @brief Monte Carlo simulation of diffusion equation
    * 
-   * @param init_vec initial vector, usually started with just zeros, but 
-   * could also be used with the negative steady solution to check stability
+   * @param N Amount of points along axis
    * @param steps number of MC-steps
    * @param fill_rigth The amount of particles which should be ''refilled''
    * on the right side after one MC-step.
+   * @param seed The seed used to initialize the random number generator
    * 
    * @return A vector with the elements as the number of particles currently 
    * on this lattice point
    */
   Vector<int> Monte_Carlo(const Vector<int> &init_vec,
-                          const int steps, const int fill_rigth);
+                          const int steps, const int fill_rigth,
+                          const long seed);
   
   /*! 
    * @brief Monte Carlo simulation of diffusion equation using uneven steps
@@ -102,13 +118,14 @@ namespace diffusion{
    * @param bins Number of bins the particles should be placed in after simulation
    * @param Nparticles Number of particles simulated, in the system at the same time
    * @param L0 Typical length, dependent upon time as \f$ \sqrt{2D\Delta t} \f$
+   * @param seed The seed used to initialize the random number generator
    * 
-   * @return Returns a vector of the same format as Monte_Carlo(). This bins
-   * the particles.
+   * @return A binned distribution of the particles after the random walk
    * 
    */
   Vector<int> Monte_Carlo_gaussian(const int steps, const int bins,
-                                   const int Nparticles, const double L0);
+                                   const int Nparticles, const double L0,
+                                   const long seed);
   
   /*!
    * @brief Analytical solution of diffusion equation for our special problem
@@ -123,5 +140,14 @@ namespace diffusion{
    * 
    */
   Vector<double> Analytical(const double t, const int N, const int order=1000);
+  
+  
+  /*!
+   * @brief Computes the discrete L2-norm 
+   * @param vector Vector which is compared to the analytical solution
+   * @param time Time of simulations (dimensionless)
+   * @return The L2-norm error
+   */
+  double Error(const Vector<double> &vector, const double time);
 }
 #endif

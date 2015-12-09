@@ -80,11 +80,28 @@ Vector<int> Monte_Carlo_step(const Vector<int> &start_vec, std::mt19937 &generat
   return out_vec;
 }
 
+Vector<int> diffusion::Monte_Carlo(const int N, const int steps, const int fill_rigth,
+                                   const long seed)
+{
+  std::mt19937 generator(seed);
+  
+  Vector<int> vec(N, [](){return 0;});
+  vec[0] = fill_rigth;
+  vec[N-1] = 0;
+  
+  for (int ii=0; ii<steps; ii++){
+    vec = Monte_Carlo_step(vec, generator);
+    vec[0] = fill_rigth;
+    vec[N-1] = 0;
+  }
+  return vec;
+}
+
 
 Vector<int> diffusion::Monte_Carlo(const Vector<int>& init_vec,
-                                   const int steps, const int fill_rigth)
+                                   const int steps, const int fill_rigth,
+                                   const long seed)
 {
-  auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
   std::mt19937 generator(seed);
   
   auto vec = init_vec;
@@ -98,9 +115,9 @@ Vector<int> diffusion::Monte_Carlo(const Vector<int>& init_vec,
 }
 
 Vector<int> diffusion::Monte_Carlo_gaussian(const int steps, const int bins,
-                                            const int Nparticles, const double L0)
+                                            const int Nparticles, const double L0,
+                                            const long seed)
 { 
-  auto seed = std::chrono::high_resolution_clock::now().time_since_epoch().count();
   std::mt19937 generator(seed);
   
   std::normal_distribution<double> gaussian_dist(0, 1);
@@ -121,11 +138,14 @@ Vector<int> diffusion::Monte_Carlo_gaussian(const int steps, const int bins,
     }
   }
 
-  // Need to bin all the particles
+  // This vector is going to contain a histogram over 
+  // the particles
   Vector<int> binned_particles(bins, [](){return 0;});
   
+  // The particles are in the range [0, 1) and a linear 
+  // map is used to get it to [0, Nbins)
   for (int ii=0; ii<Nparticles; ii++){
-    const int bin = particles[ii]*bins;
+    const int bin = particles[ii]*(bins-1);
     binned_particles[bin]++;
   }
   return binned_particles;
@@ -150,4 +170,17 @@ Vector<double> diffusion::Analytical(const double t, const int N,
     }
   }
   return u;
+}
+
+
+double diffusion::Error(const Vector<double>& vector, const double time)
+{
+  const int N = vector.size();
+  const Vector<double> analytical = diffusion::Analytical(time, N);
+  
+  double sum_abs_diff = 0;
+  for (int ii=0; ii<N; ii++){
+    sum_abs_diff += std::abs(vector[ii] - analytical[ii]);
+  }
+  return std::sqrt(1.0/(N+1.0))*sum_abs_diff;
 }

@@ -87,10 +87,12 @@ To be added..
 
 \section{Introduction}
 This projects solves the diffusion equation in one dimension. We look 
-at the diffusion of neutransmitters in the synaptic cleft. In the brain 
+at the diffusion of neurotransmitters in the synaptic cleft. In the brain 
 and here a discussion about the processes. This is how the signals are
 transmitted in the brain.
 
+The program used is hosted on Github, at 
+\url{https://github.com/mulimoen/FYS3150CompPhy} under project 5.
 
 \section{Mathematical problem}
 As a mathematical problem the problem is solved as the equation
@@ -204,23 +206,6 @@ v(x,t) = -\sum_{k=1}^\infty \frac{2}{\pi k}\sin(k\pi x)e^{-(k\pi)^2t}
 
 
 
-%Now using \eqref{eq:coupled_constant} to find the relation 
-%between $k$ and $a$ and summing over all the possible values of k,
-%\begin{gather}
-%v(x,t) = \int \!\! \mathrm{d}k\,\, C_k e^{\pm i\pi kx}e^{-(k\pi)^2 t}
-%\end{gather}
-%To find $C_k$ we use a Fourier transform at time $t=0$,
-%\begin{gather}
-%C(k) = \frac{1}{2\pi^2}\int \!\! \mathrm{d}x\,\, 
-%v(x,0) e^{\mp i\pi kx}
-%\end{gather}
-%Setting in the solution for the initial state,
-%\begin{gather}
-%C(k) = \frac{1}{2\pi^2}\int_0^1 \!\! \mathrm{d}x\,\,
-%(x - 1) e^{\pm i\pi kx}
-%\end{gather}
-
-
 \section{Finite difference methods}
 
 Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i,..,x_L$ and the time be discretised as $t_0,t_1,..,t_n,..,t_N$. Then we denote the solution, $u(x_i,t_n)$, as $u_i^n$.  
@@ -228,7 +213,7 @@ Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i
 \subsection{Schemes}
 
 \subsubsection{Explicit Euler}
-Using a forward discretization of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
+Using a forward discretisation of the time-derivative we obtain the following finite difference approximation of the diffusion equation:
 \begin{align}
 \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} = \frac{u_{i-1}^{n}-2u_{i}^{n}+u_{i+1}^{n}}{\Delta x^2}
 \end{align}
@@ -255,7 +240,7 @@ u^{n+1} =
 \subsubsection{Implicit Euler}
 \label{subsubsec:implicit_euler}
 
-Using a backward discretization of the time-derivative we obtain the following finite difference approximation of (2.11):
+Using a backward discretisation of the time-derivative we obtain the following finite difference approximation of (2.11):
 \begin{align}
 \frac{u_{i}^{n}-u_{i}^{n-1}}{\Delta t} = \frac{u_{i-1}^{n}-2u_{i}^{n}+u_{i+1}^{n}}{\Delta x^2}
 \end{align}
@@ -333,7 +318,7 @@ u^{n+1} =
 \subsubsection{Specialisation to our problem}
 
 If we consider our problem with ends equal to zero, the schemes can 
-be reduced to a submatrix with the cornes equal to zero, and is therefore
+be reduced to a sub-matrix with the corners equal to zero, and is therefore
 not required to reach the solution. All the three schemes can be written 
 with the use of the matrix
 \begin{gather}

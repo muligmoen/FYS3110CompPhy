@@ -197,6 +197,25 @@ public:
     return new_vec;
   }
   
+  //! Elementwise multiplication
+  Vector<T> operator*(const Vector<T> &other) const
+  {
+    Vector<T> new_vec(N);
+    for (int ii=0; ii<N; ii++){
+      new_vec[ii] = vec[ii]*other[ii];
+    }
+    return new_vec;
+  }
+  
+  //! Addition to vector
+  Vector<T> operator+=(const Vector<T> &other)
+  {
+    for (int ii=0; ii<N; ii++){
+      vec[ii] += other[ii];
+    }
+    return *this;
+  }
+  
   //! Gets the size of the vector
   int size() const
   {
@@ -332,4 +351,60 @@ inline Vector<double> init_vector(const double x0, const double x1, const int N,
   }
   return vec;
 }
+
+/*!
+ * @brief Adds an element before and after the vector. 
+ * @param vector Vector which is used to add ends
+ * @param first Element which should be in front of vector
+ * @param last Element which should be at the back of vector
+ * @return A vector with size N+2 with the ends added
+ */
+template <typename T>
+inline Vector<T> add_ends(const Vector<T> &vector, const T first, const T last)
+{
+  const int N = vector.size();
+  Vector<T> vec_with_ends(N+2);
+  vec_with_ends[0] = first;
+  vec_with_ends[N+1] = last;
+  for (int ii=0; ii<N; ii++){
+    vec_with_ends[ii+1] = vector[ii];
+  }
+  
+  return vec_with_ends;
+}
+/*!
+ * @brief Creates a new vector without the ends
+ * @param vector Vector which is copied from
+ * @return A new vector of size N-2 with the ends removed
+ */
+template <typename T>
+inline Vector<T> not_ends(const Vector<T> &vector)
+{
+  const int N = vector.size();
+  Vector<T> vec_without_ends(N-2);
+  
+  for (int ii=0; ii<N-2; ii++){
+    vec_without_ends[ii] = vector[ii+1];
+  }
+  
+  return vec_without_ends;
+}
+
+/*!
+ * @brief Normalises a Vector based on the first entry
+ * @param vector Vector used by normalisation
+ * @return A vector normalised based on the first entry, so vec[1] = 1.0
+ */
+template <typename T>
+inline Vector<double> normalise(const Vector<T> &vector)
+{
+  Vector<double> normalised_vector(vector.size());
+  double norm_factor = vector[0];
+  
+  for (int ii=0; ii<vector.size(); ii++){
+    normalised_vector[ii] = vector[ii]/norm_factor;
+  }
+  return normalised_vector;
+}
+
 #endif

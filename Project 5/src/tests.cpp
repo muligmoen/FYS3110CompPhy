@@ -163,6 +163,47 @@ TEST_CASE( "Advanced vector tests", "[Vector]" )
       }
     }
   }
-    
-    
+}
+
+TEST_CASE( "Vector function", "[vector]" )
+{
+  SECTION( "Adding of ends to a vector" )
+  {
+    Vector<int> vec(2, [](){return 2;});
+    auto new_vec = add_ends(vec, 1, 5);
+    REQUIRE(vec.size()+2 == new_vec.size());
+    CHECK(new_vec[0] == 1);
+    CHECK(new_vec[1] == 2);
+    CHECK(new_vec[2] == 2);
+    CHECK(new_vec[3] == 5);
+  }
+  
+  SECTION( "Removing ends of a vector" )
+  {
+    Vector<int> vec(5);
+    vec[0] = 1;
+    vec[1] = 2;
+    vec[2] = 3;
+    vec[3] = 4;
+    vec[4] = 5;
+    auto new_vec = not_ends(vec);
+    REQUIRE(new_vec.size()+2 == vec.size());
+    CHECK(new_vec[0] == 2);
+    CHECK(new_vec[1] == 3);
+    CHECK(new_vec[2] == 4);
+  }
+  
+  SECTION( "Normalisation of vector" )
+  {
+    Vector<int> vec(5);
+    vec[0] = 5;
+    vec[1] = 2;
+    vec[2] = 7;
+    vec[3] = 4;
+    vec[4] = 5;
+    auto norm_vec = normalise(vec);
+    for (int ii=0; ii<vec.size(); ii++){
+      CHECK( norm_vec[ii] == Approx(vec[ii]/5.0) );
+    }
+  }
 }
