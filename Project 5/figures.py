@@ -1,12 +1,15 @@
 import subprocess
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+
+saveloc = os.path.join('report', 'pics')
 
 def get_stdout(cmd):
   p = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
   return p.stdout.read()
 
-def plot_stuff():
+def plot_stuff(u_ANA, u_eulerF, u_eulerB, u_CN, u_MC, u_MCG):
   fig, ax = plt.subplots()
 
   N = len(u_ANA)
@@ -30,11 +33,13 @@ def plot_stuff():
   plt.axis([-0.2, 1.2, 0, 1])
 
   plt.legend(loc='upper right')
+  savename = os.path.join(saveloc, 'dx={},dt={}.png'.format(dx, dt))
+  plt.savefig(savename, dpi=400, bbox_inches='tight')
   plt.show()
   
   
 alpha = 0.5 # Stability criteria
-dx = 1/100
+dx = 1/10
 dt = dx*dx*alpha
 T = 0.01
 
@@ -51,6 +56,9 @@ u_CN = list(map(float, lines[5].strip('[]').split()))
 u_MC = list(map(float, lines[7].strip('[]').split()))
 u_MCG = list(map(float, lines[10].strip('[]').split()))
 
+MC_variance = list(map(float, lines[9].strip('[]').split()))
+MCG_variance = list(map(float, lines[12].strip('[]').split()))
+
 E = [float(lines[2]), float(lines[4]), float(lines[6]), float(lines[8]), float(lines[11])]
 
-plot_stuff()
+plot_stuff(u_ANA, u_eulerF, u_eulerB, u_CN, u_MC, u_MCG)
