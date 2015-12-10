@@ -107,11 +107,11 @@ Where $D$ is a constant determining how ''solid'' the fluid which is
 diffused through is. Our problem is one-dimensional and has conditions on 
 the boundaries.
 \subsection{Boundary conditions}
-The interval of interest is $x \in [0, d]$
+The domain is $x \in [0, d]$ with boundary and initial conditions
 \begin{align}
 u(x,0) &= 0\\
 u(0,t) &= u_0\\
-u(d,t) &= 0
+u(d,t) &= 0.
 \end{align}
 
 \subsection{Scaling}
@@ -150,8 +150,8 @@ In the steady state we must have
 This has the solution
 \begin{gather}
 u_s(x) = Ax + b\\
-u_s(0) \to b = 1, \quad
-u_s(1) \to A = -1\\
+u_s(0) \implies b = 1, \quad
+u_s(1) \implies A = -1\\
 u_s(x) = 1-x \label{eq:u_steady}
 \end{gather}
 Defining the new non-steady solution
@@ -230,14 +230,14 @@ u_{i+1}^n - 2u_i^n + u_{i-1}^n
 Written in a matrix equation with boundary conditions (the notation 
 is explained in \ref{subsubsec:implicit_euler})
 \begin{gather}
-u^{n+1} = 
+\mathbf{u^{n+1}} = 
 \begin{pmatrix}
 1 & 0 & 0 & 0 & \cdots\\
 \alpha & 1 - 2\alpha & \alpha & 0 & \cdots\\
 0 & \alpha & 1-2\alpha & \alpha & \cdots\\
 \cdots & \cdots & \ddots & \ddots& \\
 &&& 0 & 1
-\end{pmatrix}u^n
+\end{pmatrix} \mathbf{u^n}
 \end{gather}
 
 
@@ -280,8 +280,13 @@ This now should be recognized as a matrix system on the from, $Au=b$ for
              \end{pmatrix} 
 \end{align} 
 
-\subsubsection{Crank-Nicolson}
-This scheme uses a time-centered scheme at $(x,t+\Delta t/2)$
+\subsubsection{Crank-Nicholson}
+This scheme uses a time-centered difference at $u_i^{n+1/2}$, which means that also the spatial derivative must be evaluated at $t_{n+1/2}$. To get such an approximation one can use an arithmetic mean, $u'(t_{n+1/2}) \simeq \frac{1}{2}(u'(t_{n}) + u'(t_{n+1}))$. The full discretisation then reads 
+\begin{gather}
+\frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} = \frac{1}{2} \left( \frac{u_{i+1}^{n} -2 u_{i}^{n}+u_{i-1}^{n}}{\Delta x^2} + \frac{u_{i+1}^{n+1} -2u_{i}^{n+1}+u_{i-1}^{n+1} }{\Delta x} \right)
+\end{gather}
+
+
 \begin{gather}
 u_i^{n+1} = u_i^n + \frac{\Delta t}{2\Delta x^2}\left(
 u_{i+1}^n - 2u_i^n + u_{i-1}^n + u_{i+1}^{n+1} - 2u_i^{n+1} + u_{i-1}^{n+1}
