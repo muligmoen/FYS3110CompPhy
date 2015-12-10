@@ -10,20 +10,20 @@
 Vector<double> diffusion::forward_euler(const Vector<double> &init_vec,
                              const double alpha, const int steps)
 {
-  auto new_vec = init_vec;
+  auto vec = not_ends(init_vec);
   
   const double a = 1-2*alpha;
   const double b = alpha;
   for (int ii=0; ii<steps; ii++){
-    multiply_inplace(new_vec, a, b);
+    multiply_inplace(vec, a, b);
   }
-  return new_vec;
+  return add_ends(vec, 0.0, 0.0);
 }
 
 Vector<double> diffusion::backward_euler(const Vector<double>& init_vec,
                                 const double alpha, const int steps)
 {
-  auto vec = init_vec;
+  auto vec =not_ends(init_vec);
   
   const double a = 1 + 2*alpha;
   const double b = -alpha;
@@ -31,27 +31,27 @@ Vector<double> diffusion::backward_euler(const Vector<double>& init_vec,
     solve_inplace(vec, a, b);
   }
   
-  return vec;
+  return add_ends(vec, 0.0, 0.0);
 }
 
 
 Vector<double> diffusion::Crank_Nicolson(const Vector<double>& init_vec,
                               const double alpha, const int steps)
 {
-  auto vec = init_vec;
+  auto vec = not_ends(init_vec);
   
-  const double a_forward = 1 + alpha;
-  const double b_forward = -alpha/2;
+  const double a_forward = 1.0 + alpha;
+  const double b_forward = -alpha/2.0;
   
-  const double a_backward = 1 - alpha;
-  const double b_backward = alpha/2;
+  const double a_backward = 1.0 - alpha;
+  const double b_backward = alpha/2.0;
   
   for (int ii=0; ii<steps; ii++){
     multiply_inplace(vec, a_backward, b_backward);
     solve_inplace(vec, a_forward, b_forward);
   }
   
-  return vec;
+  return add_ends(vec, 0.0, 0.0);
 }
 
 
@@ -160,9 +160,8 @@ Vector<double> diffusion::Analytical(const double t, const int N,
   Vector<double> u(N, [](){return 0.0;});
   
   auto f = [](int k, double t, double x){
-            return -2.0/(k*pi)*std::sin(k*x*pi)*std::exp(-(pi*k)*t); };
+            return -2.0/(k*pi)*std::sin(k*x*pi)*std::exp(-(pi*k)*(pi*k)*t); };
   const double dx = 1.0/(N-1);
-  
   
   for (int k=1; k<order; k++){
     for (int ii=0; ii<N; ii++){
@@ -184,3 +183,15 @@ double diffusion::Error(const Vector<double>& vector, const double time)
   }
   return std::sqrt(1.0/(N+1.0))*sum_abs_diff;
 }
+
+double diffusion::Error(const Vector<double>& vector, const Vector<double>& ANAvector)
+{
+  const int N = vector.size();
+  
+  double sum_abs_diff = 0;
+  for (int ii=0; ii<N; ii++){
+    sum_abs_diff += std::abs(vector[ii] - ANAvector[ii]);
+  }
+  return std::sqrt(1.0/(N+1.0))*sum_abs_diff;
+}
+

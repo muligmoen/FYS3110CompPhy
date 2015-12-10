@@ -29,8 +29,6 @@
 template <typename T> 
 class Vector;
 
-
-
  
 /*!
  * 
@@ -197,6 +195,16 @@ public:
     return new_vec;
   }
   
+  //! Subtraction of two Vectors
+  Vector<T> operator-(const Vector<T> other) const
+  {
+    Vector<T> new_vec(N);
+    for (int ii=0; ii<N; ii++){
+      new_vec[ii] = vec[ii] - other[ii];
+    }
+    return new_vec;
+  }
+  
   //! Elementwise multiplication
   Vector<T> operator*(const Vector<T> &other) const
   {
@@ -334,7 +342,7 @@ std::ostream& operator<<(std::ostream& out, const Vector<T> &vector)
 
 //! Sets up f(x) in the ranges specified
 /*
-* x0, x1 are the range of the range, linearly spaced, and f(x) are
+* x0, x1 are the range of the range, linearly spaced, inclusive and f(x) are
 * computed for all the points
 * 
 * This function is inlined to avoid the one-definition rule
@@ -396,10 +404,9 @@ inline Vector<T> not_ends(const Vector<T> &vector)
  * @return A vector normalised based on the first entry, so vec[1] = 1.0
  */
 template <typename T>
-inline Vector<double> normalise(const Vector<T> &vector)
+inline Vector<double> normalise(const Vector<T> &vector, const double norm_factor)
 {
   Vector<double> normalised_vector(vector.size());
-  double norm_factor = vector[0];
   
   for (int ii=0; ii<vector.size(); ii++){
     normalised_vector[ii] = vector[ii]/norm_factor;

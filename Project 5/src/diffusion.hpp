@@ -31,11 +31,11 @@ namespace diffusion{
   /*!
    * @brief Does forward euler steps on the initial vector
    * 
-   * @param init_vec The initial vector
+   * @param init_vec The initial vector with ends
    * @param alpha \f$ \frac{\Delta t}{\Delta x^2} \f$
    * @param steps Number of forward Euler moves
    * 
-   * @return Returns a vector where 'steps' euler steps has been completed.
+   * @return Returns a vector where 'steps' euler steps has been completed, with ends equal to 0
    * 
    * 
    * The internal method is based on a multiplication
@@ -48,7 +48,7 @@ namespace diffusion{
   /*!
    * @brief Does backward euler steps on the initial vector
    * 
-   * @param init_vec The initial vector
+   * @param init_vec The initial vector with ends
    * @param alpha \f$ \frac{\Delta t}{\Delta x^2} \f$
    * @param steps Number of backward Euler moves
    * 
@@ -63,7 +63,7 @@ namespace diffusion{
   /*!
   * @brief Evolves the system using the Crank Nicolson scheme
   * 
-  * @param init_vec The initial input vector
+  * @param init_vec The initial input vector with ends
   * @param alpha \f$ \frac{\Delta t}{\Delta x^2} \f$
   * @param steps Number of Crank Nicolson steps
   * 
@@ -139,7 +139,7 @@ namespace diffusion{
    * default value is 1000
    * 
    */
-  Vector<double> Analytical(const double t, const int N, const int order=1000);
+  Vector<double> Analytical(const double t, const int N, const int order=2000);
   
   
   /*!
@@ -149,5 +149,14 @@ namespace diffusion{
    * @return The L2-norm error
    */
   double Error(const Vector<double> &vector, const double time);
+  
+  /*!
+   * @brief Computes the discrete L2-norm 
+   * @param vector Vector which is compared to the analytical solution
+   * @param ANAvector Analytical solution
+   * @return The L2-norm error
+   */
+  double Error(const Vector<double> &vector, const Vector<double> &ANAvector);
+  
 }
 #endif

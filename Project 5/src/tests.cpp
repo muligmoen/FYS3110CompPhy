@@ -201,7 +201,7 @@ TEST_CASE( "Vector function", "[vector]" )
     vec[2] = 7;
     vec[3] = 4;
     vec[4] = 5;
-    auto norm_vec = normalise(vec);
+    auto norm_vec = normalise(vec, vec[0]);
     for (int ii=0; ii<vec.size(); ii++){
       CHECK( norm_vec[ii] == Approx(vec[ii]/5.0) );
     }

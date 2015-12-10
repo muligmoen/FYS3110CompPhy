@@ -523,23 +523,8 @@ we implement solvers for the necessary operations.
 
 The schemes used can all be represented as a multiplication with 
 a matrix on the form of \eqref{eq:matrixA}. The matrix multiplication is 
-given in the algorithm
-\begin{algorithm}
-\begin{enumerate}[label=\bfseries \arabic*)]
-\item Get vector u, and the numbers a and b
-\item Loop over all but the ends,
-\begin{gather*}
-d_i = bu_{i-1} + au_i + bu_{i+1}
-\end{gather*}
-\item Compute the ends, 
-\begin{align*}
- d_1 &= ad_0 + bd_1\\
- d_{end} &= bd_{end -1} + ad_{end}
-\end{align*}
-\end{enumerate}
-\end{algorithm}
-The inverse matrix multiplication uses the same method as in project 1, 
-which is in the Github repository.
+straight forward to implement, and the inverse matrix multiplication uses
+the same method as in project 1, which is in the Github repository.
 
 \subsection{Finite difference schemes}
 
@@ -577,13 +562,13 @@ and $d$ as $u^n$ using TDMA. The solution is $u^{n+1}$
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Calculate
-\begin{gather*}
-\alpha = \frac{1}{2}\frac{\Delta t}{\Delta x^2}\\
-a_1 = 1 - \alpha, \quad
-b_1 = \alpha\\
-a_2 = 1 + \alpha, \quad
-b_2 = -\alpha
-\end{gather*}
+\begin{align*}
+\alpha = \frac{\Delta t}{\Delta x^2}\\
+a_1 &= 1 - \frac{1}{2}\alpha, \quad
+b_1 = \frac{1}{2}\alpha\\
+a_2 &= 1 + \frac{1}{2}\alpha, \quad
+b_2 =-\frac{1}{2}\alpha
+\end{align*}
 
 \item Do a matrix multiplication with $u^n$ and $A_1$, where $A_1$ has 
 the entries $a_1$ and $b_1$ on the form of \eqref{eq:matrixA}.
