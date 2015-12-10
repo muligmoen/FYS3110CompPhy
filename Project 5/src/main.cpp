@@ -45,17 +45,17 @@ int main(int argc, char **argv)
   // Forward Euler
   auto v_EF = forward_euler(-u_steady, alpha, Ntimesteps);
   auto u_EF = u_steady + v_EF;
-  std::cout << u_EF << " " << Error(u_EF, u_ANA) << "\n";
+  std::cout << u_EF << "\n" << Error(u_EF, u_ANA) << "\n";
   
   // Backward Euler
   auto v_EB = backward_euler(-u_steady, alpha, Ntimesteps);
   auto u_EB = u_steady + v_EB;
-  std::cout << u_EB << " " << Error(u_EB, u_ANA) << "\n";
+  std::cout << u_EB << "\n" << Error(u_EB, u_ANA) << "\n";
   
   // Crank Nicolson
   auto v_CN = Crank_Nicolson(-u_steady, alpha, Ntimesteps);
   auto u_CN = u_steady + v_CN;
-  std::cout << u_CN << " " << Error(u_CN, u_ANA) << "\n";
+  std::cout << u_CN << "\n" << Error(u_CN, u_ANA) << "\n";
   
   
   //Monte Carlo equal steplength
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
   }
   
   auto u_MC = normalise(sum_MC, Nparticles*MC_repetitions);
-  std::cout << u_MC << " " << Error(u_MC, u_ANA) << "\n";
+  std::cout << u_MC << "\n" << Error(u_MC, u_ANA) << "\n";
   
   Vector<double> variance(N);
   auto u_MCsquare = normalise(quadrate_sum_MC, Nparticles*Nparticles*MC_repetitions);
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
   
   const double norm_factor = (double)sum_MCG[0]/(double)MC_repetitions;
   auto u_MCG = normalise(sum_MCG, norm_factor*MC_repetitions);
-  std::cout << u_MCG << " " << Error(u_MCG, u_ANA) << "\n";
+  std::cout << u_MCG << "\n" << Error(u_MCG, u_ANA) << "\n";
   
   auto u_MCGsquare = normalise(quadrate_sum_MCG, norm_factor*norm_factor*MC_repetitions);
   
