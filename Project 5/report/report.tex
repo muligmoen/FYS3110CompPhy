@@ -97,8 +97,10 @@ The dominant way of transporting signals between nerve cells in the brain is by 
 \caption{Illustration of the process of vesicle release from the axon
 terminal and release of transmitter molecules into the synaptic cleft.
 (From \cite{thompson2000brain}.)}
-\label{fig:spin_neighbours_full}
 \end{figure}
+
+The diffusion equation will be solved using three finite difference schemes, explicit \emph{Forward-Euler}, implicit \emph{Backward-Euler} and implicit \emph{Crank-Nicholson}. These methods will be compared with respect to stability and accuracy. Monte carlo methods, following the lines of \cite{farnell2005monte}, will also be used for solving the diffusion problem.
+
 
 \section{Mathematical problem}
 A mathematical formulation of this problem is a diffusion equation on the form
