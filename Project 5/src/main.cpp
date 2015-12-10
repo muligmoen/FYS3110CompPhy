@@ -39,7 +39,7 @@ int main(int argc, char **argv)
   //Analytical solution
   auto v_ANA = Analytical(T, N);
   auto u_ANA = u_steady + v_ANA;
-  std::cout <<  u_ANA << "\n";
+  std::cout << u_ANA << "\n";
   
   
   // Forward Euler
@@ -49,12 +49,13 @@ int main(int argc, char **argv)
   
   // Backward Euler
   auto v_EB = backward_euler(-u_steady, alpha, Ntimesteps);
-  std::cout << u_steady + v_EB << "\n";
+  auto u_EB = u_steady + v_EB;
+  std::cout << u_EB << " " << Error(u_EB, u_ANA) << "\n";
   
   // Crank Nicolson
   auto v_CN = Crank_Nicolson(-u_steady, alpha, Ntimesteps);
-  std::cout << u_steady + v_CN << "\n";
-  
+  auto u_CN = u_steady + v_CN;
+  std::cout << u_CN << " " << Error(u_CN, u_ANA) << "\n";
   
   
   //Monte Carlo equal steplength
@@ -67,23 +68,43 @@ int main(int argc, char **argv)
     quadrate_sum_MC += vec*vec;
   }
   
-  std::cout << normalise(sum_MC, sum_MC[0]) << "\n";
+  auto u_MC = normalise(sum_MC, Nparticles*MC_repetitions);
+  std::cout << u_MC << " " << Error(u_MC, u_ANA) << "\n";
   
   Vector<double> variance(N);
+  auto u_MCsquare = normalise(quadrate_sum_MC, Nparticles*Nparticles*MC_repetitions);
+  
   for (int ii=0; ii<N; ii++){
-    variance[ii] = std::sqrt(sum_MC[ii]*sum_MC[ii] - quadrate_sum_MC[ii]);
+    variance[ii] = std::sqrt(u_MCsquare[ii] - u_MC[ii]*u_MC[ii]);
   }
     
-  //std::cout << variance << "\n";
+  std::cout << variance << "\n";
   
-  /*
-  //
-    const double L0 = Delta_x;
-    const int bins = N;
-    //auto sim = Monte_Carlo_gaussian(Nsteps, bins, Nparticles, L0, seed);
-    std::cout << normalise(Monte_Carlo_gaussian(Nsteps, bins, 100*Nparticles, L0, seed), 0.0)
-              << std::endl;
+  // Monte Carlo gaussian
+  const double L0_factor = 2; // how much Delta_x is shrinked (changes number of timesteps)
+                              // this should be a number > 1 to ensure no bins are skipped
+  const double L0 = Delta_x/L0_factor;
+  
+  Vector<int> sum_MCG(N, [](){return 0;});
+  Vector<int> quadrate_sum_MCG(N, [](){return 0;});
+    
+  for (int ii=0; ii<MC_repetitions; ii++){
+    const auto vec = Monte_Carlo_gaussian(Nsteps*L0_factor*L0_factor, N, Nparticles, L0, seed+ii);
+    sum_MCG += vec;
+    quadrate_sum_MCG += vec*vec;
   }
-  */
+  
+  const double norm_factor = (double)sum_MCG[0]/(double)MC_repetitions;
+  auto u_MCG = normalise(sum_MCG, norm_factor*MC_repetitions);
+  std::cout << u_MCG << " " << Error(u_MCG, u_ANA) << "\n";
+  
+  auto u_MCGsquare = normalise(quadrate_sum_MCG, norm_factor*norm_factor*MC_repetitions);
+  
+  Vector<double> varianceG(N);
+  for (int ii=0; ii<N; ii++){
+    varianceG[ii] = std::sqrt(u_MCGsquare[ii] - u_MCG[ii]*u_MCG[ii]);
+  }
+  
+  std::cout << varianceG << "\n";
   
 }

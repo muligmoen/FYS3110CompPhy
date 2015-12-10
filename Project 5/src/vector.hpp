@@ -401,7 +401,8 @@ inline Vector<T> not_ends(const Vector<T> &vector)
 /*!
  * @brief Normalises a Vector based on the first entry
  * @param vector Vector used by normalisation
- * @return A vector normalised based on the first entry, so vec[1] = 1.0
+ * @param norm_facto Number which is all elements are divided by
+ * @return A vector normalised based on the norm_factor
  */
 template <typename T>
 inline Vector<double> normalise(const Vector<T> &vector, const double norm_factor)

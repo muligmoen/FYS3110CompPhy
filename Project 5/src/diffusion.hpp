@@ -136,7 +136,7 @@ namespace diffusion{
    * @param t Time after initial start-time
    * @param N Number of points the interval is split into
    * @param order Order which the analytical solution is scaled to. The 
-   * default value is 1000
+   * default value is 2000
    * 
    */
   Vector<double> Analytical(const double t, const int N, const int order=2000);
