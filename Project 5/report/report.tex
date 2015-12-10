@@ -82,7 +82,7 @@ Candidate numbers 33 \& 63}
 \maketitle
 
 \begin{abstract}
-This project studies the diffusion equations using both finite difference methods and monte carlo methods. Accuracy and stability for the methods will be compared, and a practical application of transporting signals in the brain will be brifly introduced. 
+This project studies the diffusion equations using both finite difference methods and monte carlo methods. Accuracy and stability for the methods will be compared, and a practical application of transporting signals in the brain will be briefly introduced. 
 \end{abstract}
 
 The program used is hosted on Github, at 
@@ -99,7 +99,7 @@ The dominant way of transporting signals between nerve cells in the brain is by 
 \end{figure}
 
 \section{Mathematical problem}
-A mathematical formulation of this problem is a diffuson equation on the form
+A mathematical formulation of this problem is a diffusion equation on the form
 \begin{gather}
 \frac{\partial u}{\partial t} = D\nabla^2u
 \end{gather}
@@ -380,8 +380,7 @@ Having evaluated the time-derivative in $t+\Delta t$ we must evaluate the spatia
 \begin{align*}
 u(t+\Delta t/2) \simeq \frac{1}{2}(u(t)+u(t+\Delta t)).
 \end{align*}
-Using the approximation above combined with the expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme. 
-
+Using the approximation above combined with the expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme.
 
 \subsection{Stability analysis}
 
@@ -451,6 +450,27 @@ A = \frac{1-\frac{2\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right
 \end{align*}
 we see that $|A| \leq 1$ is fulfilled, and the scheme is  \emph{unconditionally stable}.
 
+\subsection{Convergence rate}
+
+Convergence rates are important when verifying the implementation of numerical schemes. If we manage to recover the convergence rates expected from the truncation error analysis there is a good chance that our program is running correctly.
+
+ One should expect that the error $E$ in the numerical solution is reduced if the mesh is refined. More specifically, many numerical methods obey a power-law relation between $E$ and step length $h$
+\begin{align*}
+E=Ch^r,
+\end{align*}
+where $C$ is just some constant and $r$ is known as the convergence rate.  
+
+For some chosen time-level the error will be computed according to 
+\begin{equation}
+E = \sqrt{\frac{1}{N+1} \sum_{i=0}^{N} (u_{e(i)}-u_{i})^2}
+\end{equation}
+which is the \emph{discrete L2-norm}. 
+
+The convergence rate can then be computed as
+\begin{align*}
+r_i = \frac{log(E_{i-1}/E_i)}{log(h_{i-1}/ h_i)}
+\end{align*}
+for a number of different numerical simulations, $i=1,2,3..$ using different $h_i=\Delta t^k = \Delta x^2 $, with $k=1$ for explicit and implicit Euler and $k=2$ for Crank-Nicholson. These choices are based on the truncation error analysis.  
 
 \section{Monte Carlo methods}
 
@@ -514,7 +534,7 @@ d_i = bu_{i-1} + au_i + bu_{i+1}
 The inverse matrix multiplication uses the same method as in project 1, 
 which is in the Github repository.
 
-\subsection{Difference schemes}
+\subsection{Finite difference schemes}
 
 \subsubsection{Explicit Euler}
 \begin{algorithm}
@@ -525,7 +545,7 @@ which is in the Github repository.
 a = 1 - \alpha\\
 b = \alpha
 \end{gather*}
-\item Mulitply $u^n$ with the matrix A, \eqref{eq:matrixA}
+\item Multiply $u^n$ with the matrix A, \eqref{eq:matrixA}
 \item Repeat for the next time-step
 \end{enumerate}
 \end{algorithm}
@@ -546,7 +566,7 @@ and $d$ as $u^n$ using TDMA. The solution is $u^{n+1}$
 \end{enumerate}
 \end{algorithm}
 
-\subsubsection{Crank Nicholson}
+\subsubsection{Crank-Nicholson}
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Calculate
@@ -572,14 +592,14 @@ the entries $a_2$ and $b_2$
 \subsection{Monte Carlo}
 The Monte Carlo method with equal steps is very simple to program, and 
 is therefore just included in the source code. The algorithm for 
-unequal steplength
+unequal step length
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Set up the lattice with all the particles in bin 0
 \item Let each particle move a length $L_0\zeta$ with $\zeta$ drawn
 from a normal distribution with mean 0, and $\sigma = 1$
 \item Clean up particles outside $(0,1)$
-\item Repeat 2)-3) for the next timestep
+\item Repeat 2)-3) for the next time step
 \item Bin up all the particles to get discrete values
 \item Normalise with regards to the first bin (boundary condition)
 \end{enumerate}
@@ -589,23 +609,26 @@ from a normal distribution with mean 0, and $\sigma = 1$
 
 \subsection{Convergence rate}
 
-One should expect that the error $E$ in the numerical solution is reduced if the mesh is refined. More specifically, many numerical methods obey a power-law relation between $E$ and step length $h$
-\begin{align*}
-E=Ch^r,
-\end{align*}
-where $C$ is just some constant and $r$ is known as the convergence rate.  
+\begin{table}[H]
+\centering
+  \caption{Data from numerical experiments. Computing error according to (4.1) while reducing $h$. All measurements done at T=1.0.}
+\vspace{2mm}
 
-For some chosen time-level the error will be computed according to 
-\begin{equation}
-E = \sqrt{\frac{1}{N+1} \sum_{i=0}^{N} (u_{e(i)}-u_{i})^2}
-\end{equation}
-which is the \emph{discrete L2-norm}. 
-
-The convergence rate can then be computed as
-\begin{align*}
-r_i = \frac{log(E_{i-1}/E_i)}{log(h_{i-1}/ h_i)}
-\end{align*}
-for a number of different numerical simulations, $..,i-1,i,..$ using different $h_i=\Delta t = \Delta x^2 $.
+\begin{tabular}{ |l|l|l| }
+  \hline
+  \textbf{h} & \textbf{E} & \textbf{r} \\
+  \hline
+3.04713699452e-05 &	0.015625 &	1.43456667265 \\
+\hline
+6.3143838985e-06 &	0.00390625 &	 1.13537024109 \\ 
+\hline
+1.49266429934e-06 &	0.0009765625 &	 1.04037611806 \\
+\hline
+3.66513686511e-07 &	0.000244140625 & 	1.01297538059  \\
+  \hline 
+\end{tabular}
+\vspace{0.2cm}
+\end{table}
 
 
 \subsection{Reproduction of results}
