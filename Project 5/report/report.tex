@@ -345,8 +345,6 @@ b & a & b & \cdots\\
 \label{eq:matrixA}
 \end{gather}
 
-\subsubsection{The $\theta-$scheme}
-
 \subsection{Truncation error analysis}
 
 To investigate the truncation error in the schemes we look into the approximations we have made deriving them. In order to do that we need the following Taylor series:
@@ -361,13 +359,13 @@ u(a+h/2) = u(a) +\frac{h}{2}u'(a) + \frac{1}{2} \left( \frac{h}{2} \right)^2 u''
 \end{equation}
 
 \subsubsection{Explicit Euler}
-The forward time-derivative is obtained by solving (??) for $u'(a)$, with $a=t$ and $h=\Delta t$
+The forward time-derivative is obtained by solving (3.11) for $u'(a)$, with $a=t$ and $h=\Delta t$
 \begin{equation}
 \frac{u(t+\Delta t)-u(t)}{\Delta t} = u'(t)+O(\Delta t).
 \end{equation}  
 Having to divide by $h$ we get an truncation error of $O(h)$ in time.
 
-The second derivative with respect to space is obtained by adding (??), with $a=x$,  $h=\Delta x$ and 
+The second derivative with respect to space is obtained by adding (3.12), with $a=x$,  $h=\Delta x$ and 
 $a=x$,  $h= -\Delta x$ and solving for $u''(x)$:
 \begin{equation}
 \frac{u(x+\Delta x)-2u(x)+u(x-\Delta x)}{\Delta x^2} = u''(x)+O(\Delta x^2).
@@ -377,10 +375,10 @@ Using these approximations we have that the truncation error of the Forward Eule
 
 \subsubsection{Implicit Euler}
 The error analysis for this scheme is the same as for the forward scheme. One can just set $h=- \Delta t$
-instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section (??)). 
+instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section (3.3.2)). 
 
 \subsubsection{Crank-Nicholson}
-To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$, $h=\Delta t$ and subtracting $a=t-\Delta t/2$, $h=-\Delta t$ for the series (??) we get the following center time-derivative:
+To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$, $h=\Delta t$ and subtracting $a=t-\Delta t/2$, $h=-\Delta t$ for the series (3.13) we get the following center time-derivative:
 \begin{equation}
 \frac{u(t + \Delta t)-u(t)}{\Delta t} = u'(t+\Delta t) + O(\Delta t^2)
 \end{equation}
@@ -441,8 +439,6 @@ Again we require that $|A| \leq 1$, which this time puts no restrictions on the 
 
 
 \subsubsection{Crank-Nicholson}
-To quote the cult television classic \emph{Dinner for one}:  \emph{"Same procedure as every year, James!}
-
 Inserting  $v^n_i$, into the Crank-Nicholson scheme
 \begin{align*}
 \frac{A^{n+1} - A^{n}}{\Delta t} e^{ik \pi x_i} = \frac{1}{2} \left( \frac{e^{ik \pi x_{i+1}}-2e^{ik \pi x_{i}} + e^{ik \pi x_{i-1}}}{\Delta x^2} (A^n + A^{n+1})  \right)
@@ -458,27 +454,13 @@ A = \frac{1-\frac{2\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right
 \end{align*}
 we see that $|A| \leq 1$ is fulfilled, and the scheme is  \emph{unconditionally stable}.
 
-\subsection{Convergence rate}
-
-Convergence rates are important when verifying the implementation of numerical schemes. If we manage to recover the convergence rates expected from the truncation error analysis there is a good chance that our program is running correctly.
-
- One should expect that the error $E$ in the numerical solution is reduced if the mesh is refined. More specifically, many numerical methods obey a power-law relation between $E$ and step length $h$
-\begin{align*}
-E=Ch^r,
-\end{align*}
-where $C$ is just some constant and $r$ is known as the convergence rate.  
+\subsection{Measuring the accuracy}
 
 For some chosen time-level the error will be computed according to 
 \begin{equation}
 E = \sqrt{\frac{1}{N+1} \sum_{i=0}^{N} (u_{e(i)}-u_{i})^2}
 \end{equation}
 which is the \emph{discrete L2-norm}. 
-
-The convergence rate can then be computed as
-\begin{align*}
-r_i = \frac{log(E_{i-1}/E_i)}{log(h_{i-1}/ h_i)}
-\end{align*}
-for a number of different numerical simulations, $i=1,2,3..$ using different $h_i=\Delta t^k = \Delta x^2 $, with $k=1$ for explicit and implicit Euler and $k=2$ for Crank-Nicholson. These choices are based on the truncation error analysis.  
 
 \section{Monte Carlo methods}
 
@@ -600,29 +582,41 @@ from a normal distribution with mean 0, and $\sigma = 1$
 
 \section{Results}
 
-\subsection{Convergence rate}
+\subsection{Error measurements}
 
 \begin{table}[H]
 \centering
-  \caption{Data from numerical experiments. Computing error according to (4.1) while reducing $h$. All measurements done at T=1.0.}
+  \caption{Data from numerical experiments. Computing error according to (4.1) at T=0.01.}
 \vspace{2mm}
 
-\begin{tabular}{ |l|l|l| }
+\begin{tabular}{ |l|l|l|l|l|l| }
   \hline
-  \textbf{h} & \textbf{E} ($t_1$) & \textbf{E} ($t_2$) \\
+  $\Delta x$ & \textbf{FE} & \textbf{BE} & \textbf{CN}  & \textbf{MC1} & \textbf{MC2}  \\
   \hline
-3.04713699452e-05 &	0.015625 &	1.43456667265 \\
+1/10	 & 0.0615769 & 	0.0646733 & 	0.0466711 & 	0.0650734 & 	0.023262  \\
 \hline
-6.3143838985e-06 &	0.00390625 &	 1.13537024109 \\ 
+1/100 &	0.0121561 & 	0.010757 & 	0.011458 & 	0.0163719 & 	0.294685  \\
 \hline
-1.49266429934e-06 &	0.0009765625 &	 1.04037611806 \\
-\hline
-3.66513686511e-07 &	0.000244140625 & 	1.01297538059  \\
-  \hline 
 \end{tabular}
 \vspace{0.2cm}
 \end{table}
 
+\begin{table}[H]
+\centering
+  \caption{Data from numerical experiments. Computing error according to (4.1) at T=1.0.}
+\vspace{2mm}
+
+\begin{tabular}{ |l|l|l|l|l|l| }
+  \hline
+  $\Delta x$ & \textbf{FE} & \textbf{BE} & \textbf{CN}  & \textbf{MC1} & \textbf{MC2}  \\
+  \hline
+1/10 &	0.015625 &	1.43456667265 & 1  & 1 & 2  \\
+\hline
+1/100 &	0.015625 &	1.43456667265 & 1  & 1 & 2  \\
+\hline
+\end{tabular}
+\vspace{0.2cm}
+\end{table}
 
 \subsection{Example of run}
 
