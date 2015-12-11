@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper,draft]{article}
+\documentclass[11pt,a4paper,final]{article}
 \usepackage[english]{babel} % Using babel for hyphenation
 \usepackage{lmodern} % Changing the font
 \usepackage[utf8]{inputenc}
@@ -99,7 +99,14 @@ terminal and release of transmitter molecules into the synaptic cleft.
 (From \cite{thompson2000brain}.)}
 \end{figure}
 
-The diffusion equation will be solved using three finite difference schemes, explicit \emph{Forward-Euler}, implicit \emph{Backward-Euler} and implicit \emph{Crank-Nicholson}. These methods will be compared with respect to stability and accuracy. Monte carlo methods, following the lines of \cite{farnell2005monte}, will also be used for solving the diffusion problem.
+The diffusion equation will be solved using three finite difference 
+schemes, explicit \emph{Forward-Euler}, 
+implicit \emph{Backward-Euler} and implicit \emph{Crank-Nicolson}. 
+These methods will be compared with respect to stability and accuracy. 
+Monte Carlo methods, following the lines of \cite{farnell2005monte},
+will also be used for solving the diffusion problem, whereas with one as 
+a fixed step-length and one with a step-length chosen from a Gaussian 
+distribution.
 
 \section{Mathematical problem}
 A mathematical formulation of this problem is a diffusion equation on the form
@@ -283,7 +290,7 @@ This now should be recognized as a matrix system on the from, $Au=b$ for
              \end{pmatrix} 
 \end{align} 
 
-\subsubsection{Crank-Nicholson}
+\subsubsection{Crank-Nicolson}
 This scheme uses a time-centered difference at $u_i^{n+1/2}$, which means that also the spatial derivative must be evaluated at $t_{n+1/2}$. To get such an approximation one can use an arithmetic mean, $u'(t_{n+1/2}) \simeq \frac{1}{2}(u'(t_{n}) + u'(t_{n+1}))$. The full discretisation then reads 
 \begin{gather}
 \frac{u_{i}^{n+1}-u_{i}^{n}}{\Delta t} = \frac{1}{2} \left( \frac{u_{i+1}^{n} -2 u_{i}^{n}+u_{i-1}^{n}}{\Delta x^2} + \frac{u_{i+1}^{n+1} -2u_{i}^{n+1}+u_{i-1}^{n+1} }{\Delta x} \right)
@@ -350,22 +357,27 @@ b & a & b & \cdots\\
 To investigate the truncation error in the schemes we look into the approximations we have made deriving them. In order to do that we need the following Taylor series:
 \begin{equation}
 u(a+h) = u(a) +hu'(a)+O(h^2)
+\label{eq:taylor_u}
 \end{equation}
 \begin{equation}
 u(a+h) = u(a) +hu'(a)+\frac{1}{2}h^2 u''(a) +O(h^3)
+\label{eq:taylor_u2}
 \end{equation}
 \begin{equation}
 u(a+h/2) = u(a) +\frac{h}{2}u'(a) + \frac{1}{2} \left( \frac{h}{2} \right)^2 u''(a) + O(h^3)
+\label{eq:taylor_u3}
 \end{equation}
 
 \subsubsection{Explicit Euler}
-The forward time-derivative is obtained by solving (3.11) for $u'(a)$, with $a=t$ and $h=\Delta t$
+The forward time-derivative is obtained by solving \eqref{eq:taylor_u}
+for $u'(a)$, with $a=t$ and $h=\Delta t$
 \begin{equation}
 \frac{u(t+\Delta t)-u(t)}{\Delta t} = u'(t)+O(\Delta t).
 \end{equation}  
 Having to divide by $h$ we get an truncation error of $O(h)$ in time.
 
-The second derivative with respect to space is obtained by adding (3.12), with $a=x$,  $h=\Delta x$ and 
+The second derivative with respect to space is obtained by adding 
+\eqref{eq:taylor_u2}, with $a=x$,  $h=\Delta x$ and 
 $a=x$,  $h= -\Delta x$ and solving for $u''(x)$:
 \begin{equation}
 \frac{u(x+\Delta x)-2u(x)+u(x-\Delta x)}{\Delta x^2} = u''(x)+O(\Delta x^2).
@@ -375,10 +387,11 @@ Using these approximations we have that the truncation error of the Forward Eule
 
 \subsubsection{Implicit Euler}
 The error analysis for this scheme is the same as for the forward scheme. One can just set $h=- \Delta t$
-instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section (3.3.2)). 
+instead of $h=\Delta t$ and hence recover the same truncation error, $O(\Delta x^2)+O(\Delta t)$. 
+However, it is "cheaper", computational wise, to obtain more accuracy using this scheme for stability reasons(discussed in section \ref{sec:implicit_euler}). 
 
-\subsubsection{Crank-Nicholson}
-To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$, $h=\Delta t$ and subtracting $a=t-\Delta t/2$, $h=-\Delta t$ for the series (3.13) we get the following center time-derivative:
+\subsubsection{Crank-Nicolson}
+To ensure better accuracy a center derivative in time can be used as well. By letting $a=t+\Delta t/2$, $h=\Delta t$ and subtracting $a=t-\Delta t/2$, $h=-\Delta t$ for the series \eqref{eq:taylor_u3} we get the following center time-derivative:
 \begin{equation}
 \frac{u(t + \Delta t)-u(t)}{\Delta t} = u'(t+\Delta t) + O(\Delta t^2)
 \end{equation}
@@ -386,7 +399,7 @@ Having evaluated the time-derivative in $t+\Delta t$ we must evaluate the spatia
 \begin{align*}
 u(t+\Delta t/2) \simeq \frac{1}{2}(u(t)+u(t+\Delta t)).
 \end{align*}
-Using the approximation above combined with the expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicholson scheme.
+Using the approximation above combined with the expression for the second order derivative we get a truncation error of $O(\Delta x^2)+O(\Delta t^2)$ for the Crank-Nicolson scheme.
 
 \subsection{Stability analysis}
 
@@ -423,6 +436,7 @@ Now, since $T(0)=1$ and $T(t)$ is decaying we must have that $|A| \leq 1$, that 
 which is satisfied for $\frac{\Delta t}{\Delta x^2} \leq \frac{1}{2}$. The scheme is so called \emph{conditionally stable}.
 
 \subsubsection{Implicit Euler}
+\label{sec:implicit_euler}
 We follow the same reasoning and procedure as for explicit Euler and start by inserting the discrete solution, $v^n_i$, into the scheme:
 \begin{align*}
 \frac{A^{n}-A^{n-1}}{\Delta t} e^{ik \pi x_i} = \frac{e^{ik \pi x_{i+1}} -2e^{ik \pi x_i} + e^{ik \pi x_{i-1}}}{\Delta x^2} A^n.
@@ -438,8 +452,8 @@ A=\left( \frac{4\Delta t}{\Delta x^2}sin^2\left(k\pi \frac{\Delta x}{2}\right)-1
 Again we require that $|A| \leq 1$, which this time puts no restrictions on the $\Delta t/ \Delta x^2$ relationship. This is therefore a so called \emph{unconditionally stable} scheme.
 
 
-\subsubsection{Crank-Nicholson}
-Inserting  $v^n_i$, into the Crank-Nicholson scheme
+\subsubsection{Crank-Nicolson}
+Inserting  $v^n_i$, into the Crank-Nicolson scheme
 \begin{align*}
 \frac{A^{n+1} - A^{n}}{\Delta t} e^{ik \pi x_i} = \frac{1}{2} \left( \frac{e^{ik \pi x_{i+1}}-2e^{ik \pi x_{i}} + e^{ik \pi x_{i-1}}}{\Delta x^2} (A^n + A^{n+1})  \right)
 \end{align*}
@@ -459,6 +473,7 @@ we see that $|A| \leq 1$ is fulfilled, and the scheme is  \emph{unconditionally 
 For some chosen time-level the error will be computed according to 
 \begin{equation}
 E = \sqrt{\frac{1}{N+1} \sum_{i=0}^{N} (u_{e(i)}-u_{i})^2}
+\label{eq:EL2}
 \end{equation}
 which is the \emph{discrete L2-norm}. 
 
@@ -541,12 +556,14 @@ and $d$ as $u^n$ using TDMA. The solution is $u^{n+1}$
 \end{enumerate}
 \end{algorithm}
 
-\subsubsection{Crank-Nicholson}
+\subsubsection{Crank-Nicolson}
 \begin{algorithm}
 \begin{enumerate}[label=\bfseries \arabic*)]
 \item Calculate
 \begin{align*}
-\alpha = \frac{\Delta t}{\Delta x^2}\\
+\alpha = \frac{\Delta t}{\Delta x^2}
+\end{align*}\vspace{-7mm}
+\begin{align*}
 a_1 &= 1 - \frac{1}{2}\alpha, \quad
 b_1 = \frac{1}{2}\alpha\\
 a_2 &= 1 + \frac{1}{2}\alpha, \quad
@@ -582,68 +599,23 @@ from a normal distribution with mean 0, and $\sigma = 1$
 
 \section{Results}
 
-\subsection{Error measurements}
-
-\begin{table}[H]
-\centering
-  \caption{Data from numerical experiments. Computing error according to (4.1) at T=0.01.}
-\vspace{2mm}
-
-\begin{tabular}{ |l|l|l|l|l|l| }
-  \hline
-  $\Delta x$ & \textbf{FE} & \textbf{BE} & \textbf{CN}  & \textbf{MC1} & \textbf{MC2}  \\
-  \hline
-1/10	 & 0.0615769 & 	0.0646733 & 	0.0466711 & 	0.0650734 & 	0.023262  \\
-\hline
-1/100 &	0.0121561 & 	0.010757 & 	0.011458 & 	0.0163719 & 	0.294685  \\
-\hline
-\end{tabular}
-\vspace{0.2cm}
-\end{table}
-
-\begin{table}[H]
-\centering
-  \caption{Data from numerical experiments. Computing error according to (4.1) at T=1.0.}
-\vspace{2mm}
-
-\begin{tabular}{ |l|l|l|l|l|l| }
-  \hline
-  $\Delta x$ & \textbf{FE} & \textbf{BE} & \textbf{CN}  & \textbf{MC1} & \textbf{MC2}  \\
-  \hline
-1/10 &	0.015625 &	1.43456667265 & 1  & 1 & 2  \\
-\hline
-1/100 &	0.015625 &	1.43456667265 & 1  & 1 & 2  \\
-\hline
-\end{tabular}
-\vspace{0.2cm}
-\end{table}
-
-\subsection{Example of run}
-
 To obtain these results we have run our program with different values of 
 $\Delta x$ and $T$. The value for $\Delta t$ has been taken from the 
 stability criteria of the explicit Euler, $\alpha = 0.5$. Two comparison
 times has been selected to ensure that the simulations reaches the 
 steady state, and that it follows the analytical solution.
 
-The result for these parameters give figure \ref{fig:dx_vs_t}. 
-In figure \ref{subfig:smallxbigt} we see that all methods except the 
-Monte Carlo with 
-variable time-step reaches the steady state, and is thus
-overlaying each other.
-The Monte Carlo simulation struggles with the normalisation, and so the 
-first bin is overfull. This causes trouble with the rate, and so is not 
-a reliable method as implemented here. For shorter times, figure 
-\ref{subfig:smallxsmallt}, there is a 
-discrepancy between all the different methods, with the Monte Carlo with 
-variable time-step following the analytical solution the closest.
+\subsection{Reproduction of results}
 
-With a finer division of the axis, we obtain figure \ref{subfig:smallxbigt}.
-This shows that the matrix solvers and Monte Carlo method with equal 
-step-length all reach the same solution as the analytical. The 
-Monte Carlo with unequal steps suffer yet again from the normalisation.
 
-\begin{figure}
+A folder containing benchmark calculations is available at: 
+
+\url{https://github.com/mulimoen/FYS3150CompPhy} under project 5 in the 
+data folder under report. The parameters are specified for each of the 
+runs.
+
+\subsection{Plots and error measurements}
+\begin{figure}[H]
 \centering
 \begin{subfigure}{0.49\textwidth}
 \includegraphics[width=\textwidth]{pics/{dx=0.1_t=0.01}.png}
@@ -668,7 +640,7 @@ Monte Carlo with unequal steps suffer yet again from the normalisation.
 \centering
 \includegraphics[width=\textwidth]{pics/{dx=0.01_t=0.2}.png}
 \caption{$\Delta x = 1/100$, $T=0.2$}
-\label{fig:bigxbigt}
+\label{subfig:bigxbigt}
 \end{subfigure}
 
 \caption{Comparison of the different models for changing $\Delta x$ and 
@@ -676,25 +648,105 @@ times}
 \label{fig:dx_vs_t}
 \end{figure}
 
+\begin{table}[H]
+\centering
+  \caption{Data from numerical experiments. Computing error according to \eqref{eq:EL2} at T=0.01.}
+\vspace{2mm}
+\begin{tabular}{ |l|l|l|l|l|l| }
+  \hline
+  $\Delta x$ & \textbf{FE} & \textbf{BE} & \textbf{CN}  & \textbf{MC1} & \textbf{MC2}  \\
+  \hline
+1/10	 & 0.0615769 & 	0.0646733 & 	0.0466711 & 	0.0671568 & 	0.0232794  \\
+\hline
+1/100 &	0.0121561 & 	0.010757 & 	0.011458 & 	0.012100 & 	0.278932  \\
+\hline
+\end{tabular}
+\label{tab:ErrorT1}
+\end{table}
+
+\begin{table}[H]
+\centering
+  \caption{Data from numerical experiments. Computing error according to \eqref{eq:EL2} at T=0.2.}
+\vspace{2mm}
+
+\begin{tabular}{ |l|l|l|l|l|l| }
+  \hline
+  $\Delta x$ & \textbf{FE} & \textbf{BE} & \textbf{CN}  & \textbf{MC1} & \textbf{MC2}  \\
+  \hline
+1/10 &	0.0559664 &	0.0414221 & 0.0487329  & 0.0623289 & 0.145985  \\
+\hline
+1/100 &	0.0220106 &	0.0214704 & 0.0217405  & 0.0241509 & 0.515567  \\
+\hline
+\end{tabular}
+\label{tab:ErrorT2}
+\end{table}
+
+
+\begin{figure}
+\centering
+\includegraphics[width=0.4\textwidth]{pics/variance.png}
+\caption{Variance for the Monte Carlo methods for $\Delta x = 1/100$
+for both times computed. The MC equal step-length is cut off to show 
+details. This curve goes to 1 and flattens.}
+\label{fig:MCvariance}
+\end{figure}
+
+
+\subsection{Discussion}
 
 
 
-\subsection{Reproduction of results}
-A folder containing benchmark calculations is available at: 
+The result for these parameters give figure \ref{fig:dx_vs_t}. For 
+our steady state time, $T = 0.2$ we see in both \ref{subfig:smallxbigt} and 
+\ref{subfig:bigxbigt} That the Monte Carlo method with variable 
+step-length shows some problems with the normalisation chosen. This suggest 
+a better algorithm than the one we have outlined here has to be employed. 
+From table \ref{tab:ErrorT2} we see that for small time-steps we
+achieve the least error of all the other methods, and it is seems 
+promising to further develop this method.
 
-\url{https://github.com/mulimoen/FYS3150CompPhy} under project 5 in the 
-data folder under report. This should be necessary information to 
-rerun all the results in this report.
+The methods based on the matrix solvers gives results which are consistent
+with each other. From table \ref{tab:ErrorT1} and \ref{tab:ErrorT2} we 
+see that the Forward Euler method has a larger error than both Backward 
+Euler and Crank Nicolson. CN is however a little better when the 
+function is steep. 
+
+For the Monte Carlo methods we are interested in the variance, which is 
+included in figure \ref{fig:MCvariance}. This shows that our selection of 
+particle numbers gives a low variance near the steady-state solution. 
+It is however advised to take more samples for shorter time-steps as 
+the variance is dependent on the time.
+
+The backwards Euler and Crank Nicolson methods are however not subject 
+to a choice of $\Delta x$ and $\Delta t$, and therefore requires 
+less FLOPS to compute compared to the forwards Euler, and is preferred.
+The Monte Carlo methods are easily parallelised, but the variable step-length
+requires a computation of the move for every particle for each time-step,
+which requires far more computations than the simple equal length
+Monte Carlo method,
+which just requires a binomial probability for each bin.
+
+
+
 
 
 \section{Conclusion}
 
-From the data gathered we have found a good way to implement all the 
-differing methods, apart from the Monte Carlo method with variable 
-step-length. For this method some further tweaking to the normalisation 
-is required in order for the method to be accurate. It does show some 
-promising features, especially for short pulses, but suffers greatly 
-when they start to flow to the left.
+The diffusion equation has been solved with three different methods, 
+analytical, based on discretisation and transforming it to matrix 
+equations, and one based on Monte Carlo simulations. The discretisised 
+schemes leads to the explicit and implicit Euler and Crank-Nicolson scheme.
+All of these schemes show equal properties for our selected times and 
+choice of $\Delta x$, but the explicit Euler suffers from a stability 
+criteria that the other two do not have. 
+
+The schemes based on the Monte Carlo is able to follow the solvers above, 
+and are easily parallelisable, which is an advantage if the results
+are to computed with less FLOPS at the expense of accuracy. Our 
+implementation of a variable step-length Monte Carlo methods is faulty, 
+but shows some potential if a different algorithm for normalisation is 
+used.
+
 
 
 \printbibliography
