@@ -93,7 +93,7 @@ The dominant way of transporting signals between nerve cells in the brain is by 
 
 \begin{figure}[H]
 \centering
-\includegraphics[scale=0.15]{fig1.png}
+\includegraphics[scale=0.15]{pics/SynapticVesicle.png}
 \caption{Illustration of the process of vesicle release from the axon
 terminal and release of transmitter molecules into the synaptic cleft.
 (From \cite{thompson2000brain}.)}
@@ -624,13 +624,83 @@ from a normal distribution with mean 0, and $\sigma = 1$
 \end{table}
 
 
+\subsection{Example of run}
+
+To obtain these results we have run our program with different values of 
+$\Delta x$ and $T$. The value for $\Delta t$ has been taken from the 
+stability criteria of the explicit Euler, $\alpha = 0.5$. Two comparison
+times has been selected to ensure that the simulations reaches the 
+steady state, and that it follows the analytical solution.
+
+The result for these parameters give figure \ref{fig:dx_vs_t}. 
+In figure \ref{subfig:smallxbigt} we see that all methods except the 
+Monte Carlo with 
+variable time-step reaches the steady state, and is thus
+overlaying each other.
+The Monte Carlo simulation struggles with the normalisation, and so the 
+first bin is overfull. This causes trouble with the rate, and so is not 
+a reliable method as implemented here. For shorter times, figure 
+\ref{subfig:smallxsmallt}, there is a 
+discrepancy between all the different methods, with the Monte Carlo with 
+variable time-step following the analytical solution the closest.
+
+With a finer division of the axis, we obtain figure \ref{subfig:smallxbigt}.
+This shows that the matrix solvers and Monte Carlo method with equal 
+step-length all reach the same solution as the analytical. The 
+Monte Carlo with unequal steps suffer yet again from the normalisation.
+
+\begin{figure}
+\centering
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\textwidth]{pics/{dx=0.1_t=0.01}.png}
+\caption{$\Delta x = 1/10$, $T=0.01$}
+\label{subfig:smallxsmallt}
+\end{subfigure}
+%
+\begin{subfigure}{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{pics/{dx=0.01_t=0.01}.png}
+\caption{$\Delta x = 1/100$, $T=0.01$}
+\label{subfig:bigxsmallt}
+\end{subfigure}
+
+\begin{subfigure}{0.49\textwidth}
+\includegraphics[width=\textwidth]{pics/{dx=0.1_t=0.2}.png}
+\caption{$\Delta x = 1/10$, $T=0.2$}
+\label{subfig:smallxbigt}
+\end{subfigure}
+%
+\begin{subfigure}{0.49\textwidth}
+\centering
+\includegraphics[width=\textwidth]{pics/{dx=0.01_t=0.2}.png}
+\caption{$\Delta x = 1/100$, $T=0.2$}
+\label{fig:bigxbigt}
+\end{subfigure}
+
+\caption{Comparison of the different models for changing $\Delta x$ and 
+times}
+\label{fig:dx_vs_t}
+\end{figure}
+
+
+
+
 \subsection{Reproduction of results}
-A folder containing benchmark calculations is available at: \\
-\url{https://github.com/mulimoen/FYS3150CompPhy} under project 5.
+A folder containing benchmark calculations is available at: 
+
+\url{https://github.com/mulimoen/FYS3150CompPhy} under project 5 in the 
+data folder under report. This should be necessary information to 
+rerun all the results in this report.
 
 
 \section{Conclusion}
 
+From the data gathered we have found a good way to implement all the 
+differing methods, apart from the Monte Carlo method with variable 
+step-length. For this method some further tweaking to the normalisation 
+is required in order for the method to be accurate. It does show some 
+promising features, especially for short pulses, but suffers greatly 
+when they start to flow to the left.
 
 
 \printbibliography

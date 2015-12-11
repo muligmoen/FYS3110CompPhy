@@ -114,6 +114,7 @@ Vector<int> diffusion::Monte_Carlo(const Vector<int>& init_vec,
   return vec;
 }
 
+
 Vector<int> diffusion::Monte_Carlo_gaussian(const int steps, const int bins,
                                             const int Nparticles, const double L0,
                                             const long seed)
