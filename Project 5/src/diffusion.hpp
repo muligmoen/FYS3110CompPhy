@@ -79,6 +79,7 @@ namespace diffusion{
   /*!
    * @brief Monte Carlo simulation of diffusion equation
    * 
+   * @param N Number of bins
    * @param steps number of MC-steps
    * @param fill_rigth The amount of particles which should be ''refilled''
    * on the right side after one MC-step.
@@ -93,7 +94,7 @@ namespace diffusion{
   /*!
    * @brief Monte Carlo simulation of diffusion equation
    * 
-   * @param N Amount of points along axis
+   * @param init_vec Output of a previous Monte Carlo simulation
    * @param steps number of MC-steps
    * @param fill_rigth The amount of particles which should be ''refilled''
    * on the right side after one MC-step.
