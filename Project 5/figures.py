@@ -33,10 +33,10 @@ def plot_stuff():
   plt.show()
   
   
-alpha = 0.5 # Stability criteria
+alpha = 1.0/2 # Stability criteria
 dx = 1/100
 dt = dx*dx*alpha
-T = 0.01
+T = 0.1
 
 cmd = ['./project5', str(dt), str(dx), str(T)]
 
@@ -52,5 +52,6 @@ u_MC = list(map(float, lines[7].strip('[]').split()))
 u_MCG = list(map(float, lines[10].strip('[]').split()))
 
 E = [float(lines[2]), float(lines[4]), float(lines[6]), float(lines[8]), float(lines[11])]
+print(E)
 
 plot_stuff()
