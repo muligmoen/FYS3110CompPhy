@@ -222,7 +222,7 @@ v(x,t) = -\sum_{k=1}^\infty \frac{2}{\pi k}\sin(k\pi x)e^{-(k\pi)^2t}
 
 \section{Finite difference methods}
 
-Let the spatial domain $x \in [0,d]$ be sampled at $N+1$ points, $x_0,x_1,..,x_i,..,x_L$ and the time be discretised as $t_0,t_1,..,t_n,..,t_N$. Then we denote the solution, $u(x_i,t_n)$, as $u_i^n$.  
+Let the spatial domain $x \in [0,d]$ be sampled at $L+1$ points, $x_0,x_1,..,x_i,..,x_L$ and the time be discretised as $t_0,t_1,..,t_n,..,t_N$. Then we denote the solution, $u(x_i,t_n)$, as $u_i^n$.  
 
 \subsection{Schemes}
 
@@ -240,14 +240,14 @@ u_{i+1}^n - 2u_i^n + u_{i-1}^n
 Written in a matrix equation with boundary conditions (the notation 
 is explained in \ref{subsubsec:implicit_euler})
 \begin{gather}
-\mathbf{u^{n+1}} = 
+u^{n+1} = 
 \begin{pmatrix}
 1 & 0 & 0 & 0 & \cdots\\
 \alpha & 1 - 2\alpha & \alpha & 0 & \cdots\\
 0 & \alpha & 1-2\alpha & \alpha & \cdots\\
 \cdots & \cdots & \ddots & \ddots& \\
 &&& 0 & 1
-\end{pmatrix} \mathbf{u^n}
+\end{pmatrix} u^n
 \end{gather}
 
 
@@ -709,7 +709,7 @@ The methods based on the matrix solvers gives results which are consistent
 with each other. From table \ref{tab:ErrorT1} and \ref{tab:ErrorT2} we 
 see that the Forward Euler method has a larger error than both Backward 
 Euler and Crank Nicolson. CN is however a little better when the 
-function is steep. 
+function is steep, but not as much as expected.
 
 For the Monte Carlo methods we are interested in the variance, which is 
 included in figure \ref{fig:MCvariance}. This shows that our selection of 
@@ -717,7 +717,7 @@ particle numbers gives a low variance near the steady-state solution.
 It is however advised to take more samples for shorter time-steps as 
 the variance is dependent on the time.
 
-The backwards Euler and Crank Nicolson methods are however not subject 
+The backwards Euler and Crank Nicolson methods are however not sensitive  
 to a choice of $\Delta x$ and $\Delta t$, and therefore requires 
 less FLOPS to compute compared to the forwards Euler, and is preferred.
 The Monte Carlo methods are easily parallelised, but the variable step-length

@@ -45,11 +45,7 @@ def plot_stuff(u_ANA, u_eulerF, u_eulerB, u_CN, u_MC, u_MCG):
 alpha = 1.0/2 # Stability criteria
 dx = 1/100
 dt = dx*dx*alpha
-<<<<<<< HEAD
-T = 0.1
-=======
 T = 0.2
->>>>>>> 61ee1336e756b46204420ada1017614fcba3c470
 
 cmd = ['./project5', str(dt), str(dx), str(T)]
 
@@ -68,12 +64,7 @@ u_MCG = list(map(float, lines[23][1:-2].split()))
 MC_variance = list(map(float, lines[7][1:-2].split()))
 MCG_variance = list(map(float, lines[7][1:-2].split()))
 
-<<<<<<< HEAD
-E = [float(lines[2]), float(lines[4]), float(lines[6]), float(lines[8]), float(lines[11])]
-print(E)
-=======
 E = [float(lines[10][0]), float(lines[13][0]), float(lines[16][0]),
      float(lines[19][0]), float(lines[24][0])]
->>>>>>> 61ee1336e756b46204420ada1017614fcba3c470
 
 plot_stuff(u_ANA, u_eulerF, u_eulerB, u_CN, u_MC, u_MCG)
